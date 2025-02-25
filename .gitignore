@@ -1,0 +1,8 @@
+.backup
+.coverage
+.work
+
+/dist
+/node_modules
+
+*.vsix

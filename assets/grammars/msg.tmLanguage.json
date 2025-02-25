@@ -1,0 +1,70 @@
+{
+    "name": "am-msg",
+    "scopeName": "source.msg",
+    "patterns": [
+		{
+			"include": "#comments"
+		},
+		{
+			"include": "#statements"
+		}
+	],
+	"repository": {
+        "comments": {
+            "patterns": [
+                {
+                    "match": "^\\s*(#@)(.*)",
+                    "captures": {
+                        "1": {
+                            "name": "comment.msg"
+                        },
+                        "2": {
+                            "name": "entity.name.type.class.msg"
+                        }
+                    }
+                },
+                {
+                    "match": "^\\s*(#.*)",
+                    "captures": {
+                        "1": {
+                            "name": "comment.msg"
+                        }
+                    }
+                }
+            ]
+        },
+        "statements": {
+            "patterns": [
+                {
+                    "match": "^([^;]+)(;)([^\n]*)$",
+                    "name": "msg-file",
+                    "captures": {
+                        "1": {
+                            "name": "variable.msg",
+                            "patterns": [
+                                {
+                                    "include": "#placeholder"
+                                }
+                            ]
+                        },
+                        "2": {
+                            "name": "keyword.msg"
+                        },
+                        "3": {
+                            "name": "string.msg",
+                            "patterns": [
+                                {
+                                    "include": "#placeholder"
+                                }
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        "placeholder": {
+            "match": "\\$\\d+",
+            "name": "constant.language.msg"
+        }
+    }
+}

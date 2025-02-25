@@ -1,0 +1,205 @@
+{
+    "name": "am-cfg",
+    "scopeName": "source.cfg",
+    "patterns": [
+		{
+			"include": "#comments"
+		},
+		{
+			"include": "#statements"
+		},
+		{
+			"include": "#literals"
+		}
+	],
+	"repository": {
+        "comments": {
+            "patterns": [
+                {
+                    "match": "^\\s*(#.*)",
+                    "captures": {
+                        "1": {
+                            "name": "comment.cfg"
+                        }
+                    }
+                }
+            ]
+        },
+        "statements": {
+            "patterns": [
+                {
+                    "match": "^(display|sound|input_map|general|saver_config|layout_config|plugin)[\\t ]*([^\\s]*)",
+                    "name": "config-section",
+                    "captures": {
+                        "1": {
+                            "name": "storage.type"
+                        },
+                        "2": {
+                            "name": "entity.name.type"
+                        }
+                    }
+                },
+                {
+                    "match": "^[\\t ]*(param|artwork|default)[\\t ]+([^ \\t\\n]+)(?:[\\t ]+(.*))?$",
+                    "name": "config-param",
+                    "captures": {
+                        "1": {
+                            "name": "variable.parameter"
+                        },
+                        "2": {
+                            "name": "variable.other"
+                        },
+                        "3": {
+                            "name": "string",
+                            "patterns": [
+                                {
+                                    "include": "#literals"
+                                },
+                                {
+                                    "include": "#keywords"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "match": "^(?:[\\t ]*)([^\\t ]+)[\\t ]*([^\\s]*)$",
+                    "name": "config-depth-any-literal",
+                    "captures": {
+                        "1": {
+                            "name": "variable.other"
+                        },
+                        "2": {
+                            "name": "string",
+                            "patterns": [
+                                {
+                                    "include": "#literals"
+                                },
+                                {
+                                    "include": "#keywords"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "match": "^(?:\\t| {1,4})([^\\t ]+)[\\t ]*(.*)$",
+                    "name": "config-depth-1-string",
+                    "captures": {
+                        "1": {
+                            "name": "variable.other"
+                        },
+                        "2": {
+                            "name": "string",
+                            "patterns": [
+                                {
+                                    "include": "#keywords"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "match": "^(?:[\\t ]*)([^\\t ]+)[\\t ]*(.*)$",
+                    "name": "config-depth-2-string",
+                    "captures": {
+                        "1": {
+                            "name": "variable.other"
+                        },
+                        "2": {
+                            "name": "string",
+                            "patterns": [
+                                {
+                                    "include": "#constants"
+                                },
+                                {
+                                    "include": "#keywords"
+                                }
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        "literals": {
+            "patterns": [
+                {
+                    "match": "\\b[0-9]+ms",
+                    "name": "constant.language.log time.log"
+                },
+                {
+                    "match": "\\b\\d{4}-\\d{2}-\\d{2}(T|\\b)",
+                    "name": "comment.log date.log"
+                },
+                {
+                    "match": "(?<=(^|\\s))\\d{2}[^\\w\\s]\\d{2}[^\\w\\s]\\d{4}\\b",
+                    "name": "comment.log date.log"
+                },
+                {
+                    "match": "\\d{1,2}:\\d{2}(:\\d{2}([.,]\\d{1,})?)?(Z| ?[+-]\\d{1,2}:\\d{2})?\\b",
+                    "name": "comment.log date.log"
+                },
+                {
+                    "match": "\\b([0-9a-fA-F]{40}|[0-9a-fA-F]{10}|[0-9a-fA-F]{7})\\b",
+                    "name": "constant.language.log number.log"
+                },
+                {
+                    "match": "\\b[0-9a-fA-F]{8}[-]?([0-9a-fA-F]{4}[-]?){3}[0-9a-fA-F]{12}\\b",
+                    "name": "constant.language.log number.log"
+                },
+                {
+                    "match": "\\b([0-9a-fA-F]{2,}[:-])+[0-9a-fA-F]{2,}+\\b",
+                    "name": "constant.language.log number.log"
+                },
+                {
+                    "match": "\\b([0-9]+|true|false|[Yy]es|[Nn]o|null)\\b",
+                    "name": "constant.language.log boolean.log"
+                },
+                {
+                    "match": "\\b(0x[a-fA-F0-9]+)\\b",
+                    "name": "constant.language.log hex.log"
+                },
+                {
+                    "match": "\"[^\"]*\"",
+                    "name": "string.log string.log"
+                },
+                {
+                    "match": "(?<![\\w])'[^']*'",
+                    "name": "string.log string.log"
+                }
+            ]
+        },
+        "keywords": {
+            "patterns": [
+                {
+                    "match": "\\+",
+                    "name": "keyword"
+                },
+                {
+                    "match": "\\;",
+                    "name": "keyword"
+                }
+            ]
+        },
+        "constants": {
+            "patterns": [
+                {
+                    "match": "\\b(contains|not_contains|equals|not_equals)\\b",
+                    "name": "keyword"
+                },
+                {
+                    "match": "\\b(back|up|down|left|right|select|prev_game|next_game|prev_page|next_page|prev_display|next_display|displays_menu|prev_filter|next_filter|filters_menu|toggle_layout|toggle_movie|toggle_mute|toggle_rotate_right|toggle_flip|toggle_rotate_left|exit|exit_to_desktop|screenshot|configure|random_game|replay_last_game|add_favourite|prev_favourite|next_favourite|add_tags|screen_saver|prev_letter|next_letter|intro|custom1|custom2|custom3|custom4|custom5|custom6|custom7|custom8|custom9|custom10|reset_window|reload)\\b",
+                    "name": "constant.language"
+                },
+                {
+                    "match": "\\b(NoSort|Name|Title|Emulator|CloneOf|Year|Manufacturer|Category|Players|Rotation|Control|Status|DisplayCount|DisplayType|AltRomname|AltTitle|Extra|Favourite|Tags|PlayedCount|PlayedTime|FileIsAvailable)\\b",
+                    "name": "constant.language"
+                }
+            ]
+        },
+        "placeholder": {
+            "match": "\\$\\d+",
+            "name": "constant.language"
+        }
+    }
+}

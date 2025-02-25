@@ -1,0 +1,15 @@
+{
+    // Starts the dev task and runs the extension in the Extension Development Host
+    // Info: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "args": ["--extensionDevelopmentPath=${workspaceFolder}"],
+            "name": "Launch Extension",
+            "outFiles": ["${workspaceFolder}/out/**/*.js"],
+            "preLaunchTask": "npm: dev",
+            "request": "launch",
+            "type": "extensionHost"
+        }
+    ]
+}

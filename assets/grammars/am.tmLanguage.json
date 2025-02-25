@@ -1,0 +1,94 @@
+{
+    "name": "am-file",
+    "scopeName": "source.am",
+    "patterns": [
+		{
+			"include": "#statements"
+		}
+	],
+	"repository": {
+        "statements": {
+            "patterns": [
+                {
+                    "match": "^([^;]*)(;)([^;]*)(;)$",
+                    "captures": {
+                        "1": {
+                            "patterns": [
+                                {
+                                    "include": "#literals"
+                                }
+                            ]
+                        },
+                        "2": {
+                            "name": "keyword.am"
+                        },
+                        "3": {
+                            "patterns": [
+                                {
+                                    "include": "#literals"
+                                }
+                            ]
+                        },
+                        "4": {
+                            "name": "keyword.am"
+                        }
+                    }
+                },
+                {
+                    "match": "^([^;]*)(;)([^;]*)(;)([^;]*)(;)$",
+                    "captures": {
+                        "1": {
+                            "patterns": [
+                                {
+                                    "include": "#literals"
+                                }
+                            ]
+                        },
+                        "2": {
+                            "name": "keyword.am"
+                        },
+                        "3": {
+                            "name": "string.am"
+                        },
+                        "4": {
+                            "name": "keyword.am"
+                        },
+                        "5": {
+                            "patterns": [
+                                {
+                                    "include": "#literals"
+                                }
+                            ]
+                        },
+                        "6": {
+                            "name": "keyword.am"
+                        }
+                    }
+                },
+                {
+                    "match": "^(.*?) (.*?)$",
+                    "captures": {
+                        "1": {
+                            "name": "variable.am"
+                        },
+                        "2": {
+                            "patterns": [
+                                {
+                                    "include": "#literals"
+                                }
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        "literals": {
+            "patterns": [
+                {
+                    "match": "\\b([0-9]+)\\b",
+                    "name": "constant.language.am"
+                }
+            ]
+        }
+    }
+}

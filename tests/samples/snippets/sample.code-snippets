@@ -1,0 +1,11 @@
+{
+    "test": {
+        "prefix": "test()",
+        "body": ["test(${1:1})"],
+        "description": "Test Snippet."
+    },
+    "keyword": {
+        "body": []
+    },
+    "invalid": {}
+}

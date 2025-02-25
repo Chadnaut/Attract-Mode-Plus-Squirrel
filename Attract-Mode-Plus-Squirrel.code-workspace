@@ -1,0 +1,23 @@
+{
+    "folders": [
+        {
+            "path": "."
+        }
+    ],
+    "settings": {
+        "files.eol": "\n",
+        "editor.rulers": [80],
+        "editor.tabSize": 4,
+        "editor.insertSpaces": true,
+        "typescript.preferences.importModuleSpecifier": "relative",
+        "terminal.integrated.tabs.enableAnimation": false,
+        "search.exclude": {
+            "**/.backup": true,
+            "**/.coverage": true,
+            "**/.vscode": true,
+            "**/.work": true,
+            "**/dist": true,
+            "**/node_modules": true
+        }
+    },
+}

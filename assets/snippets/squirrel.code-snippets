@@ -1,0 +1,306 @@
+{
+    "abstract": {
+        "description": "This member must be implemented (or overridden) by the inheritor.",
+        "body": ["abstract"]
+    },
+    "alias": {
+        "description": "Treat a member as if it had a different name.",
+        "body": ["alias ${1:name}"]
+    },
+    "artwork": {
+        "description": "Document the artwork resource labels.",
+        "body": ["artwork ${1:name}"]
+    },
+    "async": {
+        "description": "Indicate that a function is asynchronous.",
+        "body": ["async"]
+    },
+    "augments": {
+        "description": "Indicate that a symbol inherits from, and adds to, a parent symbol.",
+        "body": ["augments ${1:name}"]
+    },
+    "author": {
+        "description": "Identify the author of an item.",
+        "body": ["author ${1:name}<${2:link}>"]
+    },
+    "borrows": {
+        "description": "This object uses something from another object.",
+        "body": ["borrows ${1:name} as ${2:alias}"]
+    },
+    "callback": {
+        "description": "Document a callback function.",
+        "body": ["callback ${1:name}"]
+    },
+    "class": {
+        "description": "This function is intended to create an instance.",
+        "body": ["class"]
+    },
+    "classdesc": {
+        "description": "Use the following text to describe the entire class.",
+        "body": ["classdesc ${1:description}"]
+    },
+    "constant": {
+        "description": "Document an object as a constant.",
+        "body": ["constant {${1:type}} ${2:name} ${3:description}"]
+    },
+    "constructs": {
+        "description": "This function member will be the constructor for the previous class.",
+        "body": ["constructs ${1:name}"]
+    },
+    "copyright": {
+        "description": "Document some copyright information.",
+        "body": ["copyright ${1:description}"]
+    },
+    "default": {
+        "description": "Document the default value.",
+        "body": ["default ${1:name}"]
+    },
+    "deprecated": {
+        "description": "Document that this is no longer the preferred way.",
+        "body": ["deprecated ${1:description}"]
+    },
+    "description": {
+        "description": "Describe a symbol.",
+        "body": ["description ${1:description}"]
+    },
+    "enum": {
+        "description": "Document a collection of related properties.",
+        "body": ["enum {${1:type}}"]
+    },
+    "event": {
+        "description": "Document an event.",
+        "body": ["event ${1:name}"]
+    },
+    "example": {
+        "description": "Provide an example of how to use a documented item.",
+        "body": ["example ${1:description}"]
+    },
+    "exports": {
+        "description": "Identify the member that is exported by a module.",
+        "body": ["exports ${1:name}"]
+    },
+    "external": {
+        "description": "Identifies an external class, namespace, or module.",
+        "body": ["external ${1:name}"]
+    },
+    "file": {
+        "description": "Describe a file.",
+        "body": ["file ${1:description}"]
+    },
+    "fires": {
+        "description": "Describe the events this method may fire.",
+        "body": ["fires ${1:name}"]
+    },
+    "function": {
+        "description": "Describe a function or method.",
+        "body": ["function ${1:name}"]
+    },
+    "generator": {
+        "description": "Indicate that a function is a generator function.",
+        "body": ["generator"]
+    },
+    "getter": {
+        "description": "Document a getter of an object.",
+        "body": ["getter {${1:type}} ${2:name} ${3:description}"]
+    },
+    "global": {
+        "description": "Document a global object.",
+        "body": ["global"]
+    },
+    "hideconstructor": {
+        "description": "Indicate that the constructor should not be displayed.",
+        "body": ["hideconstructor"]
+    },
+    "ignore": {
+        "description": "Omit a symbol from the documentation.",
+        "body": ["ignore"]
+    },
+    "implements": {
+        "description": "This symbol implements an interface.",
+        "body": ["implements {${1:type}}"]
+    },
+    "inheritdoc": {
+        "description": "Indicate that a symbol should inherit its parent's documentation (except ignore).",
+        "body": ["inheritdoc"]
+    },
+    "inheritdoc!": {
+        "description": "Indicate that a symbol should inherit its parent's documentation.",
+        "body": ["inheritdoc!"]
+    },
+    "inner": {
+        "description": "Document an inner object.",
+        "body": ["inner"]
+    },
+    "instance": {
+        "description": "Document an instance member.",
+        "body": ["instance"]
+    },
+    "interface": {
+        "description": "This symbol is an interface that others can implement.",
+        "body": ["interface ${1:name}"]
+    },
+    "keyword": {
+        "description": "Document the behaviour of a keyword.",
+        "body": ["keyword ${1:name}"]
+    },
+    "kind": {
+        "description": "What kind of symbol is this?",
+        "body": ["kind ${1|class,constant,event,external,file,function,member,module,property|}"]
+    },
+    "lends": {
+        "description": "Document properties on an object literal as if they belonged to a symbol with a given name.",
+        "body": ["lends ${1:name}"]
+    },
+    "license": {
+        "description": "Identify the license that applies to this code.",
+        "body": ["license ${1:name}"]
+    },
+    "listens": {
+        "description": "List the events that a symbol listens for.",
+        "body": ["listens ${1:name}"]
+    },
+    "magic": {
+        "description": "Document a magic token.",
+        "body": ["magic ${1:name}"]
+    },
+    "member": {
+        "description": "Document a member.",
+        "body": ["member {${1:type}} ${2:name}"]
+    },
+    "memberof": {
+        "description": "This symbol belongs to a parent symbol.",
+        "body": ["memberof ${1:name}"]
+    },
+    "memberof!": {
+        "description": "Force this symbol to belongs to a parent symbol.",
+        "body": ["memberof! ${1:name}"]
+    },
+    "mixes": {
+        "description": "This object mixes in all the members from another object.",
+        "body": ["mixes ${1:name}"]
+    },
+    "mixin": {
+        "description": "Document a mixin object.",
+        "body": ["mixin ${1:name}"]
+    },
+    "module": {
+        "description": "Document a module.",
+        "body": ["module ${1:name}"]
+    },
+    "name": {
+        "description": "Document the name of an object.",
+        "body": ["name ${1:name}"]
+    },
+    "namespace": {
+        "description": "Document a namespace object.",
+        "body": ["namespace {${1:type}} ${2:name}"]
+    },
+    "override": {
+        "description": "Indicate that a symbol overrides its parent.",
+        "body": ["override"]
+    },
+    "package": {
+        "description": "Document the package name for this file.",
+        "body": ["package ${1:name}"]
+    },
+    "param": {
+        "description": "Document the parameter to a function.",
+        "body": ["param {${1:type}} ${2:name} ${3:description}"]
+    },
+    "private": {
+        "description": "This symbol is meant to be private.",
+        "body": ["private"]
+    },
+    "property": {
+        "description": "Document a property of an object.",
+        "body": ["property {${1:type}} ${2:name} ${3:description}"]
+    },
+    "protected": {
+        "description": "This symbol is meant to be protected.",
+        "body": ["protected"]
+    },
+    "public": {
+        "description": "This symbol is meant to be public.",
+        "body": ["public"]
+    },
+    "readonly": {
+        "description": "This symbol is meant to be read-only.",
+        "body": ["readonly"]
+    },
+    "requires": {
+        "description": "This file requires a module.",
+        "body": ["requires ${1:name}"]
+    },
+    "returns": {
+        "description": "Document the return value of a function.",
+        "body": ["returns {${1|integer,float,string,boolean,null|}} ${2:description}"]
+    },
+    "see": {
+        "description": "Refer to some other documentation for more information.",
+        "body": ["see ${1:name}"]
+    },
+    "setter": {
+        "description": "Document a setter of an object.",
+        "body": ["setter {${1:type}} ${2:name} ${3:description}"]
+    },
+    "since": {
+        "description": "When was this feature added?",
+        "body": ["since ${1:version}"]
+    },
+    "snippet": {
+        "description": "Document a completion snippet.",
+        "body": ["snippet"]
+    },
+    "static": {
+        "description": "Document a static member.",
+        "body": ["static"]
+    },
+    "summary": {
+        "description": "A shorter version of the full description.",
+        "body": ["summary ${1:description}"]
+    },
+    "this": {
+        "description": "What does the 'this' keyword refer to here?",
+        "body": ["this ${1:name}"]
+    },
+    "throws": {
+        "description": "Describe what errors could be thrown.",
+        "body": ["throws {${1:type}} ${2:description}"]
+    },
+    "todo": {
+        "description": "Document tasks to be completed.",
+        "body": ["todo ${1:description}"]
+    },
+    "tutorial": {
+        "description": "Insert a link to an included tutorial file.",
+        "body": ["tutorial ${1:name}"]
+    },
+    "type": {
+        "description": "Document the type of an object.",
+        "body": ["type {${1:type}}"]
+    },
+    "typedef": {
+        "description": "Document a custom type.",
+        "body": ["typedef {${1:type}} ${1:name}"]
+    },
+    "url": {
+        "description": "Document a website link.",
+        "body": ["url ${1:name}"]
+    },
+    "var": {
+        "description": "Document a variable.",
+        "body": ["var {${1:type}} ${1:name}"]
+    },
+    "variation": {
+        "description": "Distinguish different objects with the same name.",
+        "body": ["variation ${1:name}"]
+    },
+    "version": {
+        "description": "Documents the version number of an item.",
+        "body": ["version ${1:name}"]
+    },
+    "yields": {
+        "description": "Document the value yielded by a generator function.",
+        "body": ["yields ${1:type}"]
+    }
+}

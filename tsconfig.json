@@ -1,0 +1,22 @@
+{
+    "compilerOptions": {
+        "target": "ES2018",
+        "module": "CommonJS",
+        "moduleResolution": "node",
+        "baseUrl": "./src",
+        "rootDir": "./src",
+        "outDir": "./dist",
+        "declaration": true,
+        "sourceMap": true,
+        "strict": false,
+        "esModuleInterop": true,
+        "allowJs": true
+    },
+    "include": [
+        "./src/**/*.ts",
+        "./src/**/*.js"
+    ],
+    "exclude": [
+        "**/.work"
+    ],
+}

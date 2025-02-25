@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.9.6] - 2025-02-25
+
+### Added
+
+- DocBlock documentation
+
+### Changed
+
+- Package name attribute used for completion detail
+
+### Fixed
+
+- File paths constructed with variables no longer reported as missing
+- Metamethod snippet kind now shows only within classes
+
 ## [0.9.5] - 2025-02-24
 
 ### Added
@@ -17,7 +32,7 @@ All notable changes to this project will be documented in this file.
 
 - Completion documentation links
 - Artwork labels should not provide links
-- Files with magic tokens no longer reported as missing
+- File paths with magic tokens no longer reported as missing
 - Module support files should not be classed as modules
 
 ## [0.9.4] - 2025-02-22

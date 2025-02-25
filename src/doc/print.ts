@@ -1,0 +1,30 @@
+import { DocAttr } from "./kind"
+
+/** Format array of attributes for printing in code */
+export const printDocAttrs = (attrs: DocAttr[]): string =>
+    attrs.map(printDocAttr).join("");
+
+
+/**
+ * Format attribute to print in code
+ * - Includes newline at end
+*/
+export const printDocAttr = (attr: DocAttr): string => {
+    let output = "";
+
+    switch (attr.kind) {
+        case "description":
+            return ` * ${attr.documentation.split("\n").join("\n * ")}\n`;
+        default:
+            output = ` * @${attr.kind}`;
+            if (attr.type) output += ` {${attr.type}}`;
+            if (attr.name) output += ` ${attr.name}`;
+            if (attr.link) output += (attr.kind === "author") ? `<${attr.link}>` : ` ${attr.link}`;
+            if (attr.documentation) output += ` ${attr.documentation.split("\n").join("\n * ")}`;
+            output += "\n";
+            return output;
+    }
+}
+
+export const printDocNewline = (): string =>
+    " *\n";
