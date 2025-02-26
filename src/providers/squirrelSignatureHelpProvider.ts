@@ -28,10 +28,7 @@ export class SquirrelSignatureHelpProvider implements SignatureHelpProvider {
             (program: AST.Program) => {
                 const text = document.getText();
                 const pos = docPosToPos(document, position);
-                const index = context.isRetrigger
-                    ? context.activeSignatureHelp?.activeSignature
-                    : undefined;
-                return getSignatureHelp(text, program, pos, index);
+                return getSignatureHelp(text, program, pos);
             },
         );
     }

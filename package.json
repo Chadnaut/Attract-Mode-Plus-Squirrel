@@ -2,12 +2,12 @@
     "name": "am-squirrel",
     "displayName": "AM+ Squirrel",
     "description": "Squirrel for Attract-Mode Plus.",
-    "version": "0.9.6",
+    "version": "0.9.7",
     "license": "MIT",
     "publisher": "Chadnaut",
     "author": {
-      "name": "Chadnaut",
-      "url":  "https://github.com/Chadnaut"
+        "name": "Chadnaut",
+        "url": "https://github.com/Chadnaut"
     },
     "homepage": "https://github.com/Chadnaut/Attract-Mode-Plus-Squirrel",
     "repository": {
@@ -24,7 +24,7 @@
         "theme": "dark"
     },
     "engines": {
-        "vscode": "^1.95.0"
+        "vscode": "^1.69.1"
     },
     "categories": [
         "Programming Languages",
@@ -32,8 +32,16 @@
         "Linters"
     ],
     "keywords": [
+        "attract-mode-plus",
         "attract-mode",
-        "squirrel"
+        "documentation",
+        "formatter",
+        "frontend",
+        "layout",
+        "live-reload",
+        "nut",
+        "squirrel",
+        "syntax"
     ],
     "qna": false,
     "scripts": {
@@ -48,6 +56,13 @@
         "vscode:prepublish": "npm run build"
     },
     "main": "./dist/extension.js",
+    "activationEvents": [
+        "onLanguage:squirrel",
+        "onLanguage:am-log",
+        "onLanguage:am-cfg",
+        "onLanguage:am-file",
+        "onLanguage:am-msg"
+    ],
     "contributes": {
         "languages": [
             {
@@ -405,17 +420,20 @@
     "devDependencies": {
         "@prettier/sync": "^0.5.2",
         "@types/jest": "^29.5.14",
-        "@types/vscode": "^1.95.0",
+        "@types/vscode": "=1.69.1",
         "jest": "^29.7.0",
-        "jest-mock-vscode": "^4.0.3",
-        "ts-jest": "^29.2.5",
-        "typescript": "^5.6.3"
+        "jest-mock-vscode": "^4.1.0",
+        "ts-jest": "^29.2.6",
+        "typescript": "^5.7.3"
+    },
+    "overrides": {
+        "@types/vscode": "=1.69.1"
     },
     "dependencies": {
         "jest-docblock": "^29.7.0",
         "leather": "^3.0.3",
-        "prettier": "^3.3.3",
+        "prettier": "^3.5.2",
         "tail": "^2.2.6",
-        "to-fast-properties": "^3.0.1"
+        "to-fast-properties": "=3.0.1"
     }
 }

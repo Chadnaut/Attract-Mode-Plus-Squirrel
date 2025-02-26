@@ -1,5 +1,6 @@
 # Attract-Mode Plus Squirrel
 
+<a href="https://code.visualstudio.com/download"><img alt="VSCode" src="https://img.shields.io/badge/VSCode-^1.69.1-blue"></a>
 <a href="http://www.squirrel-lang.org/doc/squirrel3.html"><img alt="Squirrel" src="https://img.shields.io/badge/Squirrel-3.0.7-blue"></a>
 <a href="https://github.com/mickelson/attract"><img alt="AM" src="https://img.shields.io/badge/Attract--Mode-2.7.0-blue"></a>
 <a href="https://github.com/oomek/attractplus"><img alt="AM+" src="https://img.shields.io/badge/Attract--Mode_Plus-3.1.0-blue"></a>

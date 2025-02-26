@@ -1,6 +1,6 @@
 /** AM+ Squirrel Extension */
 
-import { ExtensionContext, languages, workspace } from "vscode";
+import { ExtensionContext, languages } from "vscode";
 import constants from "./constants";
 import * as path from "path";
 

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.9.7] - 2025-02-26
+
+### Changed
+
+- Reduce VSCode version requirement from 1.95.0 to 1.69.1
+- Auto-select completion signature to match the given parameters
+
 ## [0.9.6] - 2025-02-25
 
 ### Added

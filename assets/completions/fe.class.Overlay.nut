@@ -32,22 +32,7 @@ class feOverlay {
      * @param {fe.Listbox} listbox The element to use for the Menu.
      * @version AM_2.0.0-rc1 https://github.com/mickelson/attract/blob/v2.0.0-rc1/Layouts.md?plain=1#L1201
      */
-    function set_custom_controls(text, listbox) {}
-
-    /**
-     * @ignore
-     * @variation set_custom_controls
-     * @param {fe.Text} text The element to use for the Title.
-     * @version AM_2.0.0-rc1 https://github.com/mickelson/attract/blob/v2.0.0-rc1/Layouts.md?plain=1#L1202
-     */
-    function set_custom_controls(text) {}
-
-    /**
-     * @ignore
-     * @variation set_custom_controls
-     * @version AM_2.0.0-rc1 https://github.com/mickelson/attract/blob/v2.0.0-rc1/Layouts.md?plain=1#L1203
-     */
-    function set_custom_controls() {}
+    function set_custom_controls(text = null, listbox = null) {}
 
     /**
      * Reverts the Overlay menu to the built-in style.
