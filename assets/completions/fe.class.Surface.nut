@@ -17,7 +17,7 @@
  * @alias fe.Surface
  * @version AM_1.3.0-beta1 https://github.com/mickelson/attract/blob/v1.3.0-beta1/Layouts.md?plain=1#L173
  */
-class feSurface extends feImage {
+class feSurface {
 
     // ---------------------------------------------------------------------------------
     // #region PRESENTABLE

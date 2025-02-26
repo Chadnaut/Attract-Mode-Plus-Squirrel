@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.9.8] - 2025-02-26
+
+### Fixed
+
+- Surface completions incorrectly display overloaded methods
+
 ## [0.9.7] - 2025-02-26
 
 ### Changed

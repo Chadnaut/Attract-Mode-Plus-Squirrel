@@ -199,6 +199,13 @@ describe("Type", () => {
         expect(items[0].insertText).toBe('len');
     });
 
+    it("getTypeMemberCompletions, type lends overload", () => {
+        const program = parse('/** @lends */ class StringLiteral { function len() {} function len() {} }; local x = "string"; x');
+        const items = getTypeMemberCompletions(getBranchAtPos(program, pos(96)));
+        expect(items.length).toBe(1);
+        expect(items[0].insertText).toBe('len');
+    });
+
     it("getTypeMemberCompletions, type empty ignores completions", () => {
         const program = parse('/** @lends */ class StringLiteral { function len() {} }; /** @type */ local x = "string"; x');
         const items = getTypeMemberCompletions(getBranchAtPos(program, pos(91)));

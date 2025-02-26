@@ -9,7 +9,7 @@ import {
     getNodeExtendedSymbols,
     getNodeSymbols,
     filterRootSymbols,
-    filterOverriddenSymbols,
+    filterOverloadedSymbols,
 } from "./symbol";
 import {
     CompletionItem,
@@ -101,10 +101,9 @@ export const getMemberCompletions = (branch: AST.Node[]): CompletionItem[] => {
     const node = branch.at(-1);
     if (!node) return [];
     let symbols = getNodeExtendedSymbols(branch);
-    symbols = filterOverriddenSymbols(symbols);
+    symbols = filterOverloadedSymbols(symbols);
     symbols = filterMetaSymbols(symbols);
     symbols = filterAllowedSymbols(symbols, node);
-
     return symbolsToCompletions(branch, symbols, true);
 };
 
@@ -121,6 +120,8 @@ export const getTypeMemberCompletions = (
         symbols.push(...getNodeExtendedSymbols(nodeType));
     }
 
+    symbols = filterOverloadedSymbols(symbols);
+    symbols = filterMetaSymbols(symbols);
     symbols = filterAllowedSymbols(symbols, node);
     return symbolsToCompletions(branch, symbols, true);
 };

@@ -109,8 +109,11 @@ export const filterAllowedSymbols = (
         return true;
     });
 
-/** Return unique symbols, ignoring later ones with same names (ie: from superclass) */
-export const filterOverriddenSymbols = (
+/**
+ * Return unique symbols, ignoring later ones with same names
+ * - Occurs with superclass or overloaded variations
+ */
+export const filterOverloadedSymbols = (
     symbols: DocumentSymbolExtra[]
 ): DocumentSymbolExtra[] =>
     symbols.filter((symbol, index) =>
