@@ -80,5 +80,12 @@ describe("Map", () => {
         expect(() => getNodeChildren([qt.LambdaExpression(null, null)])).not.toThrow();
         expect(() => getNodeChildren([qt.ClassDeclaration(null, null)])).not.toThrow();
         expect(() => getNodeChildren([qt.ClassExpression(null)])).not.toThrow();
+
+        expect(() => getNodeChildren([qt.BlockStatement([qt.FunctionDeclaration(null, null, null)])])).not.toThrow();
+        expect(() => getNodeChildren([qt.BlockStatement([qt.FunctionExpression(null, null)])])).not.toThrow();
+        expect(() => getNodeChildren([qt.BlockStatement([qt.MethodDefinition(null, null, null)])])).not.toThrow();
+        expect(() => getNodeChildren([qt.BlockStatement([qt.LambdaExpression(null, null)])])).not.toThrow();
+        expect(() => getNodeChildren([qt.BlockStatement([qt.ClassDeclaration(null, null)])])).not.toThrow();
+        expect(() => getNodeChildren([qt.BlockStatement([qt.ClassExpression(null)])])).not.toThrow();
     });
 });

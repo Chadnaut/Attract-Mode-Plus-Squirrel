@@ -100,73 +100,85 @@ export const getImportModuleName = (filename: string): string | undefined => {
         : path.basename(rel, constants.LANGUAGE_EXTENSION);
 };
 
+const nodeFilenameMap = new WeakMap<AST.Node, string>();
+
 /**
  * Add potential `fe.do_nut` or `fe.load_module` filename to the imports array
  * - Attempts to resolve argument, may call getNodeVal & getNodeDef
- * - Returns undefined if the method does not match, or the value is to be ignored
- * - Returns empty string if the method matches, but no filename found - gets flagged as missing
+ * - Returns [undefined] if the method does not match, or the value is to be ignored
+ * - Returns [""] if the method matches, but no filename found - gets flagged as missing
  */
 export const getNodeImportFilename = (
     branch: AST.Node[],
-    methods: string[] = [],
+    argIndex: number = 0,
 ): string | undefined => {
     const node = branch.at(-1);
     if (node?.type !== "CallExpression") return;
 
+    const method = getCallExpressionName(branch);
+    if (!method) return;
+
     const args = (<AST.CallExpression>node).arguments;
     if (!args.length) return;
+    if (argIndex >= args.length) return;
+    const arg = args[argIndex];
+    if (nodeFilenameMap.has(arg)) return nodeFilenameMap.get(arg);
 
-    const method = getCallExpressionName(branch);
-    if (!method || (methods.length && !methods.includes(method))) return;
+    const sourceName = getBranchProgram(branch).sourceName;
+    const value = resolveBinaryExpression(branch.concat([arg]), sourceName);
+    if (!value || value.indexOf("[") !== -1) {
+        nodeFilenameMap.set(arg, undefined);
+        return;
+    }
 
-    const program = getBranchProgram(branch);
-    const b = branch.concat(args.slice(0, 1));
-    const sourceName = program.sourceName;
-    const value = resolveBinaryExpression(b, sourceName);
-    if (!value) return;
-
-    // ignore values with magic tokens
-    if (value.indexOf("[") !== -1) return;
-
+    let filename;
     switch (method) {
         case constants.SQ_DOFILE: {
             const basePath = getConfigValue(constants.ATTRACT_MODE_PATH, "");
-            return getFirstValidFilename([value, path.join(basePath, value)]) ?? "";
+            filename = getFirstValidFilename([value, path.join(basePath, value)]) ?? "";
+            break;
         }
         case constants.FE_ADD_IMAGE:
         case constants.FE_ADD_MUSIC:
         case constants.FE_ADD_SOUND:
+        case constants.FE_ADD_SHADER:
         case constants.FE_DO_NUT: {
-            return getRelativeFilename(value, sourceName) ?? "";
+            filename = getRelativeFilename(value, sourceName) ?? "";
+            break;
         }
         case constants.FE_LOAD_MODULE: {
             const basePath = getConfigValue(constants.ATTRACT_MODE_PATH, "");
             if (isSupportedNut(value)) {
                 // value is nut file
-                return getFirstValidFilename([
-                    path.join(basePath, constants.FE_MODULES_PATH, value),
-                ]) ?? "";
+                filename = (
+                    getFirstValidFilename([
+                        path.join(basePath, constants.FE_MODULES_PATH, value),
+                    ]) ?? ""
+                );
             } else {
                 // value may be folder, or nut file within folder
-                return getFirstValidFilename([
-                    path.join(
-                        basePath,
-                        constants.FE_MODULES_PATH,
-                        value + constants.LANGUAGE_EXTENSION,
-                    ),
-                    path.join(
-                        basePath,
-                        constants.FE_MODULES_PATH,
-                        value,
-                        constants.FE_MODULE_FILENAME,
-                    ),
-                ]) ?? "";
+                filename = (
+                    getFirstValidFilename([
+                        path.join(
+                            basePath,
+                            constants.FE_MODULES_PATH,
+                            value + constants.LANGUAGE_EXTENSION,
+                        ),
+                        path.join(
+                            basePath,
+                            constants.FE_MODULES_PATH,
+                            value,
+                            constants.FE_MODULE_FILENAME,
+                        ),
+                    ]) ?? ""
+                );
             }
+            break;
         }
-        // case constants.FE_ADD_ARTWORK: {
-        //     return value;
-        // }
     }
+
+    nodeFilenameMap.set(arg, filename);
+    return filename;
 };
 
 /** Return all nut files relative to nut path */
@@ -180,4 +192,3 @@ export const getNutCompletions = (sourceName: string): CompletionItem[] => {
         .filter((name) => isSupportedNut(name) && name !== self)
         .map((name) => new CompletionItem(name, CompletionItemKind.File));
 };
-

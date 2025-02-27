@@ -11,29 +11,32 @@ import {
 import constants from "../constants";
 import { requestProgram } from "./program";
 import { AST } from "../ast";
-import {
-    locOverlapsLoc,
-    locToDocRange,
-    nodeToDocRange,
-} from "./location";
+import { locOverlapsLoc, locToDocRange, nodeToDocRange } from "./location";
 import { getDeprecateNodes } from "./deprecated";
 import { CompilerError } from "../squirrel/squirrel/sqcompiler.h";
 
 // -----------------------------------------------------------------------------
 
-const programErrorMap = new WeakMap<AST.Program, CompilerError[]>();
+type DiagnosticError = CompilerError & {
+    severity: DiagnosticSeverity;
+};
+
+const programErrorMap = new WeakMap<AST.Program, DiagnosticError[]>();
 
 /** Store compilation errors for the given program */
 export const addProgramErrors = (
     program: AST.Program,
     errors: CompilerError[],
+    severity: DiagnosticSeverity = DiagnosticSeverity.Error,
 ) => {
     if (!programErrorMap.has(program)) programErrorMap.set(program, []);
-    programErrorMap.get(program).push(...errors);
-}
+    programErrorMap
+        .get(program)
+        .push(...errors.map((e) => <DiagnosticError>{ ...e, severity }));
+};
 
 /** Return compilation errors for the given program */
-export const getProgramErrors = (program: AST.Program): CompilerError[] =>
+export const getProgramErrors = (program: AST.Program): DiagnosticError[] =>
     programErrorMap.has(program) ? programErrorMap.get(program) : [];
 
 // -----------------------------------------------------------------------------
@@ -46,8 +49,10 @@ export const getDiagnostics = (program: AST.Program): Diagnostic[] =>
 export const hasDiagnostics = (program: AST.Program): boolean =>
     diagnosticsMap.has(program);
 
-export const setDiagnostics = (program: AST.Program, diagnostics: Diagnostic[]) =>
-    diagnosticsMap.set(program, diagnostics);
+export const setDiagnostics = (
+    program: AST.Program,
+    diagnostics: Diagnostic[],
+) => diagnosticsMap.set(program, diagnostics);
 
 // -----------------------------------------------------------------------------
 
@@ -55,7 +60,10 @@ export const setDiagnostics = (program: AST.Program, diagnostics: Diagnostic[]) 
  * Return true if node has an error overlapping it
  * - Intended to prevent inlayHint, but unused
  */
-export const getNodeHasError = (program: AST.Program, node: AST.Node): boolean => {
+export const getNodeHasError = (
+    program: AST.Program,
+    node: AST.Node,
+): boolean => {
     for (const error of getProgramErrors(program)) {
         if (locOverlapsLoc(node.loc, error.loc)) return true;
     }
@@ -138,13 +146,9 @@ export class SquirrelDiagnostics extends Disposable {
         });
 
         // add error tags to draw red-squiggly-underlines
-        getProgramErrors(program).forEach(({ message, loc }) => {
+        getProgramErrors(program).forEach(({ message, loc, severity }) => {
             diagnostics.push(
-                new Diagnostic(
-                    locToDocRange(loc),
-                    message,
-                    DiagnosticSeverity.Error,
-                ),
+                new Diagnostic(locToDocRange(loc), message, severity),
             );
         });
 

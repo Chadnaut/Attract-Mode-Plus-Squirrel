@@ -2,7 +2,7 @@
     "name": "am-squirrel",
     "displayName": "AM+ Squirrel",
     "description": "Squirrel for Attract-Mode Plus.",
-    "version": "0.9.8",
+    "version": "0.9.9",
     "license": "MIT",
     "publisher": "Chadnaut",
     "author": {
@@ -51,7 +51,7 @@
         "test": "jest",
         "test:watch": "jest --watchAll",
         "test:coverage": "jest --coverage --coverageDirectory ./.coverage",
-        "test:watch:coverage": "jest --watchAll --coverage --coverageDirectory ./.coverage",
+        "test:coverage:watch": "jest --watchAll --coverage --coverageDirectory ./.coverage",
         "package": "vsce package",
         "vscode:prepublish": "npm run build"
     },
@@ -343,7 +343,7 @@
                         },
                         "showMissing": {
                             "type": "boolean",
-                            "description": "Show missing files (requires Problem detection)."
+                            "description": "Missing file warnings (requires AM Path, Problem detection)."
                         },
                         "scanArtwork": {
                             "type": "boolean",

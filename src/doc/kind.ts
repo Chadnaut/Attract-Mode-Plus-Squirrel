@@ -6,7 +6,7 @@ import { SourceLocation } from "../ast/ast";
 export type DocBlock = {
     attributes: DocAttr[];
     markdown?: MarkdownString;
-    branch?: AST.Node[];
+    branch: AST.Node[];
 };
 
 /** Doc attribute type */

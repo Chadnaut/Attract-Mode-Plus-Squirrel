@@ -12,7 +12,6 @@ import { DocAttr, DocBlock } from "./kind";
 import { createDocMarkdown } from "./markdown";
 import { stringToCompletionKind } from "../utils/kind";
 import {
-    createCompletionLabel,
     getCompletionDescription,
     getCommitCharacters,
 } from "../utils/completion";
@@ -122,7 +121,8 @@ export const createDocSnippetCompletions = (
                     nextAttr = docBlock.attributes[i + 1];
                     switch (nextAttr?.kind) {
                         case "snippet":
-                            if (kind === undefined) kind = CompletionItemKind.Snippet;
+                            if (kind === undefined)
+                                kind = CompletionItemKind.Snippet;
                             snippetAttr = nextAttr;
                             i++;
                             break;
@@ -174,10 +174,10 @@ export const createDocSnippetCompletion = (
 ): CompletionItem | undefined => {
     if (!name) return;
     CompletionItemKind.Property;
-    const label = createCompletionLabel(
-        name,
-        getCompletionDescription(description, program),
-    );
+    const label = <CompletionItemLabel>{
+        label: name,
+        description: description || getCompletionDescription(program),
+    };
     const item = new CompletionItem(label, kind);
     if (documentation) {
         item.documentation = new MarkdownString();

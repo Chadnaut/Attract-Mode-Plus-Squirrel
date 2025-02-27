@@ -21,11 +21,7 @@ import {
     SymbolTag,
     TextEdit,
 } from "vscode";
-import {
-    getBranchClassDef,
-    getBranchProgram,
-    isSameBranch,
-} from "./find";
+import { getBranchClassDef, getBranchProgram, isSameBranch } from "./find";
 import { symbolToCompletionKind } from "./kind";
 import { getDocAttr, getNodeDoc } from "../doc/find";
 import { getProgramImports } from "./program";
@@ -33,13 +29,13 @@ import { AST } from "../ast";
 import { getNodeTypeDef } from "./type";
 import { getSuperDefs } from "./super";
 import { getNodeSignature } from "./signature";
-import { forwardSlash } from "./file";
 import { adjustDocPos } from "./location";
 import { addRootPrefix, nodeHasRootPrefix, removeRootPrefix } from "./root";
 import * as path from "path";
 import { getNodeDef, getNodeVal } from "./definition";
 import { stringToNode } from "./create";
 import { isValidName } from "./identifier";
+import constants from "../constants";
 
 export const uniqueCompletions = (
     completions: CompletionItem[],
@@ -158,32 +154,27 @@ export const getCommitCharacters = (kind: CompletionItemKind): string[] => {
 };
 
 /**
- * Create completion label
- * - Use program module name for description it it exists
- * - Otherwise use relative path from targetProgram to program
- */
-export const createCompletionLabel = (
-    label: string,
-    description?: string,
-): CompletionItemLabel => ({ label, description });
-
-/**
  * Return completion description
- * - Package name if available
- * - Relative path to the program otherwise
+ * - Package name if available, otherwise filename
+ * - Do not use relative name, as symlinked path create very long ../../ trails
  */
 export const getCompletionDescription = (
-    description?: string,
     program?: AST.Program,
     targetProgram?: AST.Program,
-): string | undefined =>
-    description ||
-    (getDocAttr(getNodeDoc([program]), "package")?.name ??
-        (targetProgram
-            ? forwardSlash(
-                  path.relative(targetProgram.sourceName, program.sourceName),
-              )
-            : undefined));
+): string | undefined => {
+    if (!program) return;
+    let name = getDocAttr(getNodeDoc([program]), "package")?.name;
+    if (name) return name;
+    name = path.basename(program.sourceName);
+    if (
+        name === constants.FE_LAYOUT_FILENAME ||
+        name === constants.FE_MODULE_FILENAME ||
+        name === constants.FE_PLUGIN_FILENAME
+    ) {
+        name = path.basename(program.sourceName.slice(0, -name.length));
+    }
+    return name;
+};
 
 /** Create completionItem from symbol */
 const symbolsToCompletion = (
@@ -205,14 +196,13 @@ const symbolsToCompletion = (
 
     const docBlock = getNodeDoc(symbol.branch);
     const signature = getNodeSignature(symbol.branch);
-    const label = createCompletionLabel(
-        labelName,
-        getCompletionDescription(
-            undefined,
+    const label = <CompletionItemLabel>{
+        label: labelName,
+        description: getCompletionDescription(
             getBranchProgram(symbol.branch),
             program,
         ),
-    );
+    };
 
     const kind = symbolToCompletionKind(symbol.kind);
     const item = new CompletionItem(label, kind);
@@ -274,7 +264,7 @@ export const createNodeArrayCompletions = (
     const branch = [program, node];
     const arr = <AST.ArrayExpression>getNodeVal(branch).at(-1);
     if (arr?.type === "ArrayExpression") {
-        const description = getCompletionDescription(undefined, program);
+        const description = getCompletionDescription(program);
         return arr.elements
             .map((child) => child["value"])
             .filter((value) => value !== undefined)

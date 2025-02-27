@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.9.9] - 2025-02-27
+
+### Added
+
+- Missing shader file warnings
+
+### Changed
+
+- Downgraded missing file severity from error to warning
+
+### Fixed
+
+- Symlinked paths resolved to fix repeated completions
+- Completion details default to the file or folder name instead of relative path
+- Log provider scheme updated to fix init warning
+
 ## [0.9.8] - 2025-02-26
 
 ### Fixed

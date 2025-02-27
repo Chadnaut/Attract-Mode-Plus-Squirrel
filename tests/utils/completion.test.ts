@@ -1,7 +1,7 @@
 import { describe, expect, it } from "@jest/globals";
-import { getCompletions, getMemberCompletions, formatMemberCompletions, formatQuoteCompletions, getCommitCharacters, createCompletionLabel, getCompletionDescription, createNodeArrayCompletions, getTypeMemberCompletions, uniqueCompletions } from "../../src/utils/completion";
+import { getCompletions, getMemberCompletions, formatMemberCompletions, formatQuoteCompletions, getCommitCharacters, getCompletionDescription, createNodeArrayCompletions, getTypeMemberCompletions, uniqueCompletions } from "../../src/utils/completion";
 import { dump, parseForceExtra as parse, pos } from "../utils";
-import { getNodeAtPos, getBranchAtPos } from "../../src/utils/find";
+import { getBranchAtPos } from "../../src/utils/find";
 import { SQTree as qt } from "../../src/ast";
 import { commands, CompletionItem, CompletionItemKind, CompletionItemTag, Position } from "vscode";
 import { addProgramImportName, addProgram, deletePrograms } from "../../src/utils/program";
@@ -108,10 +108,8 @@ describe("Completion", () => {
     });
 
     it("getCompletions, referenced", () => {
-        const progA = parse("function foo() {}; class c {}; root <- 123; local var = 123");
-        progA.sourceName = "a";
-        const progB = parse("function bar() {} x");
-        progB.sourceName = "b";
+        const progA = parse("function foo() {}; class c {}; root <- 123; local var = 123", { sourcename: "a" });
+        const progB = parse("function bar() {} x", { sourcename: "b" });
         addProgramImportName(progB, "a")
 
         addProgram("a", progA);
@@ -379,29 +377,32 @@ describe("Completion", () => {
 
     // -------------------------------------------------------------------------
 
-    it("createCompletionLabel, undefined", () => {
-        expect(createCompletionLabel(undefined)).toEqual({ label: undefined, description: undefined });
-    });
-
-    it("createCompletionLabel, label", () => {
-        expect(createCompletionLabel("test")).toEqual({ label: "test", description: undefined });
-    });
-
-    it("createCompletionLabel, description", () => {
-        expect(createCompletionLabel("test", "desc")).toEqual({ label: "test", description: "desc" });
-    });
-
-    it("createCompletionLabel, module", () => {
+    it("getCompletionDescription, module", () => {
         const program = parse("/** @package mock */");
-        expect(createCompletionLabel("test", getCompletionDescription(undefined, program))).toEqual({ label: "test", description: "mock" });
+        expect(getCompletionDescription(program)).toEqual("mock");
     });
 
-    it("createCompletionLabel, relative", () => {
-        const program = parse("");
-        const targetProgram = parse("");
-        program.sourceName = "path/here/subdir";
-        targetProgram.sourceName = "path/here";
-        expect(createCompletionLabel("test", getCompletionDescription(undefined, program, targetProgram))).toEqual({ label: "test", description: "subdir" });
+    it("getCompletionDescription, path", () => {
+        const program = parse("", { sourcename: "path/here/subdir" });
+        const targetProgram = parse("", { sourcename: "path/here" });
+        expect(getCompletionDescription(program, targetProgram)).toEqual("subdir");
+    });
+
+    it("getCompletionDescription, file", () => {
+        const program = parse("", { sourcename: "path/here/file.nut" });
+        const targetProgram = parse("", { sourcename: "path/here" });
+        expect(getCompletionDescription(program, targetProgram)).toEqual("file.nut");
+    });
+
+    it("getCompletionDescription, folder", () => {
+        const program1 = parse("", { sourcename: "path/here/layout.nut" });
+        expect(getCompletionDescription(program1)).toEqual("here");
+
+        const program2 = parse("", { sourcename: "path/here/module.nut" });
+        expect(getCompletionDescription(program2)).toEqual("here");
+
+        const program3 = parse("", { sourcename: "path/here/plugin.nut" });
+        expect(getCompletionDescription(program3)).toEqual("here");
     });
 
     // -------------------------------------------------------------------------

@@ -3,6 +3,7 @@ import { parseExtra as parse, pos } from '../utils';
 import { formatBytes, getArtworkCallLabel, getArtworkCompletions, getAudioCompletions, getImageCompletions, getImageMarkdownString, getProgramArtworks, getShaderCompletions, getVideoCompletions, isSupportedAudio, isSupportedImage, isSupportedShader, refreshArtworkLabels, scanArtworkLabels } from "../../src/utils/media";
 import * as path from "path";
 import constants from "../../src/constants";
+import { getProgramErrors } from "../../src/utils/diagnostics";
 
 jest.replaceProperty(constants, "FE_LAYOUTS_PATH", "tests");
 
@@ -17,6 +18,29 @@ beforeEach(() => {
 });
 
 describe("Media", () => {
+
+    it("addMediaCalls, image missing", () => {
+        getConfigValueFunc = (v) => {
+            switch (v) {
+                case constants.SHOW_MISSING_ENABLED: return true;
+                case constants.ATTRACT_MODE_PATH: return "mock/path";
+            }
+        }
+        const program = parse(`fe.add_image("missing.png")`);
+        expect(getProgramErrors(program).length).toEqual(1);
+    });
+
+    it("addMediaCalls, shader missing", () => {
+        getConfigValueFunc = (v) => {
+            switch (v) {
+                case constants.SHOW_MISSING_ENABLED: return true;
+                case constants.ATTRACT_MODE_PATH: return "mock/path";
+            }
+        }
+        const program = parse(`fe.add_shader(null, "missing.png", "missing.png")`);
+        expect(getProgramErrors(program).length).toEqual(2);
+    });
+
     it("getProgramArtworks, invalid", () => {
         const program = parse("");
         expect(getProgramArtworks(program)).toEqual([]);

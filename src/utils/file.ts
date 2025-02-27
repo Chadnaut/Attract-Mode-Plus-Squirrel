@@ -3,10 +3,14 @@ import * as fs from "fs";
 
 /**
  * Create key for data storage from path
+ * - resolve symlink
+ * - remove specials
  * - case and slash formatting
  */
 export const pathNormalize = (name: string): string =>
-    forwardSlash(path.normalize(name))
+    forwardSlash(
+        path.normalize(fs.existsSync(name) ? fs.realpathSync(name) : name),
+    )
         .toUpperCase()
         .replace(/^[\\/]*(.*?)[\\/]*$/, "$1");
 
@@ -25,15 +29,18 @@ export const filenameHasExtension = (
 ): boolean =>
     filename && extensions.includes(path.extname(filename).toLowerCase());
 
-
 /**
  * Parse delimited string for extensions and return array
  */
 export const parseExtensionList = (value: string): string[] =>
-    value.replace(/[ ,;|]+/g, ";").split(";").map((ext) => {
-        ext = ext.toLowerCase().replace(/^\./, '').trim();
-        if (ext) return `.${ext}`;
-    }).filter((ext) => ext);
+    value
+        .replace(/[ ,;|]+/g, ";")
+        .split(";")
+        .map((ext) => {
+            ext = ext.toLowerCase().replace(/^\./, "").trim();
+            if (ext) return `.${ext}`;
+        })
+        .filter((ext) => ext);
 
 // -----------------------------------------------------------------------------
 

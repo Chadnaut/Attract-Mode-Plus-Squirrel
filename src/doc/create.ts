@@ -27,7 +27,7 @@ const ALLOWED_DOC_NODE_TYPES: NodeType[] = ["Identifier", "Program"];
  * - Does NOT create markdown
  */
 export const createDoc = (comment?: AST.CommentBlock): DocBlock => {
-    const doc: DocBlock = { attributes: parseCommentAttrs(comment) };
+    const doc: DocBlock = { attributes: parseCommentAttrs(comment), branch: [] };
     if (comment) {
         setCommentDocBlock(comment, doc);
         setNodeDocBlock(comment, doc);
@@ -50,7 +50,7 @@ export const attachDoc = (
     if (!ALLOWED_DOC_NODE_TYPES.includes(node?.type)) return;
     if (hasNodeDocBlock(node)) {
         const doc = getNodeDocBlock(node);
-        if (doc) doc.branch = null;
+        if (doc) doc.branch = [];
     }
     docBlock.branch = branch;
     setNodeDocBlock(node, docBlock);

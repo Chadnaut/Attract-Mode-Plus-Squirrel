@@ -45,7 +45,10 @@ export const activate = (context: ExtensionContext) => {
         { language: constants.LANGUAGE_ID, scheme: "untitled" },
     ];
 
-    const logSelector = [{ language: constants.LOG_LANGUAGE_ID }];
+    const logSelector = [
+        { language: constants.LOG_LANGUAGE_ID, scheme: "file" },
+        { language: constants.LOG_LANGUAGE_ID, scheme: "untitled" }
+    ];
 
     // squirrel completions
     const languageNuts = [

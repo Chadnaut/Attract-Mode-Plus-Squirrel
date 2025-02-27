@@ -1,6 +1,7 @@
 import {
     CompletionItem,
     CompletionItemKind,
+    DiagnosticSeverity,
     MarkdownString,
     Uri,
 } from "vscode";
@@ -25,7 +26,7 @@ import { AST } from "../ast";
 import { getBranchProgram } from "./find";
 import { getConfigValue } from "./config";
 import { addProgramErrors } from "./diagnostics";
-import { getCallExpressionName } from "./call";
+import { filterBranchCallMethods, getCallExpressionName } from "./call";
 import { resolveBinaryExpression } from "./binary";
 
 const { readMediaAttributes } = require("leather");
@@ -44,7 +45,6 @@ export const addProgramArtwork = (program: AST.Program, name: string) => {
 export const getProgramArtworks = (program: AST.Program): string[] =>
     programArtworkMap.has(program) ? programArtworkMap.get(program) : [];
 
-
 /** Return the value of and artwork call argument */
 export const getArtworkCallLabel = (branch: AST.Node[]): string => {
     const node = branch.at(-1);
@@ -53,8 +53,11 @@ export const getArtworkCallLabel = (branch: AST.Node[]): string => {
     if (!args.length) return;
 
     if (getCallExpressionName(branch) !== constants.FE_ADD_ARTWORK) return;
-    return resolveBinaryExpression(branch.concat(args.slice(0, 1)), getBranchProgram(branch).sourceName);
-}
+    return resolveBinaryExpression(
+        branch.concat(args.slice(0, 1)),
+        getBranchProgram(branch).sourceName,
+    );
+};
 
 /** Process calls to store artwork labels */
 export const addArtworkCalls = (branches: AST.Node[][]) => {
@@ -64,27 +67,53 @@ export const addArtworkCalls = (branches: AST.Node[][]) => {
             getArtworkCallLabel(branch),
         );
     });
-}
+};
 
 /** Adds program errors for media that does not exist */
 export const addMediaCalls = (branches: AST.Node[][]) => {
-    const importMethods = [
+    const showMissing =
+        !!getConfigValue(constants.ATTRACT_MODE_PATH) &&
+        getConfigValue(constants.SHOW_MISSING_ENABLED, true);
+    if (!showMissing) return;
+
+    const message = constants.FILE_MISSING_MESSAGE;
+    const mediaCalls = filterBranchCallMethods(branches, [
         constants.FE_ADD_IMAGE,
         constants.FE_ADD_MUSIC,
         constants.FE_ADD_SOUND,
-    ];
-    const showMissing = getConfigValue(constants.SHOW_MISSING_ENABLED, true);
-    if (!showMissing) return;
+    ]);
+    const shaderCalls = filterBranchCallMethods(branches, [
+        constants.FE_ADD_SHADER,
+    ]);
 
-    branches.forEach((branch) => {
-        const filename = getNodeImportFilename(branch, importMethods);
+    // media calls have a single filename as their first param
+    mediaCalls.forEach((branch) => {
+        const filename = getNodeImportFilename(branch, 0);
         if (filename === "") {
             const args = (<AST.CallExpression>branch.at(-1)).arguments;
-            const message = "The file does not exist.";
-            addProgramErrors(getBranchProgram(branch), [{ message, loc: args[0].loc}]);
+            addProgramErrors(
+                getBranchProgram(branch),
+                [{ message, loc: args[0].loc }],
+                DiagnosticSeverity.Warning,
+            );
         }
     });
-}
+
+    // shader methods have up to 2 filenames
+    shaderCalls.forEach((branch) => {
+        for (let index = 1; index <= 2; index++) {
+            const filename = getNodeImportFilename(branch, index);
+            if (filename === "") {
+                const args = (<AST.CallExpression>branch.at(-1)).arguments;
+                addProgramErrors(
+                    getBranchProgram(branch),
+                    [{ message, loc: args[index].loc }],
+                    DiagnosticSeverity.Warning,
+                );
+            }
+        }
+    });
+};
 
 // -----------------------------------------------------------------------------
 

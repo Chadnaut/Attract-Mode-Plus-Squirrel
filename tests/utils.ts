@@ -36,20 +36,20 @@ const _parseExtra = (text: string, options: ParserOptions): AST.Program | null =
 }
 
 /** Parse and return node, throw on error */
-export const parse = (text: string): AST.Program | null =>
-    _parse(text, { throwOnError: true, sourcename: "" });
+export const parse = (text: string, options: ParserOptions = {}): AST.Program | null =>
+    _parse(text, { throwOnError: true, sourcename: "", ...options });
 
 /** Parse and return node, do not throw */
-export const parseForce = (text: string): AST.Program | null =>
-    _parse(text, { throwOnError: false, sourcename: "" });
+export const parseForce = (text: string, options: ParserOptions = {}): AST.Program | null =>
+    _parse(text, { throwOnError: false, sourcename: "", ...options });
 
 /** Parse with extra properties added */
-export const parseExtra = (text: string): AST.Program | null =>
-    _parseExtra(text, { throwOnError: true, sourcename: "" });
+export const parseExtra = (text: string, options: ParserOptions = {}): AST.Program | null =>
+    _parseExtra(text, { throwOnError: true, sourcename: "", ...options });
 
 /** ParseForce with extra properties added */
-export const parseForceExtra = (text: string): AST.Program | null =>
-    _parseExtra(text, { throwOnError: false, sourcename: "" });
+export const parseForceExtra = (text: string, options: ParserOptions = {}): AST.Program | null =>
+    _parseExtra(text, { throwOnError: false, sourcename: "", ...options });
 
 export const errors = (): string[] =>
     _errors;

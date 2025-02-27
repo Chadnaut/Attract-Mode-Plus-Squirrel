@@ -52,17 +52,13 @@ describe("Doc Create", () => {
 
 
     it("docblock automatically added to program in module path", () => {
-        const program = parse("function foo() {}");
-
-        program.sourceName = "";
+        const program = parse("function foo() {}", { sourcename: "" });
         updateNodeDoc(program);
         expect(getNodeDoc([program])).toBeUndefined();
     });
 
     it("docblock automatically added to program in module path, with attrs", () => {
-        const program = parse("function foo() {}");
-
-        program.sourceName = "mock/test"
+        const program = parse("function foo() {}", { sourcename: "mock/test" });
         updateNodeDoc(program);
         expect(getNodeDoc([program])).toHaveProperty("attributes");
     });

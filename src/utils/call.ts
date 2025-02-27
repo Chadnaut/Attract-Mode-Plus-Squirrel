@@ -108,8 +108,10 @@ export const getCallExpressionName = (branch: AST.Node[]): string => {
     switch (callee?.type) {
         case "MemberExpression":
             const { object, property } = <AST.MemberExpression>callee;
-            const name = getBranchId(branch.concat([callee], [object]))?.name ?? "";
-            method = name + "." + getBranchId(branch.concat([callee], [property]))?.name;
+            const name =
+                getBranchId(branch.concat([callee], [object]))?.name ?? "";
+            const prop = getBranchId(branch.concat([callee], [property]))?.name;
+            method = `${name}.${prop}`;
             break;
         case "Identifier":
             method = (<AST.Identifier>callee).name;
@@ -117,4 +119,13 @@ export const getCallExpressionName = (branch: AST.Node[]): string => {
     }
 
     return method;
-}
+};
+
+/** Return branches with given call method names */
+export const filterBranchCallMethods = (
+    branches: AST.Node[][],
+    methods: string[],
+): AST.Node[][] =>
+    branches.filter((branch) =>
+        methods.includes(getCallExpressionName(branch)),
+    );

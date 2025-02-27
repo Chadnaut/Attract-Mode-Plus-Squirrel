@@ -1,22 +1,39 @@
 import { describe, expect, it } from "@jest/globals";
-import { dump, parseForceExtra as parse, pos } from "../utils";
+import { dump, parseForceExtra as parse, parseForceExtra, pos } from "../utils";
 import { getNodeAtPos } from "../../src/utils/find";
 import { getDiagnostics, getNodeHasError, getProgramErrors, SquirrelDiagnostics } from "../../src/utils/diagnostics";
 import { commands, Diagnostic, DiagnosticCollection, languages, TextDocument, TextEditor, Uri, window, workspace } from "vscode";
 import { addProgramFile, deletePrograms } from "../../src/utils/program";
 import * as path from "path";
+import constants from "../../src/constants";
 
 const fileGood = path.join(__dirname, "../samples/diagnostic/good.nut");
 const fileError = path.join(__dirname, "../samples/diagnostic/error.nut");
+const fileWarning = path.join(__dirname, "../samples/diagnostic/warning.nut");
 const fileDeprecated = path.join(__dirname, "../samples/diagnostic/deprecated.nut");
 
 const docGood = { uri: Uri.file(fileGood), languageId: "squirrel" } as TextDocument;
 const docBad = { uri: Uri.file("mock.ts"), languageId: "typescript" } as TextDocument;
 const docUgly = null;
 const docError = { uri: Uri.file(fileError), languageId: "squirrel" } as TextDocument;
+const docWarning = { uri: Uri.file(fileWarning), languageId: "squirrel" } as TextDocument;
 const docDeprecated = { uri: Uri.file(fileDeprecated), languageId: "squirrel" } as TextDocument;
 
+let getConfigValueFunc = (...any) => {};
+jest.mock('../../src/utils/config.ts', () => ({
+    ...jest.requireActual('../../src/utils/config.ts'),
+    getConfigValue: (...any) => getConfigValueFunc(...any),
+}));
+
 beforeEach(() => {
+    getConfigValueFunc = (v) => {
+        switch (v) {
+            case constants.ATTRACT_MODE_PATH: return "mock/path";
+            case constants.SHOW_MISSING_ENABLED: return true;
+            default: return "";
+        }
+    }
+
     jest.replaceProperty(window, "visibleTextEditors", [] as TextEditor[]);
 
     const spyExecuteCommand = jest.spyOn(commands, "executeCommand");
@@ -33,6 +50,7 @@ beforeEach(() => {
     deletePrograms();
     addProgramFile(fileGood);
     addProgramFile(fileError);
+    addProgramFile(fileWarning);
     addProgramFile(fileDeprecated);
 });
 
@@ -111,6 +129,9 @@ describe("Diagnostics", () => {
         await d.refresh(docError);
         expect(d.collection.get(docError.uri).length).toBeGreaterThan(0);
 
+        await d.refresh(docWarning);
+        expect(d.collection.get(docWarning.uri).length).toBeGreaterThan(0);
+
         await d.refresh(docDeprecated); // contains deprecated node
         expect(d.collection.get(docDeprecated.uri).find((d) => d.tags?.length > 0)).not.toBeUndefined();
 
@@ -162,6 +183,17 @@ describe("Diagnostics", () => {
         expect(() => d.dispose()).not.toThrow();
     });
 
+    it("getProgramErrors ignore missing without attract path", () => {
+        getConfigValueFunc = (v) => {
+            switch (v) {
+                case constants.ATTRACT_MODE_PATH: return "";
+                case constants.SHOW_MISSING_ENABLED: return true;
+            }
+        }
+        const program = parse(`fe.load_module("mock")`)
+        expect(getProgramErrors(program).length).toBe(0);
+    });
+
     it("getProgramErrors catches missing module", () => {
         const program = parse(`fe.load_module("mock")`)
         expect(getProgramErrors(program).length).toBe(1);
@@ -185,6 +217,11 @@ describe("Diagnostics", () => {
     it("getProgramErrors ignores omitted do_nut", () => {
         const program = parse(`fe.do_nut()`)
         expect(getProgramErrors(program).length).toBe(0);
+    });
+
+    it("getProgramErrors ignores omitted do_nut", () => {
+        const program = parseForceExtra(`local a; a <- 1;`)
+        expect(getProgramErrors(program).length).toBe(1);
     });
 
 });

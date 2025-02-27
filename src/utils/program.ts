@@ -4,6 +4,7 @@ import {
     TextDocument,
     Disposable,
     workspace,
+    DiagnosticSeverity,
 } from "vscode";
 import { SquirrelParser } from "../squirrel/parser";
 import { createNodeMaps } from "./map";
@@ -13,7 +14,7 @@ import { getOpenTabPaths } from "./document";
 import { AST } from "../ast";
 import { addProgramErrors } from "./diagnostics";
 import { getBranchProgram } from "./find";
-import { getCallExpressionName } from "./call";
+import { filterBranchCallMethods, getCallExpressionName } from "./call";
 import { getConfigValue } from "./config";
 import { getNodeImportFilename, isProgramGlobal } from "./import";
 import { DocAttr, getKindOrder } from "../doc/kind";
@@ -107,25 +108,30 @@ export const getImportAttrs = (program: AST.Program): DocAttr[] => {
 // -----------------------------------------------------------------------------
 
 export const addImportCalls = (branches: AST.Node[][]) => {
-    const importMethods = [
+    const showMissing =
+        !!getConfigValue(constants.ATTRACT_MODE_PATH) &&
+        getConfigValue(constants.SHOW_MISSING_ENABLED, true);
+
+    filterBranchCallMethods(branches, [
         constants.FE_LOAD_MODULE,
         constants.FE_DO_NUT,
         constants.SQ_DOFILE,
-    ];
-    const showMissing = getConfigValue(constants.SHOW_MISSING_ENABLED, true);
-    branches.forEach((branch) => {
-        const filename = getNodeImportFilename(branch, importMethods);
+    ]).forEach((branch) => {
+        const filename = getNodeImportFilename(branch);
         const isModule =
             getCallExpressionName(branch) === constants.FE_LOAD_MODULE;
         if (showMissing && filename === "") {
             const args = (<AST.CallExpression>branch.at(-1)).arguments;
             const message = isModule
-                ? "The module does not exist."
-                : "The file does not exist.";
-            addProgramErrors(getBranchProgram(branch), [
-                { message, loc: args[0].loc },
-            ]);
+                ? constants.MODULE_MISSING_MESSAGE
+                : constants.FILE_MISSING_MESSAGE;
+            addProgramErrors(
+                getBranchProgram(branch),
+                [{ message, loc: args[0].loc }],
+                DiagnosticSeverity.Warning,
+            );
         }
+
         if (isModule) addProgramModuleName(getBranchProgram(branch), filename);
         addProgramImportName(getBranchProgram(branch), filename);
     });

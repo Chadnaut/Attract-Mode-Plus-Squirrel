@@ -202,13 +202,13 @@ export const getNodeChildren = (branch: AST.Node[]): AST.Node[][] => {
                 case "FunctionDeclaration": {
                     // exclude namespaced declaration
                     const n = <AST.FunctionDeclaration>child;
-                    if (n.id.type === "MemberExpression") return [];
+                    if (n.id?.type === "MemberExpression") return [];
                     return [childBranch];
                 }
                 case "ClassDeclaration": {
                     // exclude namespaced declaration
                     const n = <AST.ClassDeclaration>child;
-                    if (n.id.type === "MemberExpression") return [];
+                    if (n.id?.type === "MemberExpression") return [];
                     return [childBranch];
                 }
                 default:

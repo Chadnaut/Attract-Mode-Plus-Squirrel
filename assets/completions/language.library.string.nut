@@ -75,7 +75,7 @@ class regexp {
      * @returns {table}
      * @example
      * ```
-     * regexp("(a) *(b) *(c)").capture("a b c")
+     * regexp("(a) *(b) *(c)").capture("a b c");
      * // [
      * //     { begin = 0, end = 5 }, // the entire match range
      * //     { begin = 0, end = 1 }, // a
@@ -100,7 +100,7 @@ class regexp {
      * @returns {table}
      * @example
      * ```
-     * regexp("b").search("a b c")
+     * regexp("b").search("a b c");
      * // { begin: 2, end: 3 }
      * ```
      */

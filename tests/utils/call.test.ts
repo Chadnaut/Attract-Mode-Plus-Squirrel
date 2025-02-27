@@ -1,9 +1,17 @@
 import { describe, expect, it } from "@jest/globals";
 import { dump, parseExtra as parse, pos } from "../utils";
-import { getNodeAtPos as _getNodeAtPos } from "../../src/utils/find";
-import { getCallExpressionName, getNodeCallData } from "../../src/utils/call";
+import { getNodeAtPos as _getNodeAtPos, getBranchAtPos } from "../../src/utils/find";
+import { filterBranchCallMethods, getCallExpressionName, getNodeCallData } from "../../src/utils/call";
 
 describe("Call", () => {
+
+    it("filterBranchCallMethods", () => {
+        const text = `fe.add_artwork("img.png"); fe.load_module("mock");`;
+        const program = parse(text);
+        const art = getBranchAtPos(program, pos(10)).slice(0, -2);
+        const mod = getBranchAtPos(program, pos(34)).slice(0, -2);
+        expect(filterBranchCallMethods([art, mod], ["fe.add_artwork"]).length).toBe(1);
+    });
 
     it("getCallExpressionName, invalid", () => {
         expect(getCallExpressionName([])).toBeUndefined();

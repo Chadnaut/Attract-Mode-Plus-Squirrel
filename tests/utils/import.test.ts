@@ -29,8 +29,8 @@ describe("Import", () => {
         expect(isProgramGlobal(program)).toBe(false);
 
         // it must be in the assets path
-        program.sourceName = "assets/file.nut";
-        expect(isProgramGlobal(program)).toBe(true);
+        const program2 = parse("/** @global \n @package */ local x = 123;", { sourcename: "assets/file.nut" });
+        expect(isProgramGlobal(program2)).toBe(true);
     });
 
     it("getNodeLink, invalid", () => {
@@ -115,6 +115,13 @@ describe("Import", () => {
         expect(getNodeImportFilename(n)).toBe(filename);
     });
 
+    it("getNodeImportFilename, fe.do_nut, bad index", () => {
+        const filename = path.join(__dirname, "../samples/layout/layout.nut");
+        const program = parse(`fe.do_nut("${forwardSlash(filename)}")`);
+        const n = getBranchAtPos(program, pos(4)).slice(0, -2);
+        expect(getNodeImportFilename(n, 1)).toBeUndefined();
+    });
+
     it("getNodeImportFilename, dofile", () => {
         const filename = path.join(__dirname, "../samples/layout/layout.nut");
         const program = parse(`dofile("${forwardSlash(filename)}")`);
@@ -145,31 +152,27 @@ describe("Import", () => {
 
     it("getNodeImportFilename, fe.add_image", () => {
         const filename = path.join(__dirname, "../samples/layout/simple_nut.png");
-        const program = parse(`fe.add_image("layout/simple_nut.png")`);
-        program.sourceName = path.join(__dirname, "../samples/layout/layout.nut");
+        const program = parse(`fe.add_image("layout/simple_nut.png")`, { sourcename: path.join(__dirname, "../samples/layout/layout.nut") });
         const n = getBranchAtPos(program, pos(4)).slice(0, -2);
         expect(getNodeImportFilename(n)).toBe(filename);
     });
 
     it("getNodeImportFilename, fe.add_image, ignore magic token", () => {
-        const program = parse(`fe.add_image("layout/simple_[token]_nut.png")`);
-        program.sourceName = path.join(__dirname, "../samples/layout/layout.nut");
+        const program = parse(`fe.add_image("layout/simple_[token]_nut.png")`, { sourcename: path.join(__dirname, "../samples/layout/layout.nut") });
         const n = getBranchAtPos(program, pos(4)).slice(0, -2);
         expect(getNodeImportFilename(n)).toBeUndefined();
     });
 
     it("getNodeImportFilename, fe.add_music", () => {
         const filename = path.join(__dirname, "../samples/layout/simple_nut.mp4");
-        const program = parse(`fe.add_music("layout/simple_nut.mp4")`);
-        program.sourceName = path.join(__dirname, "../samples/layout");
+        const program = parse(`fe.add_music("layout/simple_nut.mp4")`, { sourcename: path.join(__dirname, "../samples/layout") });
         const n = getBranchAtPos(program, pos(4)).slice(0, -2);
         expect(getNodeImportFilename(n)).toBe(filename);
     });
 
     it("getNodeImportFilename, fe.add_sound", () => {
         const filename = path.join(__dirname, "../samples/layout/simple_nut.wav");
-        const program = parse(`fe.add_sound("layout/simple_nut.wav")`);
-        program.sourceName = path.join(__dirname, "../samples/layout");
+        const program = parse(`fe.add_sound("layout/simple_nut.wav")`, { sourcename: path.join(__dirname, "../samples/layout") });
         const n = getBranchAtPos(program, pos(4)).slice(0, -2);
         expect(getNodeImportFilename(n)).toBe(filename);
     });

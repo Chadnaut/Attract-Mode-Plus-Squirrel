@@ -18,12 +18,16 @@ export default {
     FE_ADD_IMAGE: "fe.add_image",
     FE_ADD_MUSIC: "fe.add_music",
     FE_ADD_SOUND: "fe.add_sound",
+    FE_ADD_SHADER: "fe.add_shader",
 
     // key paths for AM
     FE_EMULATORS_PATH: "emulators",
     FE_LAYOUTS_PATH: "layouts",
     FE_PLUGINS_PATH: "plugins",
     FE_MODULES_PATH: "modules",
+
+    FE_LAYOUT_FILENAME: "layout.nut",
+    FE_PLUGIN_FILENAME: "plugin.nut",
     FE_MODULE_FILENAME: "module.nut",
 
     // list of builtin modules
@@ -134,6 +138,10 @@ export default {
     // AM settings
     ATTRACT_MODE_PATH: `AM-Squirrel.attract-Mode.path`,
     ATTRACT_MODE_ARTWORK: `AM-Squirrel.attract-Mode.artwork`,
+
+    // messages
+    FILE_MISSING_MESSAGE: "The file does not exist.",
+    MODULE_MISSING_MESSAGE: "The module does not exist.",
 
     // other features
     SNIPPETS_ENABLED: `AM-Squirrel.languageSupport.showSnippets`,
