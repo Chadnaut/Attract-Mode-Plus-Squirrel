@@ -201,19 +201,19 @@ export const requestProgram = <T>(
 ): Promise<T> => {
     return new Promise((resolve, _reject) => {
         if (token.isCancellationRequested) return resolve(undefined);
-        commands
-            .executeCommand(
-                "vscode.executeDocumentSymbolProvider",
-                document.uri,
-            )
-            .then(() => {
-                const program = getProgram(document.uri.fsPath);
-                if (!program) return resolve(undefined);
+        const command = commands.executeCommand(
+            "vscode.executeDocumentSymbolProvider",
+            document.uri,
+        );
+        if (!command) resolve(undefined);
+        command.then(() => {
+            const program = getProgram(document.uri.fsPath);
+            if (!program) return resolve(undefined);
 
-                Promise.resolve(callback(program)).then((response) => {
-                    resolve(response);
-                });
+            Promise.resolve(callback(program)).then((response) => {
+                resolve(response);
             });
+        });
     });
 };
 

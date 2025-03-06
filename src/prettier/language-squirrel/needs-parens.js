@@ -33,6 +33,9 @@ function needsParens(path, options) {
 
   const { node, key, parent } = path;
 
+  // SQUIRREL
+  if (!options.reduceParens && node.extra?.parenthesized) return true;
+
   // to avoid unexpected `}}` in HTML interpolations
   if (
     options.__isInHtmlInterpolation &&

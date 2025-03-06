@@ -270,7 +270,7 @@ let artworkCompletions: CompletionItem[] = [];
 export const refreshArtworkLabels = () => {
     artworkCompletions = scanArtworkLabels()
         .concat(
-            getConfigValue(constants.ATTRACT_MODE_ARTWORK)
+            getConfigValue(constants.ATTRACT_MODE_ARTWORK, "")
                 .replace(/[ ,;|]+/g, ";")
                 .split(";"),
         )

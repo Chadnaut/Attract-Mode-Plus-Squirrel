@@ -1,18 +1,35 @@
+# exclude working paths
 __mocks__
 .backup/
 .coverage/
 .vscode/
 .work/
-
 node_modules/
-src/
 tests/
+src/
 
+# prettier essentials
+dist/node_modules/prettier/bin/
+dist/node_modules/prettier/internal/
+dist/node_modules/prettier/plugins/
+dist/node_modules/prettier/README.md
+dist/node_modules/prettier/THIRD-PARTY-NOTICES.md
+dist/node_modules/prettier/**/*.mjs
+dist/metafile.json
+
+# readme asset is online
+assets/images/readme.png
+
+# exclude source files
 **/*.ts
 **/*.map
-**/package-lock.json
+**/*.zip
+**/*.vsix
 
+# exclude root files
+DOCBLOCK.md
+DEVELOPMENT.md
+tsconfig.json
 .gitignore
 *.code-workspace
-jest.config.js
-tsconfig.json
+*.js

@@ -18,6 +18,7 @@ import {
   isMemberExpression,
 } from "../utils/index.js";
 import isBlockComment from "../utils/is-block-comment.js";
+import { startSpace, endSpace } from "../utils/get-space.js";
 
 /**
  * @typedef {import("../../document/builders.js").Doc} Doc
@@ -248,11 +249,12 @@ function printTernaryOld(path, options, print) {
     // Even though they don't need parens, we wrap (almost) everything in
     // parens when using ?: within JSX, because the parens are analogous to
     // curly braces in an if statement.
+    // SQUIRREL - will never enter here, never a JSX element
     const wrap = (doc) => [
-      ifBreak("("),
+      ifBreak("(", startSpace(doc, options)),
       indent([softline, doc]),
       softline,
-      ifBreak(")"),
+      ifBreak(endSpace(doc, options), ")"),
     ];
 
     // The only things we don't wrap are:
@@ -302,12 +304,13 @@ function printTernaryOld(path, options, print) {
         ? indent(print(nodePropertyName))
         : align(2, print(nodePropertyName));
     // normal mode
+    const bodyDoc = printBranch(consequentNodePropertyName);
     const part = [
       line,
       "? ",
-      consequentNode.type === node.type ? ifBreak("", "(") : "",
-      printBranch(consequentNodePropertyName),
-      consequentNode.type === node.type ? ifBreak("", ")") : "",
+      consequentNode.type === node.type ? ifBreak("", ["(", startSpace(bodyDoc, options)]) : "",
+      bodyDoc,
+      consequentNode.type === node.type ? ifBreak("", [endSpace(bodyDoc, options), ")"]) : "",
       line,
       ": ",
       printBranch(alternateNodePropertyName),

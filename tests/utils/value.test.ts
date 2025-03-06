@@ -89,7 +89,7 @@ describe("NodeValue", () => {
         const program = parse("base");
         const n = getBranchAtPos(program, pos(2));
         const val = getNodeVal(n);
-        expect(val.length).toBe(0);
+        expect(val).toHaveLength(0);
     });
 
     it("ObjectExpression", () => {
@@ -227,8 +227,8 @@ describe("NodeValue", () => {
     });
 
     it("getIdentifier, undefined", () => {
-        expect(resolveIdDef([]).length).toBe(0);
-        expect(resolveIdDef([<AST.Identifier>(qt.StringLiteral(null) as unknown)]).length).toBe(0);
+        expect(resolveIdDef([])).toHaveLength(0);
+        expect(resolveIdDef([<AST.Identifier>(qt.StringLiteral(null) as unknown)])).toHaveLength(0);
     });
 
     it("getIdentifier, already defined", () => {

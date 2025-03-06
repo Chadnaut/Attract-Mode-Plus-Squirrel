@@ -39,9 +39,9 @@ describe("SQTree", () => {
         const e1 = qt.Position(0,1,1);
         const s2 = qt.Position(0,2,2);
         const e2 = qt.Position(0,3,3);
-        const l1 = qt.SourceLocation(s1, e1);
-        const l2 = qt.SourceLocation(s2, e2);
-        expect(qt.LocDefault(l1, l2)).toEqual(l1);
+        const l1 = <AST.Node>{ loc: qt.SourceLocation(s1, e1) };
+        const l2 = <AST.Node>{ loc: qt.SourceLocation(s2, e2) };
+        expect(qt.LocDefault(l1.loc, l2)).toEqual(l1.loc);
         expect(qt.LocDefault(null, l1)).toEqual(qt.SourceLocation(s1, e1));
         expect(qt.LocDefault(null, l1, l2)).toEqual(qt.SourceLocation(s1, e2));
     });

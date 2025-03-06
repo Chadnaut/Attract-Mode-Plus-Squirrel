@@ -50,12 +50,26 @@ const options = {
     ],
   },
 
+  condenseParens: {
+    category: CATEGORY_SQUIRREL,
+    type: "boolean",
+    default: false,
+    description: "Condense spaces between parentheses.",
+    oppositeDescription: "Do not condense spaces between parentheses.",
+  },
+  reduceParens: {
+    category: CATEGORY_SQUIRREL,
+    type: "boolean",
+    default: true,
+    description: "Remove unnecessary parentheses.",
+    oppositeDescription: "Do not remove unnecessary parentheses.",
+  },
   spaceInParens: {
     category: CATEGORY_SQUIRREL,
     type: "boolean",
     default: false,
-    description: "Print spaces between param brackets.",
-    oppositeDescription: "Do not print spaces between param brackets.",
+    description: "Print spaces between parentheses.",
+    oppositeDescription: "Do not print spaces between parentheses.",
   },
   arrayBracketSpacing: {
     category: CATEGORY_SQUIRREL,

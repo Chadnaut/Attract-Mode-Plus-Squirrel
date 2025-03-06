@@ -18,7 +18,7 @@ describe("Map", () => {
         const n = getBranchAtPos(program, pos(4));
         clearProgramStrings(program);
         addProgramString(n);
-        expect(getProgramStrings(program).length).toBe(1);
+        expect(getProgramStrings(program)).toHaveLength(1);
     });
 
     it("getProgramString, undefined", () => {

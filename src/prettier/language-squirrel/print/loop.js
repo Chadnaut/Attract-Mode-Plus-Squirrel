@@ -7,6 +7,7 @@ import {
 } from "../../document/builders.js";
 import { adjustClause } from "./misc.js";
 import { printDanglingComments } from "../../main/comments/print.js";
+import { startSpace, endSpace } from "../utils/get-space.js";
 
 /**
  * @typedef {import("../types/estree.js").Node} Node
@@ -21,29 +22,31 @@ function printForStatement(path, options, print) {
   // is going to be printed before the statement.
   const dangling = printDanglingComments(path, options);
   const printedComments = dangling ? [dangling, softline] : "";
-  const space = options.spaceInParens ? " " : "";
 
   if (!node.init && !node.test && !node.update) {
-    return [printedComments, group(["for ("+space+";;"+space+")", body])];
+    return [printedComments, group(["for (;;)", body])];
   }
 
+  const bodyDoc = [
+    print("init"),
+    ";",
+    line,
+    print("test"),
+    ";",
+    line,
+    print("update")
+  ];
   return [
     printedComments,
     group([
       "for (",
-      space,
+      startSpace(bodyDoc, options),
       group([
         indent([
           softline,
-          print("init"),
-          ";",
-          line,
-          print("test"),
-          ";",
-          line,
-          print("update"),
+          bodyDoc,
         ]),
-        space,
+        endSpace(bodyDoc, options),
         softline,
       ]),
       ")",
@@ -54,15 +57,17 @@ function printForStatement(path, options, print) {
 
 function printForInStatement(path, options, print) {
   const { node } = path;
-  const space = options.spaceInParens ? " " : "";
-  return group([
-    "foreach (",
-    space,
+  const bodyDoc = [
     node.index ? [print("index"), ", "] : "",
     print("left"),
     " in ",
     print("right"),
-    space,
+  ];
+  return group([
+    "foreach (",
+    startSpace(bodyDoc, options),
+    bodyDoc,
+    endSpace(bodyDoc, options),
     ")",
     adjustClause(node.body, options, print("body")),
   ]);
@@ -70,11 +75,11 @@ function printForInStatement(path, options, print) {
 
 function printWhileStatement(path, options, print) {
   const { node } = path;
-  const space = options.spaceInParens ? " " : "";
+  const bodyDoc = print("test")
   return group([
     "while (",
-    space,
-    group([indent([softline, print("test")]), space, softline]),
+    startSpace(bodyDoc, options),
+    group([indent([softline, bodyDoc]), endSpace(bodyDoc, options), softline]),
     ")",
     adjustClause(node.body, options, print("body")),
   ]);
@@ -86,18 +91,18 @@ function printDoWhileStatement(path, options, print) {
   const clause = adjustClause(node.body, options, print("body"));
   const doBody = group(["do", clause]);
   const parts = [doBody];
-  const space = options.spaceInParens ? " " : "";
 
   if (node.body.type === "BlockStatement") {
     parts.push(" ");
   } else {
     parts.push(hardline);
   }
+  const bodyDoc = print("test");
   parts.push(
     (options.braceStyle === "allman") ? hardline : '',
     "while (",
-    space,
-    group([indent([softline, print("test")]), space, softline]),
+    startSpace(bodyDoc, options),
+    group([indent([softline, bodyDoc]), endSpace(bodyDoc, options), softline]),
     ")",
     semi,
   );

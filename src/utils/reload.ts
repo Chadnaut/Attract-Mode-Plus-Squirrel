@@ -30,7 +30,7 @@ export class SquirrelLiveReload extends Disposable {
 
     /** Extension stopped */
     public dispose() {
-        this.disposables.forEach((item) => item?.dispose());
+        this.disposables.forEach((item) => item.dispose());
     }
 
     public set enabled(v: boolean) {
@@ -52,13 +52,10 @@ export class SquirrelLiveReload extends Disposable {
         window.showInformationMessage(message);
     }
 
-    private showError(message: string, disable = true) {
+    private showError(message: string) {
         this._enabled = false;
         window
-            .showWarningMessage(
-                message,
-                disable ? constants.LIVE_RELOAD_DISABLE : undefined,
-            )
+            .showWarningMessage(message, constants.LIVE_RELOAD_DISABLE)
             .then((value) => {
                 if (value === constants.LIVE_RELOAD_DISABLE)
                     this.disableHotReloadSetting();
@@ -72,29 +69,21 @@ export class SquirrelLiveReload extends Disposable {
             constants.LIVE_RELOAD_PLUGIN,
         );
 
-    private getDstFile = (): string =>
-        path.join(
-            getConfigValue(constants.ATTRACT_MODE_PATH, ""),
-            constants.FE_PLUGINS_PATH,
-            constants.LIVE_RELOAD_PLUGIN,
-            constants.LIVE_RELOAD_FILE,
-        );
-
-    private getSrcFile = (): string =>
+    private getSrcPath = (): string =>
         path.join(
             constants.ASSETS_PATH,
             constants.FE_PLUGINS_PATH,
             constants.LIVE_RELOAD_PLUGIN,
-            constants.LIVE_RELOAD_FILE,
         );
 
+    private getDstFile = (): string =>
+        path.join(this.getDstPath(), constants.LIVE_RELOAD_FILE);
+
+    private getSrcFile = (): string =>
+        path.join(this.getSrcPath(), constants.LIVE_RELOAD_FILE);
+
     private getLogFile = (): string =>
-        path.join(
-            getConfigValue(constants.ATTRACT_MODE_PATH, ""),
-            constants.FE_PLUGINS_PATH,
-            constants.LIVE_RELOAD_PLUGIN,
-            constants.LIVE_RELOAD_LOG,
-        );
+        path.join(this.getDstPath(), constants.LIVE_RELOAD_LOG);
 
     private disableHotReloadSetting() {
         setConfigValue(constants.LIVE_RELOAD_ENABLED, false);
@@ -114,14 +103,14 @@ export class SquirrelLiveReload extends Disposable {
             window
                 .showInformationMessage(
                     constants.LIVE_RELOAD_INSTALL_MESSAGE,
-                    "Yes",
-                    "No",
+                    constants.YES,
+                    constants.NO,
                     constants.LIVE_RELOAD_DISABLE,
                 )
                 .then(
                     (value) => {
                         switch (value) {
-                            case "Yes":
+                            case constants.YES:
                                 return this.installPlugin();
                             case constants.LIVE_RELOAD_DISABLE:
                                 return this.disableHotReloadSetting();

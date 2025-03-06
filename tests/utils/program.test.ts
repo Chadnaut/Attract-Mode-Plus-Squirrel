@@ -43,8 +43,7 @@ spyOnDidCloseTextDocument.mockImplementation(
 );
 
 beforeEach(() => {
-    const spyExecuteCommand = jest.spyOn(commands, "executeCommand");
-    spyExecuteCommand.mockImplementation((command:string, ...args: any[]) => {
+    jest.spyOn(commands, "executeCommand").mockImplementation((command:string, ...args: any[]) => {
         return new Promise((e) => { e("a"); });
     });
 });
@@ -146,8 +145,7 @@ describe("Program", () => {
 
     it("addText fails gracefully", () => {
         let error;
-        const spy1 = jest.spyOn(console, "error");
-        spy1.mockImplementation((...args) => {error = args});
+        jest.spyOn(console, "error").mockImplementation((...args) => {error = args});
 
         parseThrow = true;
         addProgramText("a", "");
@@ -188,6 +186,21 @@ describe("Program", () => {
         expect(response).toBeUndefined();
     });
 
+    it("requestProgram, undefined", async () => {
+        jest.spyOn(commands, "executeCommand").mockImplementation((command:string, ...args: any[]) => {
+            return undefined;
+        });
+
+        let response;
+        addProgram("a", <AST.Program>{ sourceName: "a" });
+        await requestProgram(
+            { uri: { fsPath: "a" } } as TextDocument,
+            {} as CancellationToken,
+            (r) => {response = r}
+        );
+        expect(response).toBeUndefined();
+    });
+
     it("getProgramImports, undefined", () => {
         expect(getProgramImports(undefined)).toEqual([]);
     });
@@ -219,7 +232,7 @@ describe("Program", () => {
         const progA = <AST.Program>{ sourceName: "assetPath/a", type: "Program" };
         const progB = <AST.Program>{ sourceName: "b", type: "Program" };
         const progC = <AST.Program>{ sourceName: "c", type: "Program" };
-        setNodeDocBlock(progA, { attributes: [{ kind: "global" }] });
+        setNodeDocBlock(progA, { branch: [], attributes: [{ kind: "global" }] });
         addProgramImportName(progC, "b");
         addProgram("a", progA);
         addProgram("b", progB);

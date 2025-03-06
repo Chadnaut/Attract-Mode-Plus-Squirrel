@@ -6,8 +6,8 @@ import { MAX_CHAR } from "../../src/squirrel/include/squirrel.h";
 import { SQLexerStruct } from "../../src/squirrel/squirrel/sqlexer.h";
 import { SQSharedState } from "../../src/squirrel/squirrel/sqstate.cpp";
 
-jest.mock('../../src/squirrel/include/squirrel.h', () => ({
-    ...jest.requireActual('../../src/squirrel/include/squirrel.h'),
+jest.mock('../../src/squirrel/include/squirrel.h.ts', () => ({
+    ...jest.requireActual('../../src/squirrel/include/squirrel.h.ts'),
     MAX_CHAR: 0xFF
 }));
 

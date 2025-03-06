@@ -8,20 +8,20 @@ describe("Color", () => {
 
     it("getProgramColorInformation, invalid", () => {
         const t = new MockTextDocument("");
-        expect(getProgramColorInformation(t, undefined).length).toBe(0);
+        expect(getProgramColorInformation(t, undefined)).toHaveLength(0);
     });
 
     it("addProgramColorCall, invalid", () => {
         const t = new MockTextDocument("");
         const program = parse(t.getText())
         expect(addProgramColorCall(program, [])).toBeUndefined();
-        expect(getProgramColorInformation(t, program).length).toBe(0);
+        expect(getProgramColorInformation(t, program)).toHaveLength(0);
     });
 
     it("addProgramColorCall", () => {
         const t = new MockTextDocument("call_rgb(0,0,0);");
         const program = parse(t.getText());
-        expect(getProgramColorInformation(t, program).length).toBe(1);
+        expect(getProgramColorInformation(t, program)).toHaveLength(1);
     });
 
     it("getNodeColorInformation, invalid", () => {
@@ -68,8 +68,12 @@ describe("Color", () => {
         expect(colorToRGB(new Color(1,0,0,0), "0,0,  0")).toBe("255,0,  0");
     });
 
-    it("colorToRGB, end bracket", () => {
+    it("colorToRGB, single end bracket", () => {
         expect(colorToRGB(new Color(1,0,0,0), ")")).toBe("255, 0, 0)");
+    });
+
+    it("colorToRGB, with end bracket", () => {
+        expect(colorToRGB(new Color(1,0,0,0), "0,0,  0)")).toBe("255,0,  0)");
     });
 
 });

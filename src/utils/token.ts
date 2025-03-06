@@ -177,9 +177,8 @@ export const tokenizeNode = (
     const node = branch.at(-1);
     if (!node) return;
     if (tokenizedNodes.has(node)) return;
+
     tokenizedNodes.add(node);
-    // if (node.extra.tokenized) return;
-    // node.extra.tokenized = true;
 
     switch (node.type) {
         case "Identifier": {

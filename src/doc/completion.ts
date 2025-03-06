@@ -91,7 +91,7 @@ export const getDocProgramCompletions = (
 export const getDocCompletions = (branch: AST.Node[]): CompletionItem[] => {
     const docBranch = getDocTargetBranch(branch);
     const nodeVal = getNodeVal(docBranch);
-    if (!nodeVal.length) return [];
+    const node = nodeVal.at(-1);
 
     const name = getBranchId(docBranch)?.name ?? "";
     const attrs: DocAttr[] = [];
@@ -108,13 +108,13 @@ export const getDocCompletions = (branch: AST.Node[]): CompletionItem[] => {
     }
 
     // Special attributes
-    switch (nodeVal.at(-1).type) {
+    switch (node?.type) {
         case "EnumDeclaration":
             attrs.push({ kind: "enum", type: getEnumType(nodeVal) });
             break;
         case "MethodDefinition":
             isConstructor =
-                (<AST.MethodDefinition>nodeVal.at(-1)).kind === "constructor";
+                (<AST.MethodDefinition>node).kind === "constructor";
             if (isConstructor) {
                 const classDef = getBranchClassDef(nodeVal);
                 const className = getBranchId(classDef)?.name ?? "class";
@@ -133,7 +133,7 @@ export const getDocCompletions = (branch: AST.Node[]): CompletionItem[] => {
 
     // Return attribute
     if (!isConstructor) {
-        switch (nodeVal.at(-1).type) {
+        switch (node?.type) {
             case "MethodDefinition":
             case "FunctionDeclaration":
             case "FunctionExpression":

@@ -16,7 +16,7 @@ describe("Deprecated", () => {
         const n = parse("local x = 123;");
         const nodes = getDeprecateNodes(n);
         expect(nodes.length).toEqual(0);
-        expect(getDeprecateNodes(undefined).length).toBe(0);
+        expect(getDeprecateNodes(undefined)).toHaveLength(0);
     });
 
     it("inheritDeprecation", () => {

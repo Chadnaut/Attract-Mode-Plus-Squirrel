@@ -139,7 +139,7 @@ describe("Doc Find", () => {
 
     it("stores in program", () => {
         const p = parse("/** Doc1 */ /** Doc2 */");
-        expect(p.comments.length).toBe(2);
+        expect(p.comments).toHaveLength(2);
     });
 
     // -------------------------------------------------------------------------

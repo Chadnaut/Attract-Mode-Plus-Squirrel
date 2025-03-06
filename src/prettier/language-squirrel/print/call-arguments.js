@@ -36,15 +36,15 @@ import {
   shouldPrintComma,
 } from "../utils/index.js";
 import { isConciselyPrintedArray } from "./array.js";
+import { startSpace, endSpace } from "../utils/get-space.js";
 
 function printCallArguments(path, options, print) {
   const { node } = path;
-  let space = options.spaceInParens ? " " : "";
   const args = getCallArguments(node);
   if (args.length === 0) {
     const comment = printDanglingComments(path, options);
-    const cSpace = comment ? space : "";
-    return ["(", cSpace, comment, cSpace, ")"];
+    const commentSpace = comment.length ? (options.spaceInParens ? " " : "") : "";
+    return ["(", commentSpace, comment, commentSpace, ")"];
   }
 
   const lastArgIndex = args.length - 1;
@@ -52,14 +52,14 @@ function printCallArguments(path, options, print) {
   // useEffect(() => { ... }, [foo, bar, baz])
   // useImperativeHandle(ref, () => { ... }, [foo, bar, baz])
   if (isReactHookCallWithDepsArray(args)) {
-    const parts = ["(", space];
+    const bodyDoc = []
     iterateCallArgumentsPath(path, (path, index) => {
-      parts.push(print());
+      bodyDoc.push(print());
       if (index !== lastArgIndex) {
-        parts.push(", ");
+        bodyDoc.push(", ");
       }
     });
-    parts.push(space, ")");
+    const parts = ["(", startSpace(bodyDoc, options), bodyDoc, endSpace(bodyDoc, options), ")"];
     return parts;
   }
 
@@ -124,18 +124,21 @@ function printCallArguments(path, options, print) {
     }
 
     if (willBreak(firstArg)) {
+      const bodyDoc = [group(firstArg, { shouldBreak: true }), ", ", ...tailArgs];
       return [
         breakParent,
         conditionalGroup([
-          ["(", space, group(firstArg, { shouldBreak: true }), ", ", ...tailArgs, space, ")"],
+          ["(", startSpace(bodyDoc, options), bodyDoc, endSpace(bodyDoc, options), ")"],
           allArgsBrokenOut(),
         ]),
       ];
     }
 
+    const conDoc1 = [firstArg, ", ", ...tailArgs];
+    const conDoc2 = [group(firstArg, { shouldBreak: true }), ", ", ...tailArgs];
     return conditionalGroup([
-      ["(", space, firstArg, ", ", ...tailArgs, space, ")"],
-      ["(", space, group(firstArg, { shouldBreak: true }), ", ", ...tailArgs, space, ")"],
+      ["(", startSpace(conDoc1, options), conDoc1, endSpace(conDoc1, options), ")"],
+      ["(", startSpace(conDoc2, options), conDoc2, endSpace(conDoc2, options), ")"],
       allArgsBrokenOut(),
     ]);
   }
@@ -159,28 +162,30 @@ function printCallArguments(path, options, print) {
     }
 
     if (willBreak(lastArg)) {
+      const bodyDoc = [...headArgs, group(lastArg, { shouldBreak: true })];
       return [
         breakParent,
         conditionalGroup([
-          ["(", space, ...headArgs, group(lastArg, { shouldBreak: true }), space, ")"],
+          ["(", startSpace(bodyDoc, options), bodyDoc, endSpace(bodyDoc, options), ")"],
           allArgsBrokenOut(),
         ]),
       ];
     }
 
+    const conDoc1 = [...headArgs, lastArg];
+    const conDoc2 = [...headArgs, group(lastArg, { shouldBreak: true })];
     return conditionalGroup([
-      ["(", space, ...headArgs, lastArg, space, ")"],
-      ["(", space, ...headArgs, group(lastArg, { shouldBreak: true }), space, ")"],
+      ["(", startSpace(conDoc1, options), conDoc1, endSpace(conDoc1, options), ")"],
+      ["(", startSpace(conDoc2, options), conDoc2, endSpace(conDoc2, options), ")"],
       allArgsBrokenOut(),
     ]);
   }
 
+  const bodyDoc = [indent([softline, ...printedArguments]), ifBreak(maybeTrailingComma)];
   const contents = [
-    "(",
-    space,
-    indent([softline, ...printedArguments]),
-    ifBreak(maybeTrailingComma),
-    space,
+    "(", startSpace(bodyDoc, options),
+    bodyDoc,
+    endSpace(bodyDoc, options),
     softline,
     ")",
   ];

@@ -45,10 +45,8 @@ export const activate = (context: ExtensionContext) => {
         { language: constants.LANGUAGE_ID, scheme: "untitled" },
     ];
 
-    const logSelector = [
-        { language: constants.LOG_LANGUAGE_ID, scheme: "file" },
-        { language: constants.LOG_LANGUAGE_ID, scheme: "untitled" }
-    ];
+    // log selector has no scheme, it applies to everything - including output panel
+    const logSelector = constants.LOG_LANGUAGE_ID;
 
     // squirrel completions
     const languageNuts = [

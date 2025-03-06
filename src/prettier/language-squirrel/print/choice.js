@@ -11,19 +11,21 @@ import {
   hasComment,
   needsHardlineAfterDanglingComment,
 } from "../utils/index.js";
+import { startSpace, endSpace } from "../utils/get-space.js";
 /**
  * @typedef {import("../types/estree.js").Node} Node
  */
+
 
 function printIfStatement(path, options, print) {
   const { node } = path;
   const parts = [];
   const consequent = adjustClause(node.consequent, options, print("consequent"));
-  const space = options.spaceInParens ? " " : "";
+  const bodyDoc = print("test");
   const opening = group([
     "if (",
-    space,
-    group([indent([softline, print("test")]), space, softline]),
+    startSpace(bodyDoc, options),
+    group([indent([softline, bodyDoc]), endSpace(bodyDoc, options), softline]),
     ")",
     consequent,
   ]);

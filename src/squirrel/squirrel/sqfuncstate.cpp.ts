@@ -7,7 +7,7 @@ import { _table, UINT_MINUS_ONE } from "./sqobject.h";
 import { OT, SQObject } from "../include/squirrel.h";
 import { SQFuncStateStruct } from "./sqfuncstate.h";
 import { CompilerErrorFunc } from "./sqcompiler.h";
-import { SQTree as qt } from "../../ast/create";
+import { GetFullLoc, SQTree as qt, SetFullLoc } from "../../ast/create";
 import { SQSharedState } from "./sqstate.cpp";
 import { AST } from "../../ast";
 
@@ -285,7 +285,7 @@ export class SQFuncState extends SQFuncStateStruct {
             case _OP.ADD: case _OP.SUB: case _OP.MUL: case _OP.DIV: case _OP.MOD: {
                 const right = this.PopNode();
                 const left = this.PopNode();
-                const loc = qt.LocSpan(this.GetFullLoc(left), this.GetFullLoc(right));
+                const loc = qt.LocSpan(GetFullLoc(left), GetFullLoc(right));
                 this.PushNode(qt.BinaryExpression(GetBinaryOperator(_op), left, right, loc));
                 break;
             }
@@ -293,27 +293,27 @@ export class SQFuncState extends SQFuncStateStruct {
                 if (_arg3 == undefined) break;
                 const right = this.PopNode();
                 const left = this.PopNode();
-                const loc = qt.LocSpan(this.GetFullLoc(left), this.GetFullLoc(right));
+                const loc = qt.LocSpan(GetFullLoc(left), GetFullLoc(right));
                 this.PushNode(qt.BinaryExpression(GetBinaryOperator(_op, _arg3), left, right, loc));
                 break;
             }
             case _OP.NEG: case _OP.NOT: case _OP.BWNOT: case _OP.TYPEOF: case _OP.RESUME: case _OP.CLONE: {
                 const operator = GetUnaryOperator(_op);
                 const node = this.PopNode();
-                const loc = qt.LocSpan(_arg2, this.GetFullLoc(node));
+                const loc = qt.LocSpan(_arg2, GetFullLoc(node));
                 const exp = qt.UnaryExpression(operator, node, true, loc);
                 this.PushNode(exp);
                 break;
             }
             case _OP._RETURN: {
                 const node = (this._returnexp >= 0) ? this._nodestack.splice(this._returnexp, 1)[0] : null;
-                const loc = qt.LocSpan(_arg3, node?.loc);
+                const loc = qt.LocSpan(_arg3, GetFullLoc(node));
                 this.PushNode(qt.ReturnStatement(node, loc));
                 break;
             }
             case _OP._YIELD: {
                 const node = (this._returnexp >= 0) ? this._nodestack.splice(this._returnexp, 1)[0] : null;
-                const loc = qt.LocSpan(_arg3, node?.loc);
+                const loc = qt.LocSpan(_arg3, GetFullLoc(node));
                 this.PushNode(qt.YieldExpression(node, loc));
                 break;
             }
@@ -328,7 +328,7 @@ export class SQFuncState extends SQFuncStateStruct {
             case _OP._WHILE_STATEMENT: {
                 const body = this.PopNode();
                 const test = this.PopNode();
-                const loc = qt.LocSpan(_arg2, body?.loc);
+                const loc = qt.LocSpan(_arg2, GetFullLoc(body));
                 this.PushNode(qt.WhileStatement(test, body, loc));
                 break;
             }
@@ -340,7 +340,7 @@ export class SQFuncState extends SQFuncStateStruct {
             }
             case _OP._THROW: {
                 const node = this.PopNode();
-                const loc = qt.LocSpan(_arg1, node?.loc);
+                const loc = qt.LocSpan(_arg1, GetFullLoc(node));
                 this.PushNode(qt.ThrowStatement(node, loc));
                 break;
             }
@@ -354,7 +354,7 @@ export class SQFuncState extends SQFuncStateStruct {
                 const alternate = this.PopNode();
                 const consequent = this.PopNode();
                 const test = this.PopNode();
-                const loc = qt.LocSpan(this.GetFullLoc(test), this.GetFullLoc(alternate));
+                const loc = qt.LocSpan(GetFullLoc(test), GetFullLoc(alternate));
                 this.PushNode(qt.ConditionalExpression(test, consequent, alternate, loc));
                 break;
             }
@@ -368,7 +368,7 @@ export class SQFuncState extends SQFuncStateStruct {
                 const nargs = Math.max(0, _arg3 - 1);
                 const callArgs = this._nodestack.splice(-nargs, nargs);
                 const id = this.PopNode();
-                const loc = qt.LocSpan(id?.loc, _arg4);
+                const loc = qt.LocSpan(GetFullLoc(id), _arg4);
                 this.PushNode(qt.CallExpression(id, callArgs, loc));
                 break;
             }
@@ -411,7 +411,7 @@ export class SQFuncState extends SQFuncStateStruct {
             }
             case _OP._CLASS_EXPRESSION_BODY: {
                 const exp = <AST.ClassExpression>this.TopNode();
-                const loc = qt.LocSpan(_arg0, exp?.body?.loc);
+                const loc = qt.LocSpan(_arg0, GetFullLoc(exp?.body));
                 qt.LocUpdate(exp, loc);
                 break;
             }
@@ -432,7 +432,7 @@ export class SQFuncState extends SQFuncStateStruct {
                 const obj =<AST.ObjectExpression>this.TopNode();
                 const computed = !!(_arg0 & NEW_SLOT_COMPUTED_FLAG);
                 const json = !!(_arg0 & NEW_SLOT_JSON_FLAG);
-                const loc = qt.LocSpan(_arg3, (value ?? key)?.loc);
+                const loc = qt.LocSpan(_arg3, GetFullLoc(value ?? key));
                 const prop = qt.Property("init", key, value, computed, json, loc);
                 obj?.properties?.push(prop);
                 break;
@@ -445,7 +445,7 @@ export class SQFuncState extends SQFuncStateStruct {
                 const computed = !!(_arg0 & NEW_SLOT_COMPUTED_FLAG);
                 const method = !!(_arg0 & NEW_SLOT_METHOD_FLAG);
                 const attributes = hasattrs ? <AST.ObjectExpression>this.PopNode() : null;
-                const loc = qt.LocSpan(_arg4, (value ?? key)?.loc);
+                const loc = qt.LocSpan(_arg4, GetFullLoc(value ?? key));
                 let prop;
 
                 if (method) {
@@ -468,7 +468,7 @@ export class SQFuncState extends SQFuncStateStruct {
                 const local = _arg3 == 1;
                 const id = <AST.Identifier>this.PopNode();
                 const body = <AST.FunctionBody>func?.PopNode();
-                const loc = qt.LocSpan(_arg4, body?.loc);
+                const loc = qt.LocSpan(_arg4, GetFullLoc(body));
                 this.PushNode(qt.FunctionDeclaration(
                     id,
                     func?._params,
@@ -484,7 +484,7 @@ export class SQFuncState extends SQFuncStateStruct {
                 this.PushNode(qt.FunctionExpression(
                     func?._params,
                     body,
-                    qt.LocSpan(_arg3, body?.loc)
+                    qt.LocSpan(_arg3, GetFullLoc(body))
                 ));
                 break;
             }
@@ -494,7 +494,7 @@ export class SQFuncState extends SQFuncStateStruct {
                 this.PushNode(qt.LambdaExpression(
                     func?._params,
                     body,
-                    qt.LocSpan(_arg3, body?.loc)
+                    qt.LocSpan(_arg3, GetFullLoc(body))
                 ));
                 break;
             }
@@ -503,7 +503,7 @@ export class SQFuncState extends SQFuncStateStruct {
                 const root = object?.type === "Root";
                 const memberRoot = root || !!_arg1;
                 const property = qt.Identifier(_arg2?._unVal, _arg3);
-                const loc = qt.LocSpan(object?.loc, property.loc);
+                const loc = qt.LocSpan(GetFullLoc(object), GetFullLoc(property));
                 if (root) {
                     qt.LocUpdate(property, loc);
                     property.extra = { root: true };
@@ -549,21 +549,21 @@ export class SQFuncState extends SQFuncStateStruct {
             }
             case _OP._DELETE: {
                 const node = this.PopNode();
-                const loc = qt.LocSpan(_arg3, node?.loc);
+                const loc = qt.LocSpan(_arg3, GetFullLoc(node));
                 this.PushNode(qt.UnaryExpression("delete", node, true, loc));
                 break;
             }
             case _OP._UPDATE_EXPRESSION_PREFIX: {
                 const op: AST.UpdateOperator = (_arg3 == -1) ? "--" : "++";
                 const node = this.PopNode();
-                const loc = qt.LocSpan(_arg4, node?.loc);
+                const loc = qt.LocSpan(_arg4, GetFullLoc(node));
                 this.PushNode(qt.UpdateExpression(op, node, true, loc));
                 break;
             }
             case _OP._UPDATE_EXPRESSION_SUFFIX: {
                 const op: AST.UpdateOperator = (_arg3 == -1) ? "--" : "++";
                 const node = this.PopNode();
-                const loc = qt.LocSpan(node?.loc, _arg4);
+                const loc = qt.LocSpan(GetFullLoc(node), _arg4);
                 this.PushNode(qt.UpdateExpression(op, node, false, loc));
                 break;
             }
@@ -582,7 +582,7 @@ export class SQFuncState extends SQFuncStateStruct {
                 const nargs = _arg1;
                 const decs = <AST.VariableDeclarator[]>this._nodestack.splice(-nargs, nargs);
                 const loc = _arg2;
-                if (decs.length) loc.end = decs.at(-1).loc.end;
+                if (decs.length) loc.end = GetFullLoc(decs.at(-1)).end;
                 this.PushNode(qt.VariableDeclaration(kind, decs, loc));
                 break;
             }
@@ -593,14 +593,14 @@ export class SQFuncState extends SQFuncStateStruct {
                 const object = this.PopNode();
                 const root = object?.type === "Root";
                 // use arg end to capture square bracket "object[property]""
-                const loc = qt.LocSpan(object?.loc, _arg1);
+                const loc = qt.LocSpan(GetFullLoc(object), _arg1);
                 this.PushNode(qt.MemberExpression(object, property, computed, root, loc));
                 break;
             }
             case _OP._PARENTHESIZED: {
                 const node = this.TopNode();
                 if (node) {
-                    this.SetFullLoc(node, _arg0);
+                    SetFullLoc(node, _arg0);
                     node.extra = { parenthesized: true };
                 }
                 break;
@@ -609,7 +609,7 @@ export class SQFuncState extends SQFuncStateStruct {
                 const alternate = _arg0 ? this.PopNode() : null;
                 const consequent = this.PopNode();
                 const test = this.PopNode();
-                const loc = qt.LocSpan(_arg1, (alternate ?? consequent)?.loc)
+                const loc = qt.LocSpan(_arg1, GetFullLoc(alternate ?? consequent))
                 this.PushNode(qt.IfStatement(test, consequent, alternate, loc));
                 break;
             }
@@ -618,7 +618,7 @@ export class SQFuncState extends SQFuncStateStruct {
                 const update = _arg2 ? this.PopNode() : null;
                 const test = _arg1 ? this.PopNode() : null;
                 const init = _arg0 ? this.PopNode() : null;
-                const loc = qt.LocSpan(_arg3, body?.loc);
+                const loc = qt.LocSpan(_arg3, GetFullLoc(body));
                 this.PushNode(qt.ForStatement(init, test, update, body, loc));
                 break;
             }
@@ -627,7 +627,7 @@ export class SQFuncState extends SQFuncStateStruct {
                 const right = this.PopNode();
                 const left = this.PopNode()!;
                 const idxname = _arg0 ? this.PopNode()! : null;
-                const loc = qt.LocSpan(_arg1, body?.loc);
+                const loc = qt.LocSpan(_arg1, GetFullLoc(body));
                 this.PushNode(qt.ForInStatement(idxname, left, right, body, loc))
                 break;
             }
@@ -640,14 +640,14 @@ export class SQFuncState extends SQFuncStateStruct {
                 const consequent = this._nodestack.splice(-_arg1, _arg1);
                 const test = _arg0 ? this.PopNode() : null;
                 const sw = <AST.SwitchStatement>this.TopNode();
-                const loc = qt.LocSpan(_arg2, consequent.at(-1)?.loc ?? test?.loc);
+                const loc = qt.LocSpan(_arg2, GetFullLoc(consequent.at(-1)) ?? GetFullLoc(test));
                 sw?.cases?.push(qt.SwitchCase(test, consequent, loc));
                 break;
             }
             case _OP._CLASS_DECLARATION: {
                 const exp = <AST.ClassExpression>this.PopNode();
                 const id = <AST.Pattern>this.PopNode();
-                const loc = qt.LocSpan(_arg0, exp?.body?.loc);
+                const loc = qt.LocSpan(_arg0, GetFullLoc(exp?.body));
                 this.PushNode(qt.ClassDeclaration(id, exp?.body, exp?.superClass, exp?.attributes, loc));
                 break;
             }
@@ -667,8 +667,8 @@ export class SQFuncState extends SQFuncStateStruct {
                 const body = <AST.BlockStatement>this.PopNode();
                 const id = <AST.Pattern>this.PopNode();
                 const block = <AST.BlockStatement>this.PopNode();
-                const tloc = qt.LocSpan(_arg0, body?.loc ?? _arg1?.end);
-                const cloc = qt.LocSpan(_arg1, body?.loc);
+                const tloc = qt.LocSpan(_arg0, GetFullLoc(body) ?? _arg1?.end);
+                const cloc = qt.LocSpan(_arg1, GetFullLoc(body));
                 this.PushNode(qt.TryStatement(block, qt.CatchClause(id, body, cloc), tloc));
                 break;
             }
@@ -679,7 +679,7 @@ export class SQFuncState extends SQFuncStateStruct {
                 if (left) seq.expressions.unshift(left);
                 const head = seq.expressions[0];
                 const tail = seq.expressions.at(-1);
-                const loc = qt.LocSpan(head?.loc, tail?.loc);
+                const loc = qt.LocSpan(GetFullLoc(head), GetFullLoc(tail));
                 qt.LocUpdate(seq, loc);
                 this.PushNode(seq);
                 break;

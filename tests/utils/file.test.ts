@@ -144,7 +144,7 @@ describe("File", () => {
         expect(readDir(__dirname).length).toBeGreaterThan(0);
 
         readdirSync = false;
-        expect(readDir(__dirname).length).toBe(0);
+        expect(readDir(__dirname)).toHaveLength(0);
     });
 
     it("readDirWithTypes", () => {
@@ -152,7 +152,7 @@ describe("File", () => {
         expect(readDirWithTypes(__dirname).length).toBeGreaterThan(0);
 
         readdirSync = false;
-        expect(readDirWithTypes(__dirname).length).toBe(0);
+        expect(readDirWithTypes(__dirname)).toHaveLength(0);
     });
 
     it("fileExists", () => {

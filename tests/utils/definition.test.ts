@@ -474,11 +474,11 @@ describe("Definition", () => {
     });
 
     it("getNodeMemberExpressionIfTail", () => {
-        expect(getNodeMemberExpressionIfTail([]).length).toBe(0);
+        expect(getNodeMemberExpressionIfTail([])).toHaveLength(0);
     });
 
     it("getNodeCallIfCallee, undefined", () => {
-        expect(getNodeCallIfCallee([]).length).toBe(0);
+        expect(getNodeCallIfCallee([])).toHaveLength(0);
     });
 
     it("getNodeCallIfCallee, invalid", () => {
@@ -504,9 +504,9 @@ describe("Definition", () => {
         const program = parse(`local name = "name";`);
         const id = getNodeAtPos(program, pos(8));
         const str = getNodeAtPos(program, pos(16));
-        expect(resolveNodeChild([], [id]).length).toBe(0);
-        expect(resolveNodeChild([id], []).length).toBe(0);
-        expect(resolveNodeChild([id], [str]).length).toBe(0);
+        expect(resolveNodeChild([], [id])).toHaveLength(0);
+        expect(resolveNodeChild([id], [])).toHaveLength(0);
+        expect(resolveNodeChild([id], [str])).toHaveLength(0);
     });
 
     it("ancestor", () => {

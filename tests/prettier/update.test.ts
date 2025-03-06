@@ -1,32 +1,24 @@
-import {
-    beforeEach,
-    describe,
-    fdescribe,
-    expect,
-    it,
-    fit,
-    xit,
-} from "@jest/globals";
+import { describe, expect, it } from "@jest/globals";
 import { format, dump } from "../utils";
 
 describe("Update", () => {
-    it("PrefixInc", () => {
-        const response = format("++ x");
+    it("PrefixInc", async () => {
+        const response = await format("++ x");
         expect(response).toBe("++x;\n");
     });
 
-    it("SuffixInc", () => {
-        const response = format(" x   ++  ");
+    it("SuffixInc", async () => {
+        const response = await format(" x   ++  ");
         expect(response).toBe("x++;\n");
     });
 
-    it("SuffixInc, precidence", () => {
-        const response = format(" x   +++   y  ");
+    it("SuffixInc, precidence", async () => {
+        const response = await format(" x   +++   y  ");
         expect(response).toBe("x++ + y;\n");
     });
 
-    it("SuffixDec, precidence", () => {
-        const response = format(" x   ---   y  ");
+    it("SuffixDec, precidence", async () => {
+        const response = await format(" x   ---   y  ");
         expect(response).toBe("x-- - y;\n");
     });
 

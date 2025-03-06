@@ -1,12 +1,4 @@
-import {
-    beforeEach,
-    describe,
-    fdescribe,
-    expect,
-    it,
-    fit,
-} from "@jest/globals";
-import { parse, lineLoc, dump } from "../utils";
+import { describe, expect, it } from "@jest/globals";
 import { SQVM } from "../../src/squirrel/squirrel/sqvm.cpp";
 import { SQTable } from "../../src/squirrel/squirrel/sqtable.cpp";
 import { OT, SQObject } from "../../src/squirrel/include/squirrel.h";
@@ -14,11 +6,11 @@ import { _OP, GetAssignmentOperator, GetBinaryOperator, GetLogicOperator, GetUna
 import { SQCompilerStruct } from "../../src/squirrel/squirrel/sqcompiler.h";
 import { SQFuncStateStruct } from "../../src/squirrel/squirrel/sqfuncstate.h";
 import { SQLexer } from "../../src/squirrel/squirrel/sqlexer.cpp";
-import { AST, SQTree as qt } from '../../src/ast';
+import { AST, GetFullLoc, SQTree as qt, SetFullLoc } from '../../src/ast';
 import { SQCompiler } from "../../src/squirrel/squirrel/sqcompiler.cpp";
 import { SQFuncState } from "../../src/squirrel/squirrel/sqfuncstate.cpp";
 import { SQSharedState } from "../../src/squirrel/squirrel/sqstate.cpp";
-import { SQLocalVarInfo, SQOuterVar } from "../../src/squirrel/squirrel/sqfuncproto.h";
+import { SQOuterVar } from "../../src/squirrel/squirrel/sqfuncproto.h";
 
 /*
     These tests probe un-reachable code in the compiler
@@ -52,11 +44,10 @@ describe("Misc", () => {
     });
 
     it("FullLoc", () => {
-        const s = new SQFuncStateStruct();
         const n = qt.Identifier("name");
-        s.SetFullLoc(n, n.loc);
-        expect(s.GetFullLoc(n)).toBe(n.loc);
-        expect(s.GetFullLoc(undefined)).toBeUndefined();
+        SetFullLoc(n, n.loc);
+        expect(GetFullLoc(n)).toBe(n.loc);
+        expect(GetFullLoc(undefined)).toBeUndefined();
     });
 
     it("SQTable", () => {

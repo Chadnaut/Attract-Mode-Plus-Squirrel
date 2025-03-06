@@ -6,6 +6,9 @@ export default {
 
     TITLE: "AM+ Squirrel",
 
+    YES: "Yes",
+    NO: "No",
+
     // language
     LANGUAGE_ID: "squirrel",
     LANGUAGE_EXTENSION: ".nut",
@@ -69,6 +72,8 @@ export default {
     CODE_FORMATTING_ARRAY_BRACKET_SPACING: `AM-Squirrel.codeFormatting.style.arrayBracketSpacing`,
     CODE_FORMATTING_COMPUTED_PROPERTY_SPACING: `AM-Squirrel.codeFormatting.style.computedPropertySpacing`,
     CODE_FORMATTING_SPACE_IN_PARENS: `AM-Squirrel.codeFormatting.style.spaceInParens`,
+    CODE_FORMATTING_CONDENSE_PARENS: `AM-Squirrel.codeFormatting.style.condenseParens`,
+    CODE_FORMATTING_REDUCE_PARENS: `AM-Squirrel.codeFormatting.style.reduceParens`,
     CODE_FORMATTING_ATTR_SPACING: `AM-Squirrel.codeFormatting.style.attrSpacing`,
     CODE_FORMATTING_SEMI: `AM-Squirrel.codeFormatting.style.semi`,
     CODE_FORMATTING_USE_TABS: `AM-Squirrel.codeFormatting.style.useTabs`,

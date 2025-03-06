@@ -29,6 +29,25 @@ describe("Member", () => {
         ));
     });
 
+    it("SequenceExpression, Parens", () => {
+        const response = parse('(a,b,c)');
+        expect(response).toEqual(qt.Program(
+            [qt.ExpressionStatement(
+                {...qt.SequenceExpression(
+                    [
+                        qt.Identifier('a', lineLoc(1, 2)),
+                        qt.Identifier('b', lineLoc(3, 4)),
+                        qt.Identifier('c', lineLoc(5, 6)),
+                    ],
+                    lineLoc(1, 6),
+                ), extra: { parenthesized: true }},
+                lineLoc(0, 7)
+            )],
+            [],
+            lineLoc(0, 7)
+        ));
+    });
+
     it("Root", () => {
         const response = parse("::root");
         expect(response).toEqual(qt.Program(
@@ -67,19 +86,21 @@ describe("Member", () => {
         const response = parse("x.y.z");
         // dump(response);
         expect(response).toEqual(qt.Program(
-            [qt.ExpressionStatement(qt.MemberExpression(
+            [qt.ExpressionStatement(
                 qt.MemberExpression(
-                    qt.Identifier('x', lineLoc(0, 1)),
-                    qt.Identifier('y', lineLoc(2, 3)),
+                    qt.MemberExpression(
+                        qt.Identifier('x', lineLoc(0, 1)),
+                        qt.Identifier('y', lineLoc(2, 3)),
+                        false,
+                        false,
+                        lineLoc(0, 3)
+                    ),
+                    qt.Identifier('z', lineLoc(4, 5)),
                     false,
                     false,
-                    lineLoc(0, 3)
-                ),
-                qt.Identifier('z', lineLoc(4, 5)),
-                false,
-                false,
-                lineLoc(0, 5)
-            ))],
+                    lineLoc(0, 5)
+                )
+            )],
             [],
             lineLoc(0, 5)
         ));

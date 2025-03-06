@@ -124,7 +124,7 @@ describe("Diagnostics", () => {
         const d = new SquirrelDiagnostics();
 
         await d.refresh(docGood);
-        expect(d.collection.get(docGood.uri).length).toBe(0);
+        expect(d.collection.get(docGood.uri)).toHaveLength(0);
 
         await d.refresh(docError);
         expect(d.collection.get(docError.uri).length).toBeGreaterThan(0);
@@ -191,37 +191,37 @@ describe("Diagnostics", () => {
             }
         }
         const program = parse(`fe.load_module("mock")`)
-        expect(getProgramErrors(program).length).toBe(0);
+        expect(getProgramErrors(program)).toHaveLength(0);
     });
 
     it("getProgramErrors catches missing module", () => {
         const program = parse(`fe.load_module("mock")`)
-        expect(getProgramErrors(program).length).toBe(1);
+        expect(getProgramErrors(program)).toHaveLength(1);
     });
 
     it("getProgramErrors catches missing module nut", () => {
         const program = parse(`fe.load_module("mock.nut")`)
-        expect(getProgramErrors(program).length).toBe(1);
+        expect(getProgramErrors(program)).toHaveLength(1);
     });
 
     it("getProgramErrors catches missing dofile", () => {
         const program = parse(`dofile("mock.nut")`)
-        expect(getProgramErrors(program).length).toBe(1);
+        expect(getProgramErrors(program)).toHaveLength(1);
     });
 
     it("getProgramErrors catches missing do_nut", () => {
         const program = parse(`fe.do_nut("mock.nut")`)
-        expect(getProgramErrors(program).length).toBe(1);
+        expect(getProgramErrors(program)).toHaveLength(1);
     });
 
     it("getProgramErrors ignores omitted do_nut", () => {
         const program = parse(`fe.do_nut()`)
-        expect(getProgramErrors(program).length).toBe(0);
+        expect(getProgramErrors(program)).toHaveLength(0);
     });
 
     it("getProgramErrors ignores omitted do_nut", () => {
         const program = parseForceExtra(`local a; a <- 1;`)
-        expect(getProgramErrors(program).length).toBe(1);
+        expect(getProgramErrors(program)).toHaveLength(1);
     });
 
 });

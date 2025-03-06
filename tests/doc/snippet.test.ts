@@ -9,15 +9,13 @@ import {
     getSnippetCompletions,
 } from "../../src/doc/snippets";
 import { DocBlock } from "../../src/doc/kind";
-import { AST } from "../../src/ast";
-import { getBranchAtPos } from "../../src/utils/find";
 import { getCommentBlockAtPosition, getCommentDocBlock } from "../../src/doc/find";
 
 jest.replaceProperty(constants, "FE_MODULES_PATH", "mock");
 
 describe("Doc Snippet", () => {
     it("getSnippetCompletions, invalid", () => {
-        expect(getSnippetCompletions(null).length).toBe(0);
+        expect(getSnippetCompletions(null)).toHaveLength(0);
     });
 
     it("getDocBlockSnippets", () => {
@@ -47,13 +45,13 @@ describe("Doc Snippet", () => {
     it("keyword, parses", () => {
         const program = parse("/** @keyword test */");
         const completions = getSnippetCompletions(program);
-        expect(completions.length).toBe(1);
+        expect(completions).toHaveLength(1);
     });
 
     it("keyword, kind", () => {
         const program = parse("/** @keyword test \n @kind property */");
         const completions = getSnippetCompletions(program);
-        expect(completions.length).toBe(1);
+        expect(completions).toHaveLength(1);
         expect(completions[0].kind).toBe(CompletionItemKind.Property);
     });
 
@@ -65,7 +63,7 @@ describe("Doc Snippet", () => {
             * @magic name3 desc
             */`);
         const completions = getSnippetCompletions(program);
-        expect(completions.length).toBe(3);
+        expect(completions).toHaveLength(3);
         expect(completions[0].kind).toBe(CompletionItemKind.Event);
         expect(completions[1].kind).toBe(CompletionItemKind.Event);
         expect(completions[2].kind).toBe(CompletionItemKind.Event);
@@ -73,18 +71,19 @@ describe("Doc Snippet", () => {
 
     it("createDocSnippetCompletions, undefined", () => {
         expect(createDocSnippetCompletion(null)).toBe(undefined);
-        expect(createDocSnippetCompletions(null, null).length).toBe(0);
+        expect(createDocSnippetCompletions(null, null)).toHaveLength(0);
     });
 
     it("createDocSnippetCompletions, ignores description", () => {
         const docBlock: DocBlock = {
+            branch: [],
             attributes: [
                 { kind: "description", documentation: "desc" },
                 { kind: "keyword", name: "test", documentation: "here" },
             ],
         };
         const c = createDocSnippetCompletions(docBlock, null);
-        expect(c.length).toBe(1);
+        expect(c).toHaveLength(1);
         expect(c[0].label["label"]).toBe("test");
         expect(c[0].insertText["value"]).toBe("test");
         expect(c[0].documentation["value"]).toBe("here");
@@ -93,12 +92,13 @@ describe("Doc Snippet", () => {
 
     it("createDocSnippetCompletions, keyword", () => {
         const docBlock: DocBlock = {
+            branch: [],
             attributes: [
                 { kind: "keyword", name: "test", documentation: "here" },
             ],
         };
         const c = createDocSnippetCompletions(docBlock, null);
-        expect(c.length).toBe(1);
+        expect(c).toHaveLength(1);
         expect(c[0].label["label"]).toBe("test");
         expect(c[0].insertText["value"]).toBe("test");
         expect(c[0].documentation["value"]).toBe("here");
@@ -107,13 +107,14 @@ describe("Doc Snippet", () => {
 
     it("createDocSnippetCompletions, multiple keyword", () => {
         const docBlock: DocBlock = {
+            branch: [],
             attributes: [
                 { kind: "keyword", name: "test1", documentation: "here" },
                 { kind: "keyword", name: "test2", documentation: "there" },
             ],
         };
         const c = createDocSnippetCompletions(docBlock, null);
-        expect(c.length).toBe(2);
+        expect(c).toHaveLength(2);
         expect(c[0].label["label"]).toBe("test1");
         expect(c[0].insertText["value"]).toBe("test1");
         expect(c[0].documentation["value"]).toBe("here");
@@ -126,10 +127,11 @@ describe("Doc Snippet", () => {
 
     it("createDocSnippetCompletions, this", () => {
         const docBlock: DocBlock = {
+            branch: [],
             attributes: [{ kind: "keyword", name: "this" }],
         };
         const c = createDocSnippetCompletions(docBlock, null);
-        expect(c.length).toBe(1);
+        expect(c).toHaveLength(1);
         expect(c[0].label["label"]).toBe("this");
         expect(c[0].insertText["value"]).toBe("this");
         expect(c[0].commitCharacters).toEqual(["."]);
@@ -138,13 +140,14 @@ describe("Doc Snippet", () => {
 
     it("createDocSnippetCompletions, snippet", () => {
         const docBlock: DocBlock = {
+            branch: [],
             attributes: [
                 { kind: "keyword", name: "test" },
                 { kind: "snippet", documentation: "snippet" },
             ],
         };
         const c = createDocSnippetCompletions(docBlock, null);
-        expect(c.length).toBe(1);
+        expect(c).toHaveLength(1);
         expect(c[0].label["label"]).toBe("test");
         expect(c[0].insertText["value"]).toBe("snippet");
         expect(c[0].kind).toBe(CompletionItemKind.Snippet);
@@ -152,10 +155,11 @@ describe("Doc Snippet", () => {
 
     it("createDocSnippetCompletions, magic", () => {
         const docBlock: DocBlock = {
+            branch: [],
             attributes: [{ kind: "magic", name: "test" }],
         };
         const c = createDocSnippetCompletions(docBlock, null);
-        expect(c.length).toBe(1);
+        expect(c).toHaveLength(1);
         expect(c[0].label["label"]).toBe("test");
         expect(c[0].insertText["value"]).toBe("test");
         expect(c[0].kind).toBe(CompletionItemKind.Event);

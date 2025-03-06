@@ -23,7 +23,7 @@ describe("Hint", () => {
             qt.Position(1, 0, 0),
             qt.Position(7, 100, 0),
         ));
-        expect(hints.length).toBe(2);
+        expect(hints).toHaveLength(2);
         expect(hints[0].label).toBe("a:");
         expect(hints[0].position.line).toBe(6);
         expect(hints[0].position.character).toBe(indent + 4);
@@ -42,7 +42,7 @@ describe("Hint", () => {
             qt.Position(1, 0, 0),
             qt.Position(3, 100, 0),
         ));
-        expect(hints.length).toBe(2);
+        expect(hints).toHaveLength(2);
         expect(hints[0].label).toBe("a:");
         expect(hints[0].position.line).toBe(2);
         expect(hints[0].position.character).toBe(indent + 4);
@@ -65,7 +65,7 @@ describe("Hint", () => {
             qt.Position(1, 0, 0),
             qt.Position(7, 100, 0),
         ));
-        expect(hints.length).toBe(2);
+        expect(hints).toHaveLength(2);
         expect(hints[0].label).toBe("a:");
         expect(hints[0].position.line).toBe(6);
         expect(hints[0].position.character).toBe(indent + 4);
@@ -84,7 +84,7 @@ describe("Hint", () => {
             qt.Position(1, 0, 0),
             qt.Position(3, 100, 0),
         ));
-        expect(hints.length).toBe(1);
+        expect(hints).toHaveLength(1);
         expect(hints[0].label).toBe("value:");
         expect(hints[0].position.line).toBe(2);
         expect(hints[0].position.character).toBe(indent + 13);
@@ -104,7 +104,7 @@ describe("Hint", () => {
             qt.Position(6, 100, 0),
         ));
         expect(errors().length).toBeGreaterThanOrEqual(1);
-        expect(hints.length).toBe(4);
+        expect(hints).toHaveLength(4);
         expect(hints[0].label).toBe("a:");
         expect(hints[0].position.line).toBe(2);
         expect(hints[0].position.character).toBe(indent + 4);
@@ -122,19 +122,19 @@ describe("Hint", () => {
     it("getInlayHints, no params", () => {
         const program = parse('function foo() {}; foo("1")');
         const hints = getInlayHints([program], lineLoc(0, 100));
-        expect(hints.length).toBe(0);
+        expect(hints).toHaveLength(0);
     });
 
     it("getInlayHints, rest", () => {
         const program = parse('function foo(...) {}; foo("1")');
         const hints = getInlayHints([program], lineLoc(0, 100));
-        expect(hints.length).toBe(0);
+        expect(hints).toHaveLength(0);
     });
 
     it("getInlayHints, func exp", () => {
         const program = parse('local foo = function(a) {}; foo(1)');
         const hints = getInlayHints([program], lineLoc(0, 100));
-        expect(hints.length).toBe(1);
+        expect(hints).toHaveLength(1);
         expect(hints[0].label).toBe("a:");
         expect(hints[0].position.line).toBe(0);
         expect(hints[0].position.character).toBe(32);
@@ -143,7 +143,7 @@ describe("Hint", () => {
     it("getInlayHints, overloading", () => {
         const program = parse('function foo(c) {}; function foo(a,b) {}; foo(1,2); foo(3);');
         const hints = getInlayHints([program], lineLoc(0, 100));
-        expect(hints.length).toBe(3);
+        expect(hints).toHaveLength(3);
         expect(hints[0].label).toBe("a:");
         expect(hints[0].position.line).toBe(0);
         expect(hints[0].position.character).toBe(46);
@@ -158,7 +158,7 @@ describe("Hint", () => {
     it("getInlayHints, rest named", () => {
         const program = parse('/** @param ...here */ function foo(...) {}; foo("1")');
         const hints = getInlayHints([program], lineLoc(0, 100));
-        expect(hints.length).toBe(1);
+        expect(hints).toHaveLength(1);
         expect(hints[0].label).toBe("here:");
         expect(hints[0].position.line).toBe(0);
         expect(hints[0].position.character).toBe(48);
@@ -167,7 +167,7 @@ describe("Hint", () => {
     it("getInlayHints, rest named multiple", () => {
         const program = parse('/** @param ...here */ function foo(...) {}; foo("1","2")');
         const hints = getInlayHints([program], lineLoc(0, 100));
-        expect(hints.length).toBe(2);
+        expect(hints).toHaveLength(2);
         expect(hints[0].label).toBe("here:");
         expect(hints[0].position.line).toBe(0);
         expect(hints[0].position.character).toBe(48);
@@ -177,8 +177,8 @@ describe("Hint", () => {
     });
 
     it("getInlayHints, invalid", () => {
-        expect(getInlayHints([undefined], undefined).length).toBe(0);
-        expect(getInlayHints([qt.Identifier("name")], undefined).length).toBe(0);
+        expect(getInlayHints([undefined], undefined)).toHaveLength(0);
+        expect(getInlayHints([qt.Identifier("name")], undefined)).toHaveLength(0);
     });
 
 });

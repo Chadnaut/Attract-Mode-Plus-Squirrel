@@ -542,24 +542,24 @@ describe("Signature", () => {
         const text = "function foo(a) {}; foo(10);";
         const program = parse(text);
         const help = getSignatureHelp(text, program, pos(25));
-        expect(help.signatures.length).toBe(1);
-        expect(help.signatures[0].parameters.length).toBe(1);
+        expect(help.signatures).toHaveLength(1);
+        expect(help.signatures[0].parameters).toHaveLength(1);
     });
 
     it("getSignatureHelp, FunctionExpression", () => {
         const text = "local foo = function(a) {}; foo(10);";
         const program = parse(text);
         const help = getSignatureHelp(text, program, pos(33));
-        expect(help.signatures.length).toBe(1);
-        expect(help.signatures[0].parameters.length).toBe(1);
+        expect(help.signatures).toHaveLength(1);
+        expect(help.signatures[0].parameters).toHaveLength(1);
     });
 
     it("getSignatureHelp, FunctionExpression Root", () => {
         const text = "foo <- function(a) {}; foo(10);";
         const program = parse(text);
         const help = getSignatureHelp(text, program, pos(28));
-        expect(help.signatures.length).toBe(1);
-        expect(help.signatures[0].parameters.length).toBe(1);
+        expect(help.signatures).toHaveLength(1);
+        expect(help.signatures[0].parameters).toHaveLength(1);
     });
 
     it("getSignatureHelp, no data", () => {
@@ -573,7 +573,7 @@ describe("Signature", () => {
         const text = "/** info */ local foo = function(a) {}; foo(10);";
         const program = parse(text);
         const help = getSignatureHelp(text, program, pos(45));
-        expect(help.signatures.length).toBe(1);
+        expect(help.signatures).toHaveLength(1);
         expect(help.signatures[0].documentation["value"]).toBe("info");
     });
 
@@ -581,8 +581,8 @@ describe("Signature", () => {
         const text = "/** @param a info */ local foo = function(a) {}; foo(10);";
         const program = parse(text);
         const help = getSignatureHelp(text, program, pos(54));
-        expect(help.signatures.length).toBe(1);
-        expect(help.signatures[0].parameters.length).toBe(1);
+        expect(help.signatures).toHaveLength(1);
+        expect(help.signatures[0].parameters).toHaveLength(1);
         expect(help.signatures[0].parameters[0].documentation).toBe("info");
     });
 
@@ -591,9 +591,9 @@ describe("Signature", () => {
         const program = parse(text);
         const help = getSignatureHelp(text, program, pos(66));
         expect(help.activeSignature).toBe(0);
-        expect(help.signatures.length).toBe(2);
-        expect(help.signatures[0].parameters.length).toBe(1);
-        expect(help.signatures[1].parameters.length).toBe(2);
+        expect(help.signatures).toHaveLength(2);
+        expect(help.signatures[0].parameters).toHaveLength(1);
+        expect(help.signatures[1].parameters).toHaveLength(2);
     });
 
     it("getSignatureHelp, class overloads more", () => {
@@ -601,9 +601,9 @@ describe("Signature", () => {
         const program = parse(text);
         const help = getSignatureHelp(text, program, pos(70));
         expect(help.activeSignature).toBe(1);
-        expect(help.signatures.length).toBe(2);
-        expect(help.signatures[0].parameters.length).toBe(1);
-        expect(help.signatures[1].parameters.length).toBe(2);
+        expect(help.signatures).toHaveLength(2);
+        expect(help.signatures[0].parameters).toHaveLength(1);
+        expect(help.signatures[1].parameters).toHaveLength(2);
     });
 
     it("getSignatureHelp, object overloads", () => {
@@ -611,9 +611,9 @@ describe("Signature", () => {
         const program = parse(text);
         const help = getSignatureHelp(text, program, pos(71));
         expect(help.activeSignature).toBe(0);
-        expect(help.signatures.length).toBe(2);
-        expect(help.signatures[0].parameters.length).toBe(1);
-        expect(help.signatures[1].parameters.length).toBe(2);
+        expect(help.signatures).toHaveLength(2);
+        expect(help.signatures[0].parameters).toHaveLength(1);
+        expect(help.signatures[1].parameters).toHaveLength(2);
     });
 
     it("getSignatureHelp, object overloads version", () => {
@@ -621,9 +621,9 @@ describe("Signature", () => {
         const program = parse(text);
         const help = getSignatureHelp(text, program, pos(89));
         expect(help.activeSignature).toBe(0);
-        expect(help.signatures.length).toBe(2);
-        expect(help.signatures[0].parameters.length).toBe(1);
-        expect(help.signatures[1].parameters.length).toBe(2);
+        expect(help.signatures).toHaveLength(2);
+        expect(help.signatures[0].parameters).toHaveLength(1);
+        expect(help.signatures[1].parameters).toHaveLength(2);
         expect(help.signatures[1].documentation['value']).toContain('version');
     });
 
@@ -632,9 +632,9 @@ describe("Signature", () => {
         const program = parse(text);
         const help = getSignatureHelp(text, program, pos(90));
         expect(help.activeSignature).toBe(0);
-        expect(help.signatures.length).toBe(2);
-        expect(help.signatures[0].parameters.length).toBe(1);
-        expect(help.signatures[1].parameters.length).toBe(2);
+        expect(help.signatures).toHaveLength(2);
+        expect(help.signatures[0].parameters).toHaveLength(1);
+        expect(help.signatures[1].parameters).toHaveLength(2);
         expect(help.signatures[1].documentation['value']).toContain('version');
         expect(help.signatures[1].documentation['value']).toContain('🔶');
     });
@@ -644,9 +644,9 @@ describe("Signature", () => {
         const program = parse(text);
         const help = getSignatureHelp(text, program, pos(71));
         expect(help.activeSignature).toBe(1);
-        expect(help.signatures.length).toBe(2);
-        expect(help.signatures[0].parameters.length).toBe(1);
-        expect(help.signatures[1].parameters.length).toBe(2);
+        expect(help.signatures).toHaveLength(2);
+        expect(help.signatures[0].parameters).toHaveLength(1);
+        expect(help.signatures[1].parameters).toHaveLength(2);
     });
 
     it("getSignatureHelp, active forced", () => {
@@ -654,9 +654,9 @@ describe("Signature", () => {
         const program = parse(text);
         const help = getSignatureHelp(text, program, pos(71), 0);
         expect(help.activeSignature).toBe(0);
-        expect(help.signatures.length).toBe(2);
-        expect(help.signatures[0].parameters.length).toBe(1);
-        expect(help.signatures[1].parameters.length).toBe(2);
+        expect(help.signatures).toHaveLength(2);
+        expect(help.signatures[0].parameters).toHaveLength(1);
+        expect(help.signatures[1].parameters).toHaveLength(2);
     });
 
     // -------------------------------------------------------------------------

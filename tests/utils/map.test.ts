@@ -17,7 +17,7 @@ describe("Map", () => {
         const filename = forwardSlash(path.join(__dirname, "../samples/format/home.src.nut"));
         const program = parse(`fe.do_nut("${filename}")`);
         createNodeMaps(program);
-        expect(getProgramImportNames(program).length).toBe(1);
+        expect(getProgramImportNames(program)).toHaveLength(1);
     });
 
     it("sequence", () => {
@@ -40,21 +40,21 @@ describe("Map", () => {
         const program = parseExtra("class foo {} function foo::bar() {}");
         const n = getBranchAtPos(program, pos(8)).slice(0, -1);
         const c = getNodeChildren(n);
-        expect(c.length).toBe(1); // foo contains bar
+        expect(c).toHaveLength(1); // foo contains bar
     });
 
     it("namespace missing", () => {
         const program = parseExtra("class foo {} function who::bar() {}");
         const n = getBranchAtPos(program, pos(8)).slice(0, -1);
         const c = getNodeChildren(n);
-        expect(c.length).toBe(0); // foo does not contain bar
+        expect(c).toHaveLength(0); // foo does not contain bar
     });
 
     it("namespace program", () => {
         const program = parseExtra("class foo {} function foo::bar() {} ");
         const n = getBranchAtPos(program, pos(36));
         const c = getNodeChildren(n);
-        expect(c.length).toBe(1); // program contains foo, not foo::bar
+        expect(c).toHaveLength(1); // program contains foo, not foo::bar
     });
 
     it("incomplete", () => {

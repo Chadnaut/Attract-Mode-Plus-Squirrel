@@ -7,6 +7,7 @@ import isBlockComment from "../utils/is-block-comment.js";
 import hasNewline from "../../utils/has-newline.js";
 import { locEnd, locStart } from "../loc.js";
 import { hasComment } from "../utils/index.js";
+import { startSpace, endSpace } from "../utils/get-space.js";
 
 /**
  * @typedef {import("../types/estree.js").Node} Node
@@ -40,14 +41,13 @@ function printCatchClause(path, options, print) {
           })),
     );
     const param = print("param");
-    const space = options.spaceInParens ? " " : "";
-
+    const bodyDoc = parameterHasComments ? indent([softline, param]) : param;
     return [
       (options.braceStyle !== "1tbs") ? hardline : "",
       "catch ",
       parameterHasComments
-        ? ["(", space, indent([softline, param]), space, softline, ")"]
-        : ["(", space, param, space, ")"],
+        ? ["(", startSpace(bodyDoc, options), bodyDoc, endSpace(bodyDoc, options), softline, ")"]
+        : ["(", startSpace(bodyDoc, options), bodyDoc, endSpace(bodyDoc, options), ")"],
       (options.braceStyle === "allman") ? hardline : (node.body.type === "EmptyStatement" ? semi : " "),
       print("body"),
     ];

@@ -15,7 +15,7 @@ describe("ReturnArgument", () => {
     });
 
     it("ReturnArgument, invalid", () => {
-        expect(getNodeReturn([]).length).toBe(0);
+        expect(getNodeReturn([])).toHaveLength(0);
     });
 
     it("ReturnArgument, ignore child", () => {
@@ -67,19 +67,19 @@ describe("ReturnArgument", () => {
     it("ReturnArgument, function dec", () => {
         const program = parse(`function foo() {}`);
         const n = getBranchAtPos(program, pos(11));
-        expect(getNodeReturn(n).length).toBe(0);
+        expect(getNodeReturn(n)).toHaveLength(0);
     });
 
     it("ReturnArgument, function exp", () => {
         const program = parse(`local foo = function() {}`);
         const n = getBranchAtPos(program, pos(16));
-        expect(getNodeReturn(n).length).toBe(0);
+        expect(getNodeReturn(n)).toHaveLength(0);
     });
 
     it("ReturnArgument, method", () => {
         const program = parse(`class foo { function bar() {} }`);
         const n = getBranchAtPos(program, pos(22)).slice(0, -1);
-        expect(getNodeReturn(n).length).toBe(0);
+        expect(getNodeReturn(n)).toHaveLength(0);
     });
 
     it("ReturnArgument, generator", () => {

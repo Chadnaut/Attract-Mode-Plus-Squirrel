@@ -34,22 +34,24 @@ export const getProgramColorInformation = (
 // -----------------------------------------------------------------------------
 
 const COLOUR_FORMAT = "0, 0, 0";
-const colRegex = new RegExp(/^[\d\.]+([,\s\t\r\n]+)[\d\.]+([,\s\t\r\n]+)[\d\.]+$/);
+const colRegex = new RegExp(/^[\d\.]+([,\s\t\r\n]+)[\d\.]+([,\s\t\r\n]+)[\d\.]+/);
 
 export const colorToRGB = (
     color: Color,
     format?: string,
 ): string => {
-    const addEndBracket = format === ")";
-    if (!colRegex.test(format)) format = COLOUR_FORMAT;
+    // end bracket hack for getNodeColorInformation below
+    const addEndBracket = format?.at(-1) === ")";
+    if (!colRegex.test(format)) format = COLOUR_FORMAT + (addEndBracket ? ")" : "");
 
     const r = channelToRGB(color.red);
     const g = channelToRGB(color.green);
     const b = channelToRGB(color.blue);
+
     return format.replace(
-        /^[\d\.]+([,\s\t\r\n]+)[\d\.]+([,\s\t\r\n]+)[\d\.]+$/,
+        /^[\d\.]+([,\s\t\r\n]+)[\d\.]+([,\s\t\r\n]+)[\d\.]+/,
         `${r}$1${g}$2${b}`,
-    ) + (addEndBracket ? ")" : "");
+    );
 };
 
 export const channelToRGB = (channel: number): number =>
@@ -82,11 +84,14 @@ export const getNodeColorInformation = (
         const ns = node.loc.start.index;
         const ne = node.loc.end.index;
         const span = document.getText().slice(ns, ne);
-
-        const rs = ns + span.indexOf("(") + 1;
+        const rs = ns + span.lastIndexOf("(") + 1;
         let re = ns + span.lastIndexOf(")");
-        // This captures the end bracket - colour swatches require a valid range to display
+
+        // NOTE: This captures the end bracket
+        // - colour swatches require a valid range to display
+        // - allows empty args to still display swatch using the closing bracket
         if (rs === re) re++;
+
         range = new Range(document.positionAt(rs), document.positionAt(re));
     }
 

@@ -28,14 +28,14 @@ describe("Token", () => {
         const builder = arr as unknown as SemanticTokensBuilder;
         const n = qt.Identifier("name", lineLoc(0, 4));
         applyToken(builder, [n], "class");
-        expect(arr.length).toBe(2);
+        expect(arr).toHaveLength(2);
     });
 
     it("applyToken, undefined", () => {
         const arr = [];
         const builder = arr as unknown as SemanticTokensBuilder;
         applyToken(builder, [], "class");
-        expect(arr.length).toBe(0);
+        expect(arr).toHaveLength(0);
     });
 
     it("applyToken, invalid token", () => {
@@ -43,7 +43,7 @@ describe("Token", () => {
         const builder = arr as unknown as SemanticTokensBuilder;
         const n = qt.Identifier("name", lineLoc(0, 4));
         applyToken(builder, [n], null);
-        expect(arr.length).toBe(0);
+        expect(arr).toHaveLength(0);
     });
 
     it("applyToken, zero range", () => {
@@ -51,7 +51,7 @@ describe("Token", () => {
         const builder = arr as unknown as SemanticTokensBuilder;
         const n = qt.Identifier("name", lineLoc(0, 0));
         applyToken(builder, [n], "class");
-        expect(arr.length).toBe(0);
+        expect(arr).toHaveLength(0);
     });
 
     it("applyToken, multiline", () => {
@@ -59,7 +59,7 @@ describe("Token", () => {
         const builder = arr as unknown as SemanticTokensBuilder;
         const n = qt.Identifier("name", qt.SourceLocation(qt.Position(1,0,0), qt.Position(2,2,2)));
         applyToken(builder, [n], "class");
-        expect(arr.length).toBe(0);
+        expect(arr).toHaveLength(0);
     });
 
     it("applyToken, null range", () => {
@@ -67,7 +67,7 @@ describe("Token", () => {
         const builder = arr as unknown as SemanticTokensBuilder;
         const n = qt.Identifier("name", null);
         applyToken(builder, [n], "class");
-        expect(arr.length).toBe(0);
+        expect(arr).toHaveLength(0);
     });
 
     it("None", () => {
@@ -216,14 +216,14 @@ describe("Token", () => {
         inheritToken(builder, [null], [str]);
         inheritToken(builder, [str as unknown as AST.Identifier], [str]);
         inheritToken(builder, [id], [blk]);
-        expect(arr.length).toBe(0);
+        expect(arr).toHaveLength(0);
     });
 
     it("tokenize, invalid", () => {
         const arr = [];
         const builder = arr as unknown as SemanticTokensBuilder;
         expect(tokenizeNode(builder, [])).toBeUndefined();
-        expect(arr.length).toBe(0);
+        expect(arr).toHaveLength(0);
     });
 
     // it("tokenize, exclude method def", () => {

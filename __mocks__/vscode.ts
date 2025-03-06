@@ -71,6 +71,14 @@ class TabInputText {
     constructor(uri: Uri) {this.uri = uri}
 }
 
+class DataTransferItem {
+}
+
+class DocumentDropEdit {
+    insertText: string;
+    constructor(insertText) { this.insertText = insertText; }
+}
+
 module.exports = {
     InlayHintKind,
     InlayHint,
@@ -80,5 +88,7 @@ module.exports = {
     Hover,
     SemanticTokensBuilder,
     TabInputText,
+    DataTransferItem,
+    DocumentDropEdit,
     ...require('jest-mock-vscode').createVSCodeMock(jest),
 }

@@ -38,7 +38,7 @@ export class SquirrelDocumentDropEditProvider
         return requestProgram(document, token, (program: AST.Program) => {
             const nutPath =
                 getRelativeNutPath(program.sourceName) ??
-                path.dirname(program.sourceName);
+                (program.sourceName ? path.dirname(program.sourceName) : "");
             if (!nutPath) return;
 
             const uriList = [];

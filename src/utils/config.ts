@@ -1,7 +1,9 @@
 import { workspace, Disposable, ConfigurationTarget } from "vscode";
-import * as path from "path";
-import * as prettier from "prettier";
 import constants from "../constants";
+import { Options } from "prettier";
+import * as plugin from "../prettier/plugin";
+
+const plugins = [plugin];
 
 // -----------------------------------------------------------------------------
 
@@ -65,10 +67,8 @@ export const onConfigChange = <T = any>(
 
 // -----------------------------------------------------------------------------
 
-const plugins = [path.join(__dirname, "../prettier/plugin.js")];
-
 /** Returns prettier config options */
-export const getPrettierOptions = (): prettier.Options => {
+export const getPrettierOptions = (): Options => {
     const objectCurlySpacing = getConfigValue(
         constants.CODE_FORMATTING_OBJECT_CURLY_SPACING,
         true,
@@ -83,6 +83,14 @@ export const getPrettierOptions = (): prettier.Options => {
     );
     const spaceInParens = getConfigValue(
         constants.CODE_FORMATTING_SPACE_IN_PARENS,
+        false,
+    );
+    const condenseParens = getConfigValue(
+        constants.CODE_FORMATTING_CONDENSE_PARENS,
+        false,
+    );
+    const reduceParens = getConfigValue(
+        constants.CODE_FORMATTING_REDUCE_PARENS,
         false,
     );
     const attrSpacing = getConfigValue(
@@ -108,6 +116,8 @@ export const getPrettierOptions = (): prettier.Options => {
         objectCurlySpacing,
         arrayBracketSpacing,
         computedPropertySpacing,
+        condenseParens,
+        reduceParens,
         spaceInParens,
         attrSpacing,
         printWidth,

@@ -6,5 +6,5 @@
     "include": [
         "./**/*.ts",
         "./**/*.nut"
-, "../.work/providers.test.ts"    ]
+    ]
 }

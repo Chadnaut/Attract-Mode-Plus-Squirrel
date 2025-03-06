@@ -8,7 +8,7 @@ jest.replaceProperty(constants, "FE_MODULES_PATH", "mock");
 
 describe("Doc Completion", () => {
     it("getDocCompletions, undefined", () => {
-        expect(getDocCompletions([]).length).toBe(0);
+        expect(getDocCompletions([])).toHaveLength(1); // autogen doc
     });
 
     it("getDocCompletions, label", () => {

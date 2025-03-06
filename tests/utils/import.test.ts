@@ -192,7 +192,7 @@ describe("Import", () => {
         const completions = getNutCompletions(filename);
         expect(completions.length).toBeGreaterThan(0);
         expect(completions).not.toContain("layout/layout.nut");
-        expect(getNutCompletions(undefined).length).toBe(0);
+        expect(getNutCompletions(undefined)).toHaveLength(0);
     });
 
     it("Import loop handled", () => {

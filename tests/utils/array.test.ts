@@ -1,6 +1,4 @@
 import { describe, expect, it } from "@jest/globals";
-import { dump, parseExtra as parse, pos } from "../utils";
-import { getNodeAtPos as _getNodeAtPos } from "../../src/utils/find";
 import { uniqueFilter } from "../../src/utils/array";
 
 describe("Array", () => {

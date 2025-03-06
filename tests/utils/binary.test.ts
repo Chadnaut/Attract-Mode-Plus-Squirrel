@@ -4,8 +4,8 @@ import { resolveBinaryExpression } from "../../src/utils/binary";
 import { parseExtra as parse, pos } from "../utils";
 
 jest.replaceProperty(constants, "FE_LAYOUTS_PATH", "tests");
-jest.mock('../../src/utils/config', () => ({
-    ...jest.requireActual('../../src/utils/config'),
+jest.mock('../../src/utils/config.ts', () => ({
+    ...jest.requireActual('../../src/utils/config.ts'),
     getConfigValue: (configSection, defaultValue) => {
         switch (configSection) {
             case constants.ATTRACT_MODE_PATH:

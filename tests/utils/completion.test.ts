@@ -21,20 +21,20 @@ describe("Completion", () => {
     it("getCompletions, none", () => {
         const program = parse("v");
         const items = getCompletions(getBranchAtPos(program, pos(1)));
-        expect(items.length).toBe(0);
-        expect(getCompletions([]).length).toBe(0);
+        expect(items).toHaveLength(0);
+        expect(getCompletions([])).toHaveLength(0);
     });
 
     it("getCompletions, program", () => {
         const program = parse("v");
         const items = getCompletions([program.body[0]["expression"]]);
-        expect(items.length).toBe(0);
+        expect(items).toHaveLength(0);
     });
 
     it("getCompletions, root", () => {
         const program = parse("::root <- 123; r");
         const items = getCompletions(getBranchAtPos(program, pos(16)));
-        expect(items.length).toBe(1);
+        expect(items).toHaveLength(1);
         expect(items[0].label["label"]).toBe("::root");
         expect(items[0].insertText).toBe("::root"); // <- turn 'r' into '::root'
     });
@@ -42,7 +42,7 @@ describe("Completion", () => {
     it("getCompletions, root prefix", () => {
         const program = parse("::root <- 123; ::");
         const items = getCompletions(getBranchAtPos(program, pos(17)));
-        expect(items.length).toBe(1);
+        expect(items).toHaveLength(1);
         expect(items[0].label["label"]).toBe("::root");
         expect(items[0].insertText).toBe("root"); // <-- turn '::' into '::root'
     });
@@ -50,46 +50,46 @@ describe("Completion", () => {
     it("getCompletions, module", () => {
         const program = parse("/** @package Here */\nlocal xx = { yy = 1}; xx");
         const items = getCompletions(getBranchAtPos(program, qt.Position(2, 23, null)));
-        expect(items.length).toBe(1);
+        expect(items).toHaveLength(1);
         expect(items[0].label["description"]).toBe("Here");
     });
 
     it("getCompletions, deprecated", () => {
         const program = parse("/** @deprecated */\nlocal xx = { yy = 1}; xx");
         const items = getCompletions(getBranchAtPos(program, qt.Position(2, 23, null)));
-        expect(items.length).toBe(1);
+        expect(items).toHaveLength(1);
         expect(items[0].tags).toContain(CompletionItemTag.Deprecated);
     });
 
     it("getCompletions, not current declaration", () => {
         const program = parse("local x = 1; local y = x");
         const items = getCompletions(getBranchAtPos(program, pos(24)));
-        expect(items.length).toBe(1);
+        expect(items).toHaveLength(1);
     });
 
     it("getCompletions, allow outer declaration", () => {
         const program = parse("local foo = function() { local x = 1; local y = x }");
         const items = getCompletions(getBranchAtPos(program, pos(49)));
-        expect(items.length).toBe(2);
+        expect(items).toHaveLength(2);
     });
 
     it("getCompletions, member", () => {
         const program = parse("obj.prop.");
         const items = getCompletions(getBranchAtPos(program, pos(9)));
-        expect(items.length).toBe(0);
+        expect(items).toHaveLength(0);
     });
 
     it("getCompletions, single", () => {
         const program = parse("class foo {}; v");
         const items = getCompletions(getBranchAtPos(program, pos(15)));
-        expect(items.length).toBe(1);
+        expect(items).toHaveLength(1);
         expect(items[0].insertText).toBe("foo");
     });
 
     it("getCompletions, multiple", () => {
         const program = parse("class foo {}; function bar() {}; v");
         const items = getCompletions(getBranchAtPos(program, pos(34)));
-        expect(items.length).toBe(2);
+        expect(items).toHaveLength(2);
         expect(items[0].insertText).toBe("foo");
         expect(items[1].insertText).toBe("bar");
     });
@@ -97,13 +97,13 @@ describe("Completion", () => {
     it("getCompletions, @ignore", () => {
         const program = parse("/** @ignore */ function foo() {}; f");
         const items = getCompletions(getBranchAtPos(program, pos(35)));
-        expect(items.length).toBe(0);
+        expect(items).toHaveLength(0);
     });
 
     it("getCompletions, not self", () => {
         const program = parse("class a local b = 123;");
         const items = getCompletions(getBranchAtPos(program, pos(7)));
-        expect(items.length).toBe(1);
+        expect(items).toHaveLength(1);
         expect(items[0].insertText).toBe("b");
     });
 
@@ -116,7 +116,7 @@ describe("Completion", () => {
         addProgram("b", progB);
         const items = getCompletions(getBranchAtPos(progB, pos(19)));
         const values = items.map((item) => item.insertText);
-        expect(values.length).toBe(4);
+        expect(values).toHaveLength(4);
         expect(values).toContain("foo");
         expect(values).toContain("c");
         expect(values).toContain("root");
@@ -126,7 +126,7 @@ describe("Completion", () => {
     it("getCompletions, root capture", () => {
         const program = parse("root <- 123; :: \n root");
         const items = getCompletions(getBranchAtPos(program, pos(15)));
-        expect(items.length).toBe(1);
+        expect(items).toHaveLength(1);
     });
 
     // -------------------------------------------------------------------------
@@ -135,26 +135,26 @@ describe("Completion", () => {
         const program = parse("{}");
         const items = getMemberCompletions(getBranchAtPos(program, pos(1)));
 
-        expect(items.length).toBe(0);
-        expect(getMemberCompletions([]).length).toBe(0);
+        expect(items).toHaveLength(0);
+        expect(getMemberCompletions([])).toHaveLength(0);
     });
 
     it("getMemberCompletions, none", () => {
         const program = parse("local a = 1; a");
         const items = getMemberCompletions(getBranchAtPos(program, pos(14)));
-        expect(items.length).toBe(0);
+        expect(items).toHaveLength(0);
     });
 
     it("getMemberCompletions, function return", () => {
         const program = parse("function foo() { return { a = 1 }; } foo()");
         const items = getMemberCompletions(getBranchAtPos(program, pos(42)));
-        expect(items.length).toBe(1);
+        expect(items).toHaveLength(1);
     });
 
     it("getMemberCompletions, multiple", () => {
         const program = parse("local a = { x = 1, y = 2 }; a");
         const items = getMemberCompletions(getBranchAtPos(program, pos(29)));
-        expect(items.length).toBe(2);
+        expect(items).toHaveLength(2);
         expect(items[0].insertText).toBe("x");
         expect(items[1].insertText).toBe("y");
     });
@@ -162,121 +162,121 @@ describe("Completion", () => {
     it("getMemberCompletions, class none", () => {
         const program = parse("class foo { }; local f = foo(); f");
         const items = getMemberCompletions(getBranchAtPos(program, pos(33)));
-        expect(items.length).toBe(0);
+        expect(items).toHaveLength(0);
     });
 
     it("getMemberCompletions, class copy", () => {
         const program = parse("class foo { }; local f = foo; f");
         const items = getMemberCompletions(getBranchAtPos(program, pos(31)));
-        expect(items.length).toBe(0);
+        expect(items).toHaveLength(0);
     });
 
     it("getMemberCompletions, class body", () => {
         const program = parse("class foo { bar = 123; function moo() { this. }};");
         const items = getMemberCompletions(getBranchAtPos(program, pos(44)));
-        expect(items.length).toBe(2);
+        expect(items).toHaveLength(2);
     });
 
     it("getMemberCompletions, class override", () => {
         const program = parse("class foo { bar = 123; } class moo extends foo { bar = 456; } moo().");
         const items = getMemberCompletions(getBranchAtPos(program, pos(67)));
-        expect(items.length).toBe(1); // both have bar, should override
+        expect(items).toHaveLength(1); // both have bar, should override
     });
 
     it("getMemberCompletions, class constructor", () => {
         const program = parse("class foo { bar = 123; constructor() {} function moo() { this. }};");
         const items = getMemberCompletions(getBranchAtPos(program, pos(61)));
-        expect(items.length).toBe(2); // omit constructor
+        expect(items).toHaveLength(2); // omit constructor
     });
 
     it("getMemberCompletions, public", () => {
         const program = parse("class foo { p = 1 }; local f = foo(); f");
         const items = getMemberCompletions(getBranchAtPos(program, pos(39)));
-        expect(items.length).toBe(1);
+        expect(items).toHaveLength(1);
         expect(items[0].insertText).toBe("p");
     });
 
     it("getMemberCompletions, LambdaExpression", () => {
         const program = parse("local foo = @() 123; foo");
         const items = getMemberCompletions(getBranchAtPos(program, pos(25)));
-        expect(items.length).toBe(0);
+        expect(items).toHaveLength(0);
     });
 
     it("getMemberCompletions, MethodDefinition", () => {
         const program = parse("class foo { function bar() {} }; foo().bar");
         const items = getMemberCompletions(getBranchAtPos(program, pos(42)));
-        expect(items.length).toBe(0);
+        expect(items).toHaveLength(0);
     });
 
     it("getMemberCompletions, FunctionDeclaration", () => {
         const program = parse("function foo() {} foo");
         const items = getMemberCompletions(getBranchAtPos(program, pos(21)));
-        expect(items.length).toBe(0);
+        expect(items).toHaveLength(0);
     });
 
     it("getMemberCompletions, FunctionExpression", () => {
         const program = parse("local foo = function() {}; foo");
         const items = getMemberCompletions(getBranchAtPos(program, pos(28)));
-        expect(items.length).toBe(0);
+        expect(items).toHaveLength(0);
     });
 
     it("getMemberCompletions, base", () => {
         const program = parse("class foo { x = 123 } class bar extends foo { constructor() { base } }");
         const items = getMemberCompletions(getBranchAtPos(program, pos(66)));
-        expect(items.length).toBe(1);
+        expect(items).toHaveLength(1);
         expect(items[0].insertText).toBe("x");
     });
 
     it("getMemberCompletions, lambda", () => {
         const program = parse("local foo = @() 123; foo");
         const items = getMemberCompletions(getBranchAtPos(program, pos(24)));
-        expect(items.length).toBe(0);
+        expect(items).toHaveLength(0);
     });
 
     it("getMemberCompletions, array", () => {
         const program = parse("class foo { bar = 123 }; local f = [foo()]; f[0].");
         const items = getMemberCompletions(getBranchAtPos(program, pos(48)));
-        expect(items.length).toBe(1);
+        expect(items).toHaveLength(1);
         expect(items[0].insertText).toBe('bar');
     });
 
     it("getMemberCompletions, array index", () => {
         const program = parse("local arr = [{ x = 1 }]; arr[0].");
         const items = getMemberCompletions(getBranchAtPos(program, pos(31)));
-        expect(items.length).toBe(1);
+        expect(items).toHaveLength(1);
         expect(items[0].insertText).toBe('x');
     });
 
     it("getMemberCompletions, array key", () => {
         const program = parse(`local arr = [{ x = 1 }, { y = 1 }]; arr["0"].`);
         const items = getMemberCompletions(getBranchAtPos(program, pos(44)));
-        expect(items.length).toBe(1);
+        expect(items).toHaveLength(1);
         expect(items[0].insertText).toBe('y');
     });
 
     it("getMemberCompletions, type self", () => {
         const program = parse("/** @type {foo} */ class foo { bar = 123 }; foo()");
         const items = getMemberCompletions(getBranchAtPos(program, pos(49)));
-        expect(items.length).toBe(1);
+        expect(items).toHaveLength(1);
         expect(items[0].insertText).toBe('bar');
     });
 
     it("getCompletions, type self overload class", () => {
         const program = parse("/** @type {foo} */ class foo { bar = 123; bar = 456; bar = 789; }; foo()");
         const items = getCompletions(getBranchAtPos(program, pos(72)));
-        expect(items.length).toBe(0);
+        expect(items).toHaveLength(0);
     });
 
     it("getMemberCompletions, type self overload class", () => {
         const program = parse("/** @type {foo} */ class foo { bar = 123; bar = 456; bar = 789; }; foo()");
         const items = getMemberCompletions(getBranchAtPos(program, pos(72)));
-        expect(items.length).toBe(1);
+        expect(items).toHaveLength(1);
     });
 
     it("getMemberCompletions, type self overload table", () => {
         const program = parse("/** @type {foo} */ local foo = { bar = 123, bar = 456, bar = 789 }; foo");
         const items = getMemberCompletions(getBranchAtPos(program, pos(71)));
-        expect(items.length).toBe(1);
+        expect(items).toHaveLength(1);
     });
 
     it("getMemberCompletions, type with extends", () => {
@@ -287,15 +287,15 @@ describe("Completion", () => {
         // - both `getMemberCompletions` and `getTypeMemberCompletions` return same result
 
         const items1 = getMemberCompletions(b);
-        expect(items1.length).toBe(1);
+        expect(items1).toHaveLength(1);
         expect(items1[0].insertText).toBe("bar");
 
         const items2 = getTypeMemberCompletions(b);
-        expect(items2.length).toBe(1);
+        expect(items2).toHaveLength(1);
         expect(items2[0].insertText).toBe("bar");
 
         let items3 = uniqueCompletions([...items1, ...items2]);
-        expect(items3.length).toBe(1);
+        expect(items3).toHaveLength(1);
     });
 
     it("getMemberCompletions, type array class", () => {
@@ -303,15 +303,15 @@ describe("Completion", () => {
         const b = getBranchAtPos(program, pos(124));
 
         const items1 = getMemberCompletions(b);
-        expect(items1.length).toBe(1);
+        expect(items1).toHaveLength(1);
         expect(items1[0].insertText).toBe("bar");
 
         const items2 = getTypeMemberCompletions(b);
-        expect(items2.length).toBe(0); // <-- fixed, was 1
+        expect(items2).toHaveLength(0); // <-- fixed, was 1
         // expect(items2[0].insertText).toBe("bar");
 
         // let items3 = uniqueCompletions([...items1, ...items2]);
-        // expect(items3.length).toBe(1);
+        // expect(items3).toHaveLength(1);
     });
 
     // -------------------------------------------------------------------------
@@ -325,7 +325,7 @@ describe("Completion", () => {
         }
         `);
         const items = getMemberCompletions(getBranchAtPos(program, qt.Position(2, 15, 0)));
-        expect(items.length).toBe(1); // do not show overload completions
+        expect(items).toHaveLength(1); // do not show overload completions
         expect(items[0].insertText).toBe('bar');
     });
 
@@ -410,13 +410,13 @@ describe("Completion", () => {
     it("createNodeArrayCompletions", () => {
         const program = parse(`local arr = ["a","b","c"];`);
         const completions = createNodeArrayCompletions("arr", program);
-        expect(completions.length).toBe(3);
+        expect(completions).toHaveLength(3);
     });
 
     it("createNodeArrayCompletions, invalid", () => {
         const program = parse(`local arr = ["a","b","c"];`);
         const completions = createNodeArrayCompletions("", program);
-        expect(completions.length).toBe(0);
+        expect(completions).toHaveLength(0);
     });
 
 });

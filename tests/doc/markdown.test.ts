@@ -1,12 +1,5 @@
 import { getAttrByKind, getNodeDocBlock } from '../../src/doc/find';
-import {
-    beforeEach,
-    describe,
-    fdescribe,
-    expect,
-    it,
-    fit,
-} from "@jest/globals";
+import { describe, expect, it } from "@jest/globals";
 import { parseExtra as parse, pos, dump } from "../utils";
 import { createDocMarkdown, formatVersion } from "../../src/doc/markdown";
 import { AST, SQTree as qt } from '../../src/ast';

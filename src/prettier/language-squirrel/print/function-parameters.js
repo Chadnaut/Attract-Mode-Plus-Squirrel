@@ -41,17 +41,15 @@ function printFunctionParameters(
   const parameters = getFunctionParameters(functionNode);
   const space = options.spaceInParens ? " " : "";
   if (parameters.length === 0) {
-    return [
-      "(",
-      printDanglingComments(path, options, {
-        filter: (comment) =>
-          getNextNonSpaceNonCommentCharacter(
-            options.originalText,
-            locEnd(comment),
-          ) === ")",
-      }),
-      ")",
-    ];
+    const comments = printDanglingComments(path, options, {
+      filter: (comment) =>
+        getNextNonSpaceNonCommentCharacter(
+          options.originalText,
+          locEnd(comment),
+        ) === ")",
+    });
+    const commentSpace = comments.length ? space : "";
+    return ["(", commentSpace, comments, commentSpace, ")"];
   }
 
   const { parent } = path;
@@ -142,8 +140,7 @@ function printFunctionParameters(
   }
 
   return [
-    "(",
-    space,
+    "(", space,
     indent([softline, ...printed]),
     ifBreak(
       !hasRestParameter(functionNode) && shouldPrintComma(options, "all")

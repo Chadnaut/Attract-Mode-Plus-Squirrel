@@ -25,6 +25,7 @@ import {
 } from "../utils/index.js";
 import isBlockComment from "../utils/is-block-comment.js";
 import { printTernaryOld } from "./ternary-old.js";
+import { startSpace, endSpace } from "../utils/get-space.js";
 
 /**
  * @typedef {import("../../document/builders.js").Doc} Doc
@@ -130,12 +131,15 @@ function shouldExtraIndentForConditionalExpression(path) {
   return parent[ancestorNameMap.get(parent.type)] === child;
 }
 
-const wrapInParens = (doc) => [
-  ifBreak("("),
-  indent([softline, doc]),
-  softline,
-  ifBreak(")"),
-];
+// SQUIRREL - does not use new ternary
+const wrapInParens = (doc, options) => {
+  return [
+    ifBreak("(", startSpace(doc, options)),
+    indent([softline, doc]),
+    softline,
+    ifBreak(endSpace(doc, options), ")"),
+  ];
+}
 
 /**
  * The following is the shared logic for
@@ -314,7 +318,7 @@ function printTernary(path, options, print, args) {
 
   const printedTest = isConditionalExpression
     ? [
-        wrapInParens(print("test")),
+        wrapInParens(print("test"), options),
         node.test.type === "ConditionalExpression" ? breakParent : "",
       ]
     : [
@@ -326,7 +330,7 @@ function printTernary(path, options, print, args) {
         node.extendsType.type === "ConditionalTypeAnnotation" ||
         node.extendsType.type === "TSMappedType"
           ? print("extendsType")
-          : group(wrapInParens(print("extendsType"))),
+          : group(wrapInParens(print("extendsType"), options)),
       ];
   const printedTestWithQuestionMark = group([printedTest, " ?"], {
     id: testId,
@@ -360,7 +364,7 @@ function printTernary(path, options, print, args) {
 
   const printedAlternate = print(alternateNodePropertyName);
   const printedAlternateWithParens = tryToParenthesizeAlternate
-    ? ifBreak(printedAlternate, dedent(wrapInParens(printedAlternate)), {
+    ? ifBreak(printedAlternate, dedent(wrapInParens(printedAlternate, options)), {
         groupId: testAndConsequentId,
       })
     : printedAlternate;

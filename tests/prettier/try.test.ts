@@ -1,22 +1,14 @@
-import {
-    beforeEach,
-    describe,
-    fdescribe,
-    expect,
-    it,
-    fit,
-    xit,
-} from "@jest/globals";
+import { describe, expect, it } from "@jest/globals";
 import { format, dump } from "../utils";
 
 describe("Try", () => {
-    it("TryStatement", () => {
-        const response = format("  try {  a  } catch  (e)  { b }  ");
+    it("TryStatement", async () => {
+        const response = await format("  try {  a  } catch  (e)  { b }  ");
         expect(response).toBe("try {\n    a;\n} catch (e) {\n    b;\n}\n");
     });
 
-    it("ThrowStatement", () => {
-        const response = format("  throw   x  ");
+    it("ThrowStatement", async () => {
+        const response = await format("  throw   x  ");
         expect(response).toBe("throw x;\n");
     });
 

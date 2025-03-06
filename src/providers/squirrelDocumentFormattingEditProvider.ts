@@ -9,7 +9,7 @@ import {
 } from "vscode";
 import { fullRange } from "../utils/document";
 import constants from "../constants";
-import * as prettier from "prettier";
+import * as prettier from "prettier/standalone";
 import { getPrettierOptions } from "../utils/config";
 
 export class SquirrelDocumentFormattingEditProvider
@@ -34,9 +34,10 @@ export class SquirrelDocumentFormattingEditProvider
                     window.showWarningMessage(
                         constants.FORMATTING_ERROR_TITLE +
                             " " +
-                            (error?.message ||
+                            (error.message ||
                                 constants.FORMATTING_ERROR_MESSAGE),
                     );
+                    console.error(error);
                     resolve(undefined);
                 },
             );

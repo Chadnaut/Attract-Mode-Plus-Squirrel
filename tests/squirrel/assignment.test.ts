@@ -1,15 +1,27 @@
-import {
-    beforeEach,
-    describe,
-    fdescribe,
-    expect,
-    it,
-    fit,
-} from "@jest/globals";
+import { describe, expect, it } from "@jest/globals";
 import { parse, lineLoc, dump } from "../utils";
 import { SQTree as qt } from "../../src/ast";
 
 describe("Assignment", () => {
+
+    it("Sequence", () => {
+        const response = parse(" local x = (1,2,3); ");
+        expect(response).toEqual(qt.Program(
+            [qt.VariableDeclaration('local', [
+                qt.VariableDeclarator(
+                    qt.Identifier('x', lineLoc(7, 8)),
+                    {...qt.SequenceExpression([
+                        qt.IntegerLiteral(1, "1", lineLoc(12, 13)),
+                        qt.IntegerLiteral(2, "2", lineLoc(14, 15)),
+                        qt.IntegerLiteral(3, "3", lineLoc(16, 17)),
+                    ], lineLoc(12, 17)), extra: { parenthesized: true } },
+                    lineLoc(7, 18) // includes parens
+                ),
+            ], lineLoc(1, 18))], // does not include semi-colon
+            [],
+            lineLoc(0, 20)
+        ));
+    });
 
     it("Constant", () => {
         const response = parse(" const x = 1; ");

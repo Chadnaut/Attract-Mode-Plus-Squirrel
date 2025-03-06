@@ -33,6 +33,7 @@ function printCallExpression(path, options, print) {
     // e.g. `it('long name', () => {`
     isTestCall(node, path.parent)
   ) {
+    // SQUIRREL will never enter this block - not a template, define, or test call
     const printed = [];
     iterateCallArgumentsPath(path, () => {
       printed.push(print());
@@ -41,7 +42,7 @@ function printCallExpression(path, options, print) {
       return [
         isNew ? "new " : "",
         printCallee(path, print),
-        "(",
+        "(", // SQUIRREL space not needed, cannot be reached
         join(", ", printed),
         ")",
       ];

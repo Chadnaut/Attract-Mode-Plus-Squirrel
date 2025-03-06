@@ -6,6 +6,7 @@ import { createTypeCheckFunction } from "../utils/index.js";
 import isIgnored from "../utils/is-ignored.js";
 import { shouldPrintLeadingSemicolon } from "./semicolon.js";
 import { printSquirrel } from "./squirrel.js";
+import { startSpace, endSpace } from "../utils/get-space.js";
 
 /**
  * @typedef {import("../../common/ast-path.js").default} AstPath
@@ -69,11 +70,11 @@ function print(path, options, print, args) {
 
   return inheritLabel(doc, (doc) => [
     needsSemi ? ";" : "",
-    needsParens ? "(" : "",
+    needsParens ? ["(", startSpace(doc, options)] : "",
     needsParens && isClassExpression
       ? [indent([line, doc]), line]
       : [doc],
-    needsParens ? ")" : "",
+    needsParens ? [endSpace(doc, options), ")"] : "",
   ]);
 }
 

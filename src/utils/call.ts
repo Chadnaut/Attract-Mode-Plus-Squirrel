@@ -1,10 +1,8 @@
 import { AST } from "../ast";
-import { resolveBinaryExpression } from "./binary";
 import { getNodeDef, getNodeVal } from "./definition";
 import {
     getBranchEndingAtType,
     getBranchId,
-    getBranchProgram,
     getBranchWithConstructor,
     getNodeAfterPos,
     getBranchAtPos,

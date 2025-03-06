@@ -4,6 +4,7 @@ import {
   softline,
 } from "../../document/builders.js";
 import { hasComment } from "../utils/index.js";
+import { startSpace, endSpace } from "../utils/get-space.js";
 
 /**
  * @typedef {import("../types/estree.js").Node} Node
@@ -19,8 +20,9 @@ function printUnary(path, options, print) {
   }
 
   if (hasComment(node.argument)) {
+    const bodyDoc = print("argument");
     parts.push(
-      group(["(", indent([softline, print("argument")]), softline, ")"]),
+      group(["(", startSpace(bodyDoc, options), indent([softline, bodyDoc]), softline, endSpace(bodyDoc, options), ")"]),
     );
   } else {
     parts.push(print("argument"));

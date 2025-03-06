@@ -11,7 +11,7 @@ describe("Symbol", () => {
     it("getNodeSymbols, enum member", () => {
         const node = parse(`enum myEnum { b };`);
         const symbols = getNodeSymbols([node]);
-        expect(symbols.length).toBe(1);
+        expect(symbols).toHaveLength(1);
         expect(symbols[0].kind).toBe(SymbolKind.Enum);
         expect(symbols[0].children[0].kind).toBe(SymbolKind.EnumMember);
     });
@@ -19,28 +19,28 @@ describe("Symbol", () => {
     it("getNodeSymbols, var func", () => {
         const node = parse(`local c = function(){};`);
         const symbols = getNodeSymbols([node]);
-        expect(symbols.length).toBe(1);
+        expect(symbols).toHaveLength(1);
         expect(symbols[0].kind).toBe(SymbolKind.Variable);
     });
 
     it("getNodeSymbols, func", () => {
         const node = parse(`function d(){};`);
         const symbols = getNodeSymbols([node]);
-        expect(symbols.length).toBe(1);
+        expect(symbols).toHaveLength(1);
         expect(symbols[0].kind).toBe(SymbolKind.Function);
     });
 
     it("getNodeSymbols, var", () => {
         const node = parse(`local e = 1;`);
         const symbols = getNodeSymbols([node]);
-        expect(symbols.length).toBe(1);
+        expect(symbols).toHaveLength(1);
         expect(symbols[0].kind).toBe(SymbolKind.Variable);
     });
 
     it("getNodeSymbols, const", () => {
         const node = parse(`const f = 2;`);
         const symbols = getNodeSymbols([node]);
-        expect(symbols.length).toBe(1);
+        expect(symbols).toHaveLength(1);
         expect(symbols[0].kind).toBe(SymbolKind.Constant);
     });
 
@@ -54,7 +54,7 @@ describe("Symbol", () => {
         `);
 
         const symbols = getNodeSymbols([node]);
-        expect(symbols.length).toBe(1);
+        expect(symbols).toHaveLength(1);
         expect(symbols[0].kind).toBe(SymbolKind.Class);
         expect(symbols[0].children[0].kind).toBe(SymbolKind.Property);
         expect(symbols[0].children[1].kind).toBe(SymbolKind.Constructor);
@@ -68,7 +68,7 @@ describe("Symbol", () => {
         `);
 
         const symbols = getNodeSymbols([node]);
-        expect(symbols.length).toBe(1);
+        expect(symbols).toHaveLength(1);
         expect(symbols[0].kind).toBe(SymbolKind.Class);
 
         // NOTE: foo::bar still a function since added late
@@ -76,15 +76,15 @@ describe("Symbol", () => {
     });
 
     it("getNodeSymbols, invalid", () => {
-        expect(getNodeSymbols([]).length).toBe(0);
+        expect(getNodeSymbols([])).toHaveLength(0);
         const n = <AST.Node>{};
-        expect(getNodeSymbols([n]).length).toBe(0);
+        expect(getNodeSymbols([n])).toHaveLength(0);
     });
 
     it("getNodeSymbols, root", () => {
         const node = parse("::root <- 123; bare <- 456;");
         const symbols = getNodeSymbols([node]);
-        expect(symbols.length).toBe(2);
+        expect(symbols).toHaveLength(2);
         expect(symbols[0].name).toBe("::root");
         expect(symbols[1].name).toBe("bare");
     });
@@ -144,7 +144,7 @@ describe("Symbol", () => {
         const n = getBranchAtPos(program, pos(7));
         const symbols = getAncestorSymbols(n);
         // dump(symbols);
-        expect(symbols.length).toBe(2);
+        expect(symbols).toHaveLength(2);
         expect(symbols[0].name).toBe("bbb");
         expect(symbols[1].name).toBe("ccc");
     });
@@ -156,7 +156,7 @@ describe("Symbol", () => {
         const symbols = getAncestorSymbols(n);
 
         // dump(symbols);
-        expect(symbols.length).toBe(1);
+        expect(symbols).toHaveLength(1);
         expect(symbols[0].name).toBe("bbb");
     });
 
@@ -166,7 +166,7 @@ describe("Symbol", () => {
         const n = getBranchAtPos(program, pos(40));
         const symbols = getAncestorSymbols(n);
         // dump(symbols);
-        expect(symbols.length).toBe(2);
+        expect(symbols).toHaveLength(2);
         expect(symbols[0].name).toBe("bbb");
         expect(symbols[1].name).toBe("aaa");
     });

@@ -58,7 +58,7 @@ describe("Meta", () => {
         expect(items.length).toEqual(1);
         expect(items[0].detail).toBe("(property) foo.bar: integer");
         expect(items[0].insertText).toBe("bar");
-        expect(getDeprecateNodes(program).length).toBe(1);
+        expect(getDeprecateNodes(program)).toHaveLength(1);
     });
 
     it("ClassExp", () => {
@@ -128,7 +128,7 @@ describe("Meta", () => {
     it("Ignore", () => {
         const program = parse("class foo { /** @property {integer} bar here */ function who() {} }; foo()");
         const items = getMemberCompletions(getBranchAtPos(program, pos(70)));
-        expect(items.length).toBe(1);
+        expect(items).toHaveLength(1);
         expect(items[0].detail).toBe("(method) foo.who(): null");
         expect(items[0].insertText).toBe("who");
     });

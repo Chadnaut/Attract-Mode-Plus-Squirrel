@@ -308,7 +308,7 @@ export class SQCompiler extends SQCompilerDefine // #L72
                 }
                 break;
             default:
-                this.CommaExpr(true);
+                this.CommaExpr();
                 this._fs.DiscardTarget();
                 //this._fs.PopTarget();
                 break;
@@ -362,9 +362,9 @@ export class SQCompiler extends SQCompilerDefine // #L72
             break;
         }
     }
-    CommaExpr = (sequence?: boolean) =>
+    CommaExpr = () =>
     {
-        for (this.Expression(false); this._token == ','; this._fs.PopTarget(), this.Lex(), this.CommaExpr(sequence), sequence ? this._fs.AddInstruction(_OP._SEQUENCE_EXPRESSION) : null);
+        for (this.Expression(false); this._token == ','; this._fs.PopTarget(), this.Lex(), this.CommaExpr(), this._fs.AddInstruction(_OP._SEQUENCE_EXPRESSION));
     }
     Expression = (required = true) =>
     {

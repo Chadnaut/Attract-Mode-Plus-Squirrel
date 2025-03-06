@@ -105,7 +105,7 @@ export class SquirrelDiagnostics extends Disposable {
             // give the import errors a tick so they can be added to the list
             setTimeout(() => this.refreshAll());
         } else {
-            this.collection.clear();
+            this.collection?.clear();
         }
     }
 

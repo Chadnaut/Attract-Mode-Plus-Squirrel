@@ -41,11 +41,10 @@ export class SquirrelCompletionItemDocProvider
             document,
             token,
             (program: AST.Program) => {
-                // Pos must be immediately after /** prefix
+                // Must be the head of a comment block, not a string or inner comment
                 const pos = docPosToPos(document, position);
                 const comment = getCommentAtPosition(program, pos);
-                if (!comment) return;
-                if (comment.type !== "CommentBlock") return;
+                if (comment?.type !== "CommentBlock") return;
                 if (pos.index !== comment.loc.start.index + pLen) return;
 
                 return getDocCompletionsAtPos(program, pos);

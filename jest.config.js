@@ -3,13 +3,20 @@
 /** @type {import('ts-jest').JestConfigWithTsJest} **/
 module.exports = {
     preset: "ts-jest",
-    testEnvironment: "node",
+    testEnvironment: 'node',
     transform: {
-        "^.+.tsx?$": [
+        "^.+\\.ts$": [
             "ts-jest",
             { isolatedModules: true }
         ],
+        "^.+\\.js$": [
+            "esbuild-jest"
+        ],
     },
+    coverageDirectory: "./.coverage",
+    collectCoverageFrom: [
+        "./src/**/*.ts"
+    ],
     modulePathIgnorePatterns: [
         "/\.work/"
     ],

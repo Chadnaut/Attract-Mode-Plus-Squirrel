@@ -14,8 +14,8 @@ import { SQFuncStateStruct } from "../../src/squirrel/squirrel/sqfuncstate.h";
 import { SQSharedState } from "../../src/squirrel/squirrel/sqstate.cpp";
 import { SQTree as qt } from "../../src/ast/create";
 
-jest.mock('../../src/squirrel/squirrel/sqopcodes.h', () => ({
-    ...jest.requireActual('../../src/squirrel/squirrel/sqopcodes.h'),
+jest.mock('../../src/squirrel/squirrel/sqopcodes.h.ts', () => ({
+    ...jest.requireActual('../../src/squirrel/squirrel/sqopcodes.h.ts'),
     MAX_FUNC_STACKSIZE: 4, // 255
     MAX_LITERALS: 4 // 2147483647
 }));

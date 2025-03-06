@@ -33,14 +33,14 @@ export const filenameHasExtension = (
  * Parse delimited string for extensions and return array
  */
 export const parseExtensionList = (value: string): string[] =>
-    value
+    value ? value
         .replace(/[ ,;|]+/g, ";")
         .split(";")
         .map((ext) => {
             ext = ext.toLowerCase().replace(/^\./, "").trim();
             if (ext) return `.${ext}`;
         })
-        .filter((ext) => ext);
+        .filter((ext) => ext) : [];
 
 // -----------------------------------------------------------------------------
 

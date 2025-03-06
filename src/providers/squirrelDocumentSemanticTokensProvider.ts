@@ -13,6 +13,7 @@ export class SquirrelDocumentSemanticTokensProvider
     implements DocumentSemanticTokensProvider
 {
     public enabled: boolean = true;
+
     provideDocumentSemanticTokens(
         document: TextDocument,
         token: CancellationToken,

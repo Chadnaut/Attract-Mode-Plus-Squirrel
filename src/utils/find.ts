@@ -138,6 +138,7 @@ export const isNodeBlock = (node: AST.Node): boolean => {
         case "Program":
         case "ClassBody":
         case "BlockStatement":
+        case "SwitchCase":
         case "ObjectExpression":
         case "LambdaExpression":
         case "FunctionExpression":
@@ -182,7 +183,7 @@ export const getBranchEndingAtType = (branch: AST.Node[], type: NodeType): AST.N
     return branch.slice(0, i+1);
 }
 
-/** Return array of nodes from given node  (usually Program), up to and including node at position */
+/** Return array of nodes from program, up to and including node at position */
 export const getBranchAtPos = (
     program: AST.Program,
     pos: AST.Position,

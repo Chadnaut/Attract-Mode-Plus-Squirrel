@@ -40,7 +40,7 @@ export class SquirrelDefinitionProvider implements DefinitionProvider {
 
                 let nodeDef: AST.Node[] = [];
 
-                switch (node?.type) {
+                switch (node.type) {
                     case "SwitchCase":
                         // Special: "case" and "default" keywords resolve to "switch"
                         nodeDef = branch;

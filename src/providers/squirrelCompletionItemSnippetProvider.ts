@@ -29,26 +29,21 @@ export class SquirrelCompletionItemSnippetProvider
         if (!this.enabled) return;
 
         const wordPrefix = getWordPrefix(document, position, 1);
-        if (wordPrefix === ".") return;
-        if (wordPrefix === "\"") return;
-        if (wordPrefix === "*") return;
+        if ([".", '"', "*"].includes(wordPrefix)) return;
 
-        return requestProgram(
-            document,
-            token,
-            (program: AST.Program) => {
-                const pos = docPosToPos(document, position);
-                const branch = getBranchAtPos(program, pos);
-                const isProperty = branch.at(-2)?.type === "PropertyDefinition";
-                const completions = [program, ...getProgramImports(program)]
-                    .flatMap((p) => getSnippetCompletions(p))
-                    .filter(
-                        (item) =>
-                            item.kind !== CompletionItemKind.Event &&
-                            (isProperty || item.kind !== CompletionItemKind.Property),
-                    );
-                return completions;
-            },
-        );
+        return requestProgram(document, token, (program: AST.Program) => {
+            const pos = docPosToPos(document, position);
+            const branch = getBranchAtPos(program, pos);
+            const isProperty = branch.at(-2)?.type === "PropertyDefinition";
+            const completions = [program, ...getProgramImports(program)]
+                .flatMap((p) => getSnippetCompletions(p))
+                .filter(
+                    (item) =>
+                        isProperty
+                        ? (item.kind === CompletionItemKind.Property)
+                        : (item.kind !== CompletionItemKind.Event && item.kind !== CompletionItemKind.Property)
+                );
+            return completions;
+        });
     }
 }

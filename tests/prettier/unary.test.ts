@@ -1,45 +1,37 @@
-import {
-    beforeEach,
-    describe,
-    fdescribe,
-    expect,
-    it,
-    fit,
-    xit,
-} from "@jest/globals";
+import { describe, expect, it } from "@jest/globals";
 import { format, dump } from "../utils";
 
 describe("Unary", () => {
-    it("Not", () => {
-        const response = format("! 1");
+    it("Not", async () => {
+        const response = await format("! 1");
         expect(response).toBe("!1;\n");
     });
-    it("BW Not", () => {
-        const response = format("~ 1");
+    it("BW Not", async () => {
+        const response = await format("~ 1");
         expect(response).toBe("~1;\n");
     });
-    it("BW Not, parenthesis removal", () => {
-        const response = format("~ (1)");
+    it("BW Not, parenthesis removal", async () => {
+        const response = await format("~ (1)");
         expect(response).toBe("~1;\n");
     });
-    it("Typeof", () => {
-        const response = format(" typeof  1");
+    it("Typeof", async () => {
+        const response = await format(" typeof  1");
         expect(response).toBe("typeof 1;\n");
     });
-    it("Resume", () => {
-        const response = format(" resume  1");
+    it("Resume", async () => {
+        const response = await format(" resume  1");
         expect(response).toBe("resume 1;\n");
     });
-    it("Clone", () => {
-        const response = format(" clone  1");
+    it("Clone", async () => {
+        const response = await format(" clone  1");
         expect(response).toBe("clone 1;\n");
     });
-    it("Neg, int", () => {
-        const response = format(" -1");
+    it("Neg, int", async () => {
+        const response = await format(" -1");
         expect(response).toBe("-1;\n");
     });
-    it("Neg, id", () => {
-        const response = format(" -a");
+    it("Neg, id", async () => {
+        const response = await format(" -a");
         expect(response).toBe("-a;\n");
     });
 

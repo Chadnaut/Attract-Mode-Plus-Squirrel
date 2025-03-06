@@ -50,13 +50,13 @@ describe("Create", () => {
     it("attrToNode, array", () => {
         const n = attrToNode({ kind: "type", type: "array" });
         expect(n.type).toBe("ArrayExpression");
-        expect(n["elements"].length).toBe(0);
+        expect(n["elements"]).toHaveLength(0);
     });
 
     it("attrToNode, array", () => {
         const n = attrToNode({ kind: "type", type: "array", expected: [{ label: { label: "string" }}] });
         expect(n.type).toBe("ArrayExpression");
-        expect(n["elements"].length).toBe(1);
+        expect(n["elements"]).toHaveLength(1);
         expect(n["elements"][0].type).toBe("StringLiteral");
     });
 

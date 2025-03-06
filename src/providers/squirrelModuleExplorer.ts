@@ -60,8 +60,6 @@ export class AttractModuleTreeDataProvider
     public getTreeItem(element: AttractModuleNode): Thenable<TreeItem> {
         return new Promise((resolve, reject) => {
             const info = getModuleInfo(element.resource.fsPath);
-            if (!info) reject();
-
             const label = info.name;
             const description = info.description
                 ? info.version
@@ -103,10 +101,6 @@ export class AttractModuleTreeDataProvider
 export class SquirrelModuleExplorer extends Disposable {
     private disposables: Disposable[] = [];
 
-    public dispose() {
-        this.disposables.forEach((item) => item?.dispose());
-    }
-
     constructor() {
         super(undefined);
 
@@ -121,5 +115,9 @@ export class SquirrelModuleExplorer extends Disposable {
                 treeDataProvider.refresh(),
             ),
         ];
+    }
+
+    public dispose() {
+        this.disposables.forEach((item) => item?.dispose());
     }
 }

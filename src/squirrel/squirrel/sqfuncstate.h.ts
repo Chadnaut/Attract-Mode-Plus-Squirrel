@@ -4,9 +4,8 @@ import { CompilerErrorFunc } from './sqcompiler.h';
 import { SQObject } from '../include/squirrel.h';
 import { SQFuncState } from './sqfuncstate.cpp';
 import { SQInstruction } from './sqopcodes.h';
-import { SQTree as qt } from '../../ast/create';
+import { GetFullLoc, SQTree as qt } from '../../ast/create';
 import { AST } from '../../ast';
-import { SQVM } from './sqvm.cpp';
 import { SQSharedState } from './sqstate.cpp';
 import toFastProperties from 'to-fast-properties';
 
@@ -131,15 +130,6 @@ export class SQFuncStateStruct {
           - Uses fullLoc when creating range
     */
 
-    fullLoc = new Map();
-
-    SetFullLoc = (node: AST.Node, loc: AST.SourceLocation) => {
-        this.fullLoc.set(node, loc);
-    }
-
-    GetFullLoc = (node: AST.Node): AST.SourceLocation | undefined =>
-        this.fullLoc.has(node) ? this.fullLoc.get(node) : node?.loc;
-
     // -------------------------------------------------------------------------
 
     /** Wrap specific nodes with ExpressionStatement or Directive */
@@ -165,13 +155,13 @@ export class SQFuncStateStruct {
             case 'ConditionalExpression':
             case 'SequenceExpression': {
                 const child = this.PopNode();
-                const loc = this.GetFullLoc(child);
+                const loc = GetFullLoc(child);
                 this.PushNode(qt.ExpressionStatement(child, loc));
                 break;
             }
             case 'StringLiteral': {
                 const child = <AST.StringLiteral>this.PopNode();
-                const loc = this.GetFullLoc(child);
+                const loc = GetFullLoc(child);
                 this.PushNode(qt.Directive(child, loc));
                 break;
             }

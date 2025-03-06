@@ -30,6 +30,7 @@ import { printMemberLookup } from "./member.js";
 import {
   printBindExpressionCallee,
 } from "./misc.js";
+import { startSpace, endSpace } from "../utils/get-space.js";
 
 /**
  * @typedef {import("../../document/builders.js").Doc} Doc
@@ -315,7 +316,7 @@ function printMemberChain(path, options, print) {
     // Checks if the last node (i.e. the parent node) needs parens and print
     // accordingly
     if (printedGroup.length > 0 && printedGroup.at(-1).needsParens) {
-      return ["(", ...printed, ")"];
+      return ["(", startSpace(printed, options), ...printed, endSpace(printed, options), ")"];
     }
     return printed;
   }

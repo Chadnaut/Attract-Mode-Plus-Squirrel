@@ -1,13 +1,5 @@
-import {
-    beforeEach,
-    describe,
-    fdescribe,
-    expect,
-    it,
-    fit,
-    xit,
-} from "@jest/globals";
-import { format, formatCPP, dump } from "../utils";
+import { describe, expect, it } from "@jest/globals";
+import { dump, format, formatCPP } from "../utils";
 import * as path from "path";
 import { readFile } from "../../src/utils/file";
 
@@ -16,48 +8,48 @@ export const getFile = (filename: string): string =>
 
 describe("Sample", () => {
 
-    it("Home", () => {
+    it("Home", async () => {
         const name = "home";
         const src = getFile(`../samples/format/${name}.src.nut`);
         const jsx = getFile(`../samples/format/${name}.jsx.nut`);
         const cpp = getFile(`../samples/format/${name}.cpp.nut`);
 
-        expect(format(src)).toBe(jsx);
-        expect(format(jsx)).toBe(jsx);
-        expect(format(cpp)).toBe(jsx);
+        expect(await format(src)).toBe(jsx);
+        expect(await format(jsx)).toBe(jsx);
+        expect(await format(cpp)).toBe(jsx);
 
-        expect(formatCPP(src)).toBe(cpp);
-        expect(formatCPP(jsx)).toBe(cpp);
-        expect(formatCPP(cpp)).toBe(cpp);
+        expect(await formatCPP(src)).toBe(cpp);
+        expect(await formatCPP(jsx)).toBe(cpp);
+        expect(await formatCPP(cpp)).toBe(cpp);
     });
 
-    it("Test", () => {
+    it("Test", async () => {
         const name = "test";
         const src = getFile(`../samples/format/${name}.src.nut`);
         const jsx = getFile(`../samples/format/${name}.jsx.nut`);
         const cpp = getFile(`../samples/format/${name}.cpp.nut`);
 
-        expect(format(src)).toBe(jsx);
-        expect(format(jsx)).toBe(jsx);
-        expect(format(cpp)).toBe(jsx);
+        expect(await format(src)).toBe(jsx);
+        expect(await format(jsx)).toBe(jsx);
+        expect(await format(cpp)).toBe(jsx);
 
-        expect(formatCPP(src)).toBe(cpp);
-        expect(formatCPP(jsx)).toBe(cpp);
-        expect(formatCPP(cpp)).toBe(cpp);
+        expect(await formatCPP(src)).toBe(cpp);
+        expect(await formatCPP(jsx)).toBe(cpp);
+        expect(await formatCPP(cpp)).toBe(cpp);
     });
 
-    it("Penner", () => {
+    it("Penner", async () => {
         const name = "penner";
         const src = getFile(`../samples/format/${name}.src.nut`);
         const jsx = getFile(`../samples/format/${name}.jsx.nut`);
         const cpp = getFile(`../samples/format/${name}.cpp.nut`);
 
-        expect(format(src)).toBe(jsx);
-        expect(format(jsx)).toBe(jsx);
-        expect(format(cpp)).toBe(jsx);
+        expect(await format(src)).toBe(jsx);
+        expect(await format(jsx)).toBe(jsx);
+        expect(await format(cpp)).toBe(jsx);
 
-        expect(formatCPP(src)).toBe(cpp);
-        expect(formatCPP(jsx)).toBe(cpp);
-        expect(formatCPP(cpp)).toBe(cpp);
+        expect(await formatCPP(src)).toBe(cpp);
+        expect(await formatCPP(jsx)).toBe(cpp);
+        expect(await formatCPP(cpp)).toBe(cpp);
     });
 });

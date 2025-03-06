@@ -1,6 +1,7 @@
 import { TextDocument, DocumentLink, Uri, Range } from "vscode";
 
-const logRegex = new RegExp(/^(?:(?<prefix>Script Error in )(?<link>.*?\.nut) - |(?<prefix>\*[A-Z]+ \[[^\]]*\] )(?<link>.*?) line \[(?<line>\d+)\]|(?<link>.*?) line = \((?<line>\d+)\) column = \((?<column>\d+)\)|(?<prefix> - Loaded layout: )(?<link>.*?)(?<gap> \()(?<name>.*?)\)|(?<prefix>Config: )(?<link>[^\r\n]*)|(?<prefix>.*?file: )(?<link>.*?)\. +Valid)/gm);
+// 1.70.2 fix - duplicate capture group name
+const logRegex = new RegExp(/^(?:(?<prefix1>Script Error in )(?<link1>.*?\.nut) - |(?<prefix2>\*[A-Z]+ \[[^\]]*\] )(?<link2>.*?) line \[(?<line1>\d+)\]|(?<link3>.*?) line = \((?<line2>\d+)\) column = \((?<column>\d+)\)|(?<prefix3> - Loaded layout: )(?<link4>.*?)(?<gap> \()(?<name>.*?)\)|(?<prefix4>Config: )(?<link5>[^\r\n]*)|(?<prefix5>.*?file: )(?<link6>.*?)\. +Valid)/gm);
 
 /** Find links in last_run.log files */
 export const getLogLinks = (document: TextDocument): DocumentLink[] => {
@@ -13,12 +14,13 @@ export const getLogLinks = (document: TextDocument): DocumentLink[] => {
     let match: RegExpExecArray;
     while ((match = logRegex.exec(text))) {
         const groups = match.groups;
-        const prefix = groups.prefix ?? '';
-        const link = groups.link ?? '';
-        const gap = groups.gap ?? '';
-        const name = groups.name ?? '';
-        const line = groups.line ?? '';
-        const column = groups.column ?? '';
+
+        const prefix = groups.prefix1 || groups.prefix2 || groups.prefix3 || groups.prefix4 || groups.prefix5 || '';
+        const link = groups.link1 || groups.link2 || groups.link3 || groups.link4 || groups.link5 || groups.link6;
+        const line = groups.line1 || groups.line2 || '';
+        const gap = groups.gap || '';
+        const name = groups.name || '';
+        const column = groups.column || '';
 
         const index = match.index;
         const linkStart = index + prefix.length;

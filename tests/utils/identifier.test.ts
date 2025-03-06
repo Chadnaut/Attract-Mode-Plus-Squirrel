@@ -158,7 +158,7 @@ describe("Identifier", () => {
 
     it("None", () => {
         const program = parse("");
-        expect(addBranchId([program]).length).toBe(0);
+        expect(addBranchId([program])).toHaveLength(0);
     });
 
     it("AssignmentPattern", () => {

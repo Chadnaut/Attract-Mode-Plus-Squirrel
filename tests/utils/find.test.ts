@@ -19,11 +19,11 @@ describe("Find", () => {
     it("getNodeAfterPos", () => {
         const program = parse("function foo() {    local bar = 123   }");
         expect(getNodeAfterPos(program, pos(17)).at(-1).type).toEqual("VariableDeclaration");
-        expect(getNodeAfterPos(undefined, undefined).length).toBe(0);
+        expect(getNodeAfterPos(undefined, undefined)).toHaveLength(0);
         expect(getNodeAfterPos(program, pos(100)).at(-1)).toBeUndefined();
 
         getNodeAfterPos(program, pos(17)).at(-1).loc = undefined;
-        expect(getNodeAfterPos(program, pos(17)).length).toBe(0);
+        expect(getNodeAfterPos(program, pos(17))).toHaveLength(0);
     });
 
     it("getNodeAfterPos, promote expression", () => {
@@ -34,11 +34,11 @@ describe("Find", () => {
     it("getNodeBeforePos", () => {
         const program = parse("function foo() {    local bar = 123   }");
         expect(getNodeBeforePos(program, pos(37)).at(-1).type).toEqual("VariableDeclaration");
-        expect(getNodeBeforePos(undefined, undefined).length).toBe(0);
+        expect(getNodeBeforePos(undefined, undefined)).toHaveLength(0);
         expect(getNodeBeforePos(program, pos(0)).at(-1)).toBeUndefined();
 
         getNodeBeforePos(program, pos(37)).at(-1).loc = undefined;
-        expect(getNodeBeforePos(program, pos(37)).length).toBe(0);
+        expect(getNodeBeforePos(program, pos(37))).toHaveLength(0);
     });
 
     it("getNodeBeforePos, promote expression", () => {
@@ -89,7 +89,7 @@ describe("Find", () => {
     });
 
     it("getBranchCallable, undefined", () => {
-        expect(getBranchCallable([]).length).toBe(0);
+        expect(getBranchCallable([])).toHaveLength(0);
     });
 
     it("getBranchCallable, FunctionDeclaration", () => {
@@ -114,11 +114,11 @@ describe("Find", () => {
 
     it("getBranchCallable, False", () => {
         const n = qt.StringLiteral("123");
-        expect(getBranchCallable([n]).length).toBe(0);
+        expect(getBranchCallable([n])).toHaveLength(0);
     });
 
     it("getBranchFunctionDef, undefined", () => {
-        expect(getBranchFunctionDef([]).length).toBe(0);
+        expect(getBranchFunctionDef([])).toHaveLength(0);
     });
 
     it("getBranchFunctionDef, FunctionDeclaration", () => {

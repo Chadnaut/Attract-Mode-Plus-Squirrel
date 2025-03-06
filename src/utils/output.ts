@@ -8,7 +8,7 @@ const Tail = require("tail").Tail;
 
 export class SquirrelOutputChannel extends Disposable {
     private _enabled: boolean;
-    private disposables: Disposable[];
+    private disposables: Disposable[] = [];
     private channel: OutputChannel;
     private filename: string;
     private listener: typeof Tail;
@@ -16,13 +16,12 @@ export class SquirrelOutputChannel extends Disposable {
 
     constructor() {
         super(undefined);
-        this.disposables = [this.channel];
     }
 
     /** Extension stopped */
     public dispose() {
         this.stop();
-        this.disposables.forEach((item) => item?.dispose());
+        this.disposables.forEach((item) => item.dispose());
     }
 
     public set enabled(value: boolean) {
@@ -33,11 +32,14 @@ export class SquirrelOutputChannel extends Disposable {
                     constants.LOG_OUTPUT_NAME,
                     constants.LOG_LANGUAGE_ID,
                 );
+                this.disposables.push(this.channel);
             }
             this.restart();
         } else {
             this.stop();
             if (this.channel) {
+                const i = this.disposables.findIndex((d) => d === this.channel);
+                this.disposables.splice(i, 1);
                 this.channel.dispose();
                 delete this.channel;
             }
@@ -74,7 +76,7 @@ export class SquirrelOutputChannel extends Disposable {
                 this.listener = new Tail(this.filename, {
                     useWatchFile: true,
                     fsWatchOptions: { interval },
-                    nLines: 1000
+                    nLines: 1000,
                 });
                 this.listener.on("line", this.append.bind(this));
             }

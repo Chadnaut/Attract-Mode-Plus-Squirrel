@@ -54,7 +54,7 @@ describe("Doc Program Completion", () => {
 
     it("getDocCompletionsAtPos, boilerplate", () => {
         const program = parse(``);
-        const value = getDocCompletionsAtPos(program, pos(3))[0].insertText["value"];
+        const value = getDocCompletionsAtPos(program, pos(3))[1].insertText["value"];
         expect(value).toContain("@summary A short description.");
         expect(value).toContain("@version 0.0.1");
         expect(value).toContain("@author mock_author");
@@ -63,7 +63,7 @@ describe("Doc Program Completion", () => {
 
     it("getDocCompletionsAtPos, artwork", () => {
         const program = parse(`fe.add_artwork("art1"); fe.add_artwork("art2")`);
-        const value = getDocCompletionsAtPos(program, pos(3))[0].insertText["value"];
+        const value = getDocCompletionsAtPos(program, pos(3))[1].insertText["value"];
         expect(value).toContain("@requires");
         expect(value).toContain("@artwork art1, art2");
     });

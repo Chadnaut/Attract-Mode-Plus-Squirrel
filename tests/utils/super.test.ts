@@ -85,7 +85,7 @@ describe("Super", () => {
     });
 
     it("getNodeExtendedClasses, undefined", () => {
-        expect(getNodeExtendedClasses([]).length).toBe(0);
+        expect(getNodeExtendedClasses([])).toHaveLength(0);
     });
 
     it("getNodeExtendedClasses, invalid", () => {

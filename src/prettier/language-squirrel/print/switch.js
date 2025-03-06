@@ -12,6 +12,7 @@ import {
     hasComment,
     isNextLineEmpty,
   } from "../utils/index.js";
+import { startSpace, endSpace } from "../utils/get-space.js";
 
 /**
  * @typedef {import("../types/estree.js").Node} Node
@@ -34,13 +35,13 @@ function printBreakContinue(path, options, print) {
 
 function printSwitchStatement(path, options, print) {
   const { node } = path;
-  const space = options.spaceInParens ? " " : "";
+  const bodyDoc = print("discriminant");
   return [
     group([
       "switch (",
-      space,
-      indent([softline, print("discriminant")]),
-      space,
+      startSpace(bodyDoc, options),
+      indent([softline, bodyDoc]),
+      endSpace(bodyDoc, options),
       softline,
       ")",
     ]),

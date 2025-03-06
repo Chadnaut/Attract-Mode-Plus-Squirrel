@@ -48,7 +48,7 @@ describe("Media", () => {
 
     it("getProgramArtworks", () => {
         const program = parse(`fe.add_artwork("snap");`);
-        expect(getProgramArtworks(program).length).toBe(1);
+        expect(getProgramArtworks(program)).toHaveLength(1);
     });
 
     it("getArtworkCallLabel, undefined", () => {
@@ -153,7 +153,7 @@ describe("Media", () => {
         const filename = path.join(__dirname, "../samples/layout/layout.nut");
         const completions = getImageCompletions(filename);
         expect(completions.length).toBeGreaterThan(0);
-        expect(getImageCompletions(undefined).length).toBe(0);
+        expect(getImageCompletions(undefined)).toHaveLength(0);
     });
 
     it("getVideoCompletions", () => {
@@ -161,7 +161,7 @@ describe("Media", () => {
         const filename = path.join(__dirname, "../samples/layout/layout.nut");
         const completions = getVideoCompletions(filename);
         expect(completions.length).toBeGreaterThan(0);
-        expect(getVideoCompletions(undefined).length).toBe(0);
+        expect(getVideoCompletions(undefined)).toHaveLength(0);
     });
 
     it("getAudioCompletions", () => {
@@ -169,7 +169,7 @@ describe("Media", () => {
         const filename = path.join(__dirname, "../samples/layout/layout.nut");
         const completions = getAudioCompletions(filename);
         expect(completions.length).toBeGreaterThan(0);
-        expect(getAudioCompletions(undefined).length).toBe(0);
+        expect(getAudioCompletions(undefined)).toHaveLength(0);
     });
 
     it("getShaderCompletions", () => {
@@ -177,7 +177,7 @@ describe("Media", () => {
         const filename = path.join(__dirname, "../samples/layout/layout.nut");
         const completions = getShaderCompletions(filename);
         expect(completions.length).toBeGreaterThan(0);
-        expect(getShaderCompletions(undefined).length).toBe(0);
+        expect(getShaderCompletions(undefined)).toHaveLength(0);
     });
 
     it("getArtworkCompletions", () => {

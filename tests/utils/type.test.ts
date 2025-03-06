@@ -157,15 +157,15 @@ describe("Type", () => {
     it("getNodeTypeDef, no type", () => {
         const program = parse('call();');
         const n = getBranchAtPos(program, pos(2));
-        expect(getNodeTypeDef(n).length).toBe(0);
-        expect(getNodeTypeDef([]).length).toBe(0);
+        expect(getNodeTypeDef(n)).toHaveLength(0);
+        expect(getNodeTypeDef([])).toHaveLength(0);
     });
 
     it("getNodeTypeDef, no def", () => {
         const program = parse('local str = "string";');
         const n = getBranchAtPos(program, pos(7));
         const def = getNodeTypeDef(n);
-        expect(def.length).toBe(0);
+        expect(def).toHaveLength(0);
     });
 
     // -------------------------------------------------------------------------
@@ -177,67 +177,67 @@ describe("Type", () => {
     it("getTypeMemberCompletions, type self", () => {
         const program = parse("/** @type {foo} */ class foo { bar = 123 }; foo()");
         const items = getTypeMemberCompletions(getBranchAtPos(program, pos(49)));
-        expect(items.length).toBe(0);
+        expect(items).toHaveLength(0);
     });
 
     it("getTypeMemberCompletions, type self overload class", () => {
         const program = parse("/** @type {foo} */ class foo { bar = 123; bar = 456; bar = 789; }; foo()");
         const items = getTypeMemberCompletions(getBranchAtPos(program, pos(72)));
-        expect(items.length).toBe(0);
+        expect(items).toHaveLength(0);
     });
 
     it("getTypeMemberCompletions, type self overload table", () => {
         const program = parse("/** @type {foo} */ local foo = { bar = 123, bar = 456, bar = 789 }; foo");
         const items = getTypeMemberCompletions(getBranchAtPos(program, pos(71)));
-        expect(items.length).toBe(0);
+        expect(items).toHaveLength(0);
     });
 
     it("getTypeMemberCompletions, type lends", () => {
         const program = parse('/** @lends */ class StringLiteral { function len() {} }; local x = "string"; x');
         const items = getTypeMemberCompletions(getBranchAtPos(program, pos(78)));
-        expect(items.length).toBe(1);
+        expect(items).toHaveLength(1);
         expect(items[0].insertText).toBe('len');
     });
 
     it("getTypeMemberCompletions, type lends overload", () => {
         const program = parse('/** @lends */ class StringLiteral { function len() {} function len() {} }; local x = "string"; x');
         const items = getTypeMemberCompletions(getBranchAtPos(program, pos(96)));
-        expect(items.length).toBe(1);
+        expect(items).toHaveLength(1);
         expect(items[0].insertText).toBe('len');
     });
 
     it("getTypeMemberCompletions, type empty ignores completions", () => {
         const program = parse('/** @lends */ class StringLiteral { function len() {} }; /** @type */ local x = "string"; x');
         const items = getTypeMemberCompletions(getBranchAtPos(program, pos(91)));
-        expect(items.length).toBe(0);
+        expect(items).toHaveLength(0);
     });
 
     it("getTypeMemberCompletions, type override", () => {
         const program = parse('/** @lends */ class StringLiteral { function len() {} }; /** @type {string} */ local x = 123; x');
         const items = getTypeMemberCompletions(getBranchAtPos(program, pos(95)));
-        expect(items.length).toBe(1);
+        expect(items).toHaveLength(1);
         expect(items[0].insertText).toBe('len');
     });
 
     it("getTypeMemberCompletions, type array elements", () => {
         const program = parse('/** @lends */ class ArrayExpression { function len1() {} }; /** @lends */ class StringLiteral { function len2() {} }; /** @type {array(string)} */ local x = []; x; x[0]');
         const items1 = getTypeMemberCompletions(getBranchAtPos(program, pos(162)));
-        expect(items1.length).toBe(1);
+        expect(items1).toHaveLength(1);
         expect(items1[0].insertText).toBe('len1');
 
         const items2 = getTypeMemberCompletions(getBranchAtPos(program, pos(168)));
-        expect(items2.length).toBe(1);
+        expect(items2).toHaveLength(1);
         expect(items2[0].insertText).toBe('len2');
     });
 
     it("getTypeMemberCompletions, type array", () => {
         const program = parse('/** @lends */ class ArrayExpression { function len1() {} }; /** @type {array} */ local x = []; x; x[0]');
         const items1 = getTypeMemberCompletions(getBranchAtPos(program, pos(98)));
-        expect(items1.length).toBe(1);
+        expect(items1).toHaveLength(1);
         expect(items1[0].insertText).toBe('len1');
 
         const items2 = getTypeMemberCompletions(getBranchAtPos(program, pos(104)));
-        expect(items2.length).toBe(0);
+        expect(items2).toHaveLength(0);
     });
 
     // -------------------------------------------------------------------------
@@ -245,35 +245,35 @@ describe("Type", () => {
     it("getTypeMemberCompletions, completion", () => {
         const program = parse('/** @lends */ class StringLiteral { function len() {} }; "string";');
         const items = getTypeMemberCompletions(getBranchAtPos(program, pos(65)));
-        expect(items.length).toBe(1);
+        expect(items).toHaveLength(1);
         expect(items[0].insertText).toBe("len");
     });
 
     it("getTypeMemberCompletions, extended completion", () => {
         const program = parse('class foo { function len() { return ""; } } /** @lends */ class StringLiteral extends foo {}; "string";');
         const items = getTypeMemberCompletions(getBranchAtPos(program, pos(102)));
-        expect(items.length).toBe(1);
+        expect(items).toHaveLength(1);
         expect(items[0].insertText).toBe("len");
     });
 
     it("getTypeMemberCompletions, type completion", () => {
         const program = parse('/** @lends */ class StringLiteral { function len() { return ""; } }; "string".len();');
         const items = getTypeMemberCompletions(getBranchAtPos(program, pos(83)));
-        expect(items.length).toBe(1);
+        expect(items).toHaveLength(1);
         expect(items[0].insertText).toBe("len");
     });
 
     it("getTypeMemberCompletions, extended type completion", () => {
         const program = parse('class foo { function len() { return ""; } } /** @lends */ class StringLiteral extends foo {}; "string".len();');
         const items = getTypeMemberCompletions(getBranchAtPos(program, pos(108)));
-        expect(items.length).toBe(1);
+        expect(items).toHaveLength(1);
         expect(items[0].insertText).toBe("len");
     });
 
     it("getTypeMemberCompletions, prevents missing loop", () => {
         const program = parse('local a = b(); a.c.d()');
         const items = getTypeMemberCompletions(getBranchAtPos(program, pos(22)));
-        expect(items.length).toBe(0);
+        expect(items).toHaveLength(0);
     });
 
     // // -------------------------------------------------------------------------
@@ -336,7 +336,7 @@ describe("Type", () => {
         expect(sig).toEqual("(method) IntegerLiteral.len(): integer");
 
         const items = getTypeMemberCompletions(getBranchAtPos(program, pos(90)));
-        expect(items.length).toBe(1);
+        expect(items).toHaveLength(1);
         expect(items[0].insertText).toBe("len");
     });
 
@@ -349,40 +349,40 @@ describe("Type", () => {
         expect(sig).toEqual("(method) IntegerLiteral.len(): integer");
 
         const items = getTypeMemberCompletions(getBranchAtPos(program, pos(144)));
-        expect(items.length).toBe(1);
+        expect(items).toHaveLength(1);
         expect(items[0].insertText).toBe("len");
     });
 
     it("Param type", () => {
         const program = parse("local x = { y = 1 }; /** @param {x} a */ function foo (a) { a }");
         const items = getTypeMemberCompletions(getBranchAtPos(program, pos(61)));
-        expect(items.length).toBe(1);
+        expect(items).toHaveLength(1);
         expect(items[0].insertText).toBe("y");
     });
 
     it("Param array element array element type", () => {
         const program = parse("/** @lends */ class StringLiteral { function len() {} }; /** @param {array(string)} a */ function foo (a) { a[0] }");
         const items = getTypeMemberCompletions(getBranchAtPos(program, pos(112)));
-        expect(items.length).toBe(1);
+        expect(items).toHaveLength(1);
         expect(items[0].insertText).toBe("len");
     });
 
     it("Param array element array", () => {
         const program = parse("/** @lends */ class StringLiteral { function len() {} }; /** @param {array} a */ function foo (a) { a[0] }");
         const items = getTypeMemberCompletions(getBranchAtPos(program, pos(104)));
-        expect(items.length).toBe(0);
+        expect(items).toHaveLength(0);
     });
 
     it("Param type, invalid", () => {
         const program = parse("local x = { y = 1 }; /** @param {z} a */ function foo (a) { a }");
         const items = getTypeMemberCompletions(getBranchAtPos(program, pos(61)));
-        expect(items.length).toBe(0);
+        expect(items).toHaveLength(0);
     });
 
     it("ReturnArgument, override array element", () => {
         const program = parse("/** @lends */ class StringLiteral { function len() {} }; /** @returns {array(string)} */ function foo() {}; foo()[0]");
         const items = getTypeMemberCompletions(getBranchAtPos(program, pos(116)));
-        expect(items.length).toBe(1);
+        expect(items).toHaveLength(1);
         expect(items[0].insertText).toBe('len');
     });
 

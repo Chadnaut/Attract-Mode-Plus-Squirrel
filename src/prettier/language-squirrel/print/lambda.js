@@ -31,6 +31,7 @@ import {
 } from "../utils/index.js";
 import { shouldPrintParamsWithoutParens } from "./function.js";
 import { printFunctionParameters } from "./function-parameters.js";
+import { startSpace, endSpace } from "../utils/get-space.js";
 
 /**
  * @typedef {import("../../common/ast-path.js").default} AstPath
@@ -57,7 +58,7 @@ function shouldAddParensIfNotBreak(node) {
 
 // We handle sequence expressions as the body of arrows specially,
 // so that the required parentheses end up on their own lines.
-const shouldAlwaysAddParens = (node) => node.type === "SequenceExpression";
+// const shouldAlwaysAddParens = (node) => node.type === "SequenceExpression";
 
 function printLambdaFunction(path, options, print, args = {}) {
   /** @type {Doc[]} */
@@ -109,7 +110,7 @@ function printLambdaFunction(path, options, print, args = {}) {
   // as the arrow.
   const shouldPutBodyOnSameLine =
     !hasLeadingOwnLineComment(options.originalText, functionBody) &&
-    (shouldAlwaysAddParens(functionBody) ||
+    ( //shouldAlwaysAddParens(functionBody) || // SQUIRREL
       mayBreakAfterShortPrefix(functionBody, bodyDoc, options) ||
       (!shouldBreakChain && shouldAddParensIfNotBreak(functionBody)));
 
@@ -311,9 +312,9 @@ function printLambdaFunctionBody(
     return [
       " ",
       group([
-        ifBreak("", "("),
+        ifBreak("", ["(", startSpace(bodyDoc, options)]),
         indent([softline, bodyDoc]),
-        ifBreak("", ")"),
+        ifBreak("", [endSpace(bodyDoc, options), ")"]),
         trailingComma,
         trailingSpace,
       ]),
@@ -321,9 +322,9 @@ function printLambdaFunctionBody(
     ];
   }
 
-  if (shouldAlwaysAddParens(functionBody)) {
-    bodyDoc = group(["(", indent([softline, bodyDoc]), softline, ")"]);
-  }
+//   if (shouldAlwaysAddParens(functionBody)) {
+//     bodyDoc = group(["(", indent([softline, bodyDoc]), softline, ")"]);
+//   }
 
   return shouldPutBodyOnSameLine
     ? [" ", bodyDoc, bodyComments]

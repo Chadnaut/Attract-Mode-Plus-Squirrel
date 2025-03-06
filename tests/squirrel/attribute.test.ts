@@ -11,6 +11,10 @@ import { SQTree as qt } from "../../src/ast";
 
 describe("Attribute", () => {
 
+    it("Malformed attribute", () => {
+        expect(() => { parse("class foo { </ x = 1 > x = 1; }"); }).toThrow();
+    });
+
     it("ClassExpression", () => {
         const response = parse("local x = class </a=1/> {}");
         // dump(response);

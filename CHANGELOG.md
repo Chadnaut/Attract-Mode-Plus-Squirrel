@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.9.10] - 2025-03-06
+
+### Added
+
+- Formatter setting to keep superfluous parentheses
+- Formatter setting to condense nested parentheses
+- Provider tests
+
+### Changed
+
+- Build pipeline to esbuild
+- Massive dist size reduction
+- Prettier async tests
+
+### Fixed
+
+- Colour picker placement
+- Attribute syntax highlighting
+- Sequence-expression formatting
+- Space formatting edge-cases
+- Activation in older VSCode
+
 ## [0.9.9] - 2025-02-27
 
 ### Added

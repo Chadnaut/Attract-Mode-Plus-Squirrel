@@ -1,12 +1,4 @@
-import {
-    beforeEach,
-    describe,
-    fdescribe,
-    expect,
-    it,
-    fit,
-    xit,
-} from "@jest/globals";
+import { describe, expect, it } from "@jest/globals";
 import { getRandSeed } from './../../src/utils/rand';
 
 describe("Rand", () => {

@@ -1,12 +1,34 @@
 import { AST } from ".";
 
+// ---------------------------------------------
+
+const fullLocMap = new WeakMap<AST.Node, AST.SourceLocation>();
+
+export const SetFullLoc = (node: AST.Node, loc: AST.SourceLocation) => {
+    fullLocMap.set(node, loc);
+}
+
+export const GetFullLoc = (node: AST.Node): AST.SourceLocation | undefined => {
+    return fullLocMap.has(node) ? fullLocMap.get(node) : node?.loc;
+}
+
+const attrOrNull = (value: AST.ObjectExpression): AST.ObjectExpression | undefined =>
+    (typeof value === "object") ? value : null;
+
+// ---------------------------------------------
+
 export class SQTree {
     // ---------------------------------------------
     // Helpers
 
     /** Location to range, used by all Tree generators */
     static LocRange = (loc?: AST.SourceLocation): AST.Range | undefined =>
-        loc ? [(loc.start ?? loc.end)?.index ?? 0, (loc.end ?? loc.start)?.index ?? 0] : undefined;
+        loc
+            ? [
+                  (loc.start ?? loc.end)?.index ?? 0,
+                  (loc.end ?? loc.start)?.index ?? 0,
+              ]
+            : undefined;
 
     /** Update target node location and range */
     static LocUpdate = (node: AST.Node, loc: AST.SourceLocation) => {
@@ -16,11 +38,21 @@ export class SQTree {
     };
 
     /** Location starts at `from` and ends at `to`, where available */
-    static LocSpan = (from: AST.SourceLocation, to?: AST.SourceLocation): AST.SourceLocation | undefined =>
-        (from || to) ? this.SourceLocation(from?.start ?? to.start, to?.end ?? from.end) : undefined;
+    static LocSpan = (
+        from: AST.SourceLocation,
+        to?: AST.SourceLocation,
+    ): AST.SourceLocation | undefined =>
+        from || to
+            ? this.SourceLocation(from?.start ?? to.start, to?.end ?? from.end)
+            : undefined;
 
-    static LocDefault = (loc: AST.SourceLocation, from: AST.SourceLocation, to?: AST.SourceLocation): AST.SourceLocation | undefined =>
-        loc ? loc : this.LocSpan(from, to);
+    static LocDefault = (
+        loc: AST.SourceLocation,
+        from: AST.Node,
+        to?: AST.Node,
+    ): AST.SourceLocation | undefined => {
+        return loc ? loc : this.LocSpan(GetFullLoc(from), GetFullLoc(to));
+    };
 
     // ---------------------------------------------
 
@@ -122,9 +154,7 @@ export class SQTree {
         range: this.LocRange(loc),
     });
 
-    static NullLiteral = (
-        loc?: AST.SourceLocation,
-    ): AST.NullLiteral => ({
+    static NullLiteral = (loc?: AST.SourceLocation): AST.NullLiteral => ({
         type: "NullLiteral",
         value: null,
         raw: "null",
@@ -156,20 +186,20 @@ export class SQTree {
         expression: AST.Expression,
         loc?: AST.SourceLocation,
     ): AST.ExpressionStatement => {
-        loc = this.LocDefault(loc, expression?.loc);
+        loc = this.LocDefault(loc, expression);
         return {
             type: "ExpressionStatement",
             expression,
             loc: loc,
             range: this.LocRange(loc),
         };
-    }
+    };
 
     static Directive = (
         expression: AST.StringLiteral,
         loc?: AST.SourceLocation,
     ): AST.Directive => {
-        loc = this.LocDefault(loc, expression?.loc);
+        loc = this.LocDefault(loc, expression);
         return {
             type: "ExpressionStatement",
             expression,
@@ -177,7 +207,7 @@ export class SQTree {
             loc: loc,
             range: this.LocRange(loc),
         };
-    }
+    };
 
     static BlockStatement = (
         body: AST.Statement[] = [],
@@ -189,9 +219,7 @@ export class SQTree {
         range: this.LocRange(loc),
     });
 
-    static EmptyStatement = (
-        loc?: AST.SourceLocation,
-    ): AST.EmptyStatement => ({
+    static EmptyStatement = (loc?: AST.SourceLocation): AST.EmptyStatement => ({
         type: "EmptyStatement",
         loc,
         range: this.LocRange(loc),
@@ -210,9 +238,7 @@ export class SQTree {
         range: this.LocRange(loc),
     });
 
-    static BreakStatement = (
-        loc?: AST.SourceLocation,
-    ): AST.BreakStatement => ({
+    static BreakStatement = (loc?: AST.SourceLocation): AST.BreakStatement => ({
         type: "BreakStatement",
         loc,
         range: this.LocRange(loc),
@@ -409,7 +435,7 @@ export class SQTree {
         init: AST.Node = null,
         loc?: AST.SourceLocation,
     ): AST.VariableDeclarator => {
-        loc = this.LocDefault(loc, id?.loc, init?.loc);
+        loc = this.LocDefault(loc, id, init);
         return {
             type: "VariableDeclarator",
             id,
@@ -436,7 +462,7 @@ export class SQTree {
         init: AST.EnumLiteral,
         loc?: AST.SourceLocation,
     ): AST.EnumMember => {
-        loc = this.LocDefault(loc, id?.loc, init?.loc);
+        loc = this.LocDefault(loc, id, init);
         return {
             type: "EnumMember",
             id,
@@ -449,9 +475,7 @@ export class SQTree {
     // ----------------------------------------------
     // Expressions
 
-    static ThisExpression = (
-        loc?: AST.SourceLocation,
-    ): AST.ThisExpression => ({
+    static ThisExpression = (loc?: AST.SourceLocation): AST.ThisExpression => ({
         type: "ThisExpression",
         loc,
         range: this.LocRange(loc),
@@ -571,7 +595,7 @@ export class SQTree {
         right: AST.Expression,
         loc?: AST.SourceLocation,
     ): AST.BinaryExpression => {
-        loc = this.LocDefault(loc, left?.loc, right?.loc);
+        loc = this.LocDefault(loc, left, right);
         return {
             type: "BinaryExpression",
             left,
@@ -588,7 +612,7 @@ export class SQTree {
         right: AST.Node,
         loc?: AST.SourceLocation,
     ): AST.AssignmentExpression => {
-        loc = this.LocDefault(loc, left?.loc, right?.loc);
+        loc = this.LocDefault(loc, left, right);
         return {
             type: "AssignmentExpression",
             left,
@@ -605,7 +629,7 @@ export class SQTree {
         right: AST.Expression,
         loc?: AST.SourceLocation,
     ): AST.LogicalExpression => {
-        loc = this.LocDefault(loc, left?.loc, right?.loc);
+        loc = this.LocDefault(loc, left, right);
         return {
             type: "LogicalExpression",
             left,
@@ -623,7 +647,7 @@ export class SQTree {
         root: boolean = false, // SPECIAL: root usually appears in memberExpressions [::, name]
         loc?: AST.SourceLocation,
     ): AST.MemberExpression => {
-        loc = this.LocDefault(loc, object?.loc, property?.loc);
+        loc = this.LocDefault(loc, object, property);
         return {
             type: "MemberExpression",
             object,
@@ -641,7 +665,7 @@ export class SQTree {
         alternate: AST.Expression,
         loc?: AST.SourceLocation,
     ): AST.ConditionalExpression => {
-        loc = this.LocDefault(loc, test?.loc, alternate?.loc);
+        loc = this.LocDefault(loc, test, alternate);
         return {
             type: "ConditionalExpression",
             test,
@@ -677,9 +701,7 @@ export class SQTree {
     // ---------------------------------------------
     // Patterns
 
-    static RestElement = (
-        loc?: AST.SourceLocation,
-    ): AST.RestElement => ({
+    static RestElement = (loc?: AST.SourceLocation): AST.RestElement => ({
         type: "RestElement",
         loc,
         range: this.LocRange(loc),
@@ -690,7 +712,7 @@ export class SQTree {
         right: AST.Expression,
         loc?: AST.SourceLocation,
     ): AST.AssignmentPattern => {
-        loc = this.LocDefault(loc, left?.loc, right?.loc);
+        loc = this.LocDefault(loc, left, right);
         return {
             type: "AssignmentPattern",
             left,
@@ -726,7 +748,7 @@ export class SQTree {
         value,
         computed,
         static: isstatic,
-        attributes,
+        attributes: attrOrNull(attributes),
         loc,
         range: this.LocRange(loc),
     });
@@ -744,7 +766,7 @@ export class SQTree {
         key,
         value,
         static: isstatic,
-        attributes,
+        attributes: attrOrNull(attributes),
         loc,
         range: this.LocRange(loc),
     });
@@ -760,7 +782,7 @@ export class SQTree {
         id,
         body,
         superClass,
-        attributes,
+        attributes: attrOrNull(attributes),
         loc,
         range: this.LocRange(loc),
     });
@@ -775,7 +797,7 @@ export class SQTree {
         id: null,
         body,
         superClass,
-        attributes,
+        attributes: attrOrNull(attributes),
         loc,
         range: this.LocRange(loc),
     });

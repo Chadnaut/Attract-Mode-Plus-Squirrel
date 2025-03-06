@@ -14,7 +14,7 @@ describe("Snippets", () => {
     it("loadSnippets, none", () => {
         const filename = path.join(__dirname, "../samples/snippets/bad-filename.code-snippets");
         const snippets = loadSnippets(filename);
-        expect(snippets.length).toBe(0);
+        expect(snippets).toHaveLength(0);
     });
 
 });
