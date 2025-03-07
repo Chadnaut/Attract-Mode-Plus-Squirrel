@@ -28,4 +28,35 @@ describe("Attribute", () => {
         expect(response).toBe("class foo {\n    </ a = 1 />\n    function x() {}\n}\n");
     });
 
+    // -------------------------------------------------------------------------
+
+    it("Class Comments", async () => {
+        const response = await format(" class foo /*1*/ </ /*2*/ a=1 /*3*/ /> /*4*/ {} ");
+        expect(response).toBe("class foo /*1*/ </ /*2*/ a = 1 /*3*/ /> /*4*/ {}\n");
+    });
+
+    it("Func Comments", async () => {
+        const response = await format(" class foo { /*1*/ </ /*2*/ a=1 /*3*/ /> /*4*/\n function x() {} } ");
+        expect(response).toBe("class foo {\n    /*1*/ </ /*2*/ a = 1 /*3*/ /> /*4*/\n    function x() {}\n}\n");
+    });
+
+    it("Prop Comments", async () => {
+        const response = await format(" class foo { /*1*/ </ /*2*/ a=1 /*3*/ /> /*4*/\n x = 1 } ");
+        expect(response).toBe("class foo {\n    /*1*/ </ /*2*/ a = 1 /*3*/ /> /*4*/\n    x = 1;\n}\n");
+    });
+
+    // -------------------------------------------------------------------------
+
+    it("Attr multi line", async () => {
+        const options = { attrSingleLine: false };
+        const response = await format('class foo { </ aaaaaaaaaaaaa = 1, bbbbbbbbbbbbb = 2, ccccccccccccc = 3, ddddddddddddd = 4 /> function bar() {} }', options);
+        expect(response).toBe('class foo {\n    </\n        aaaaaaaaaaaaa = 1,\n        bbbbbbbbbbbbb = 2,\n        ccccccccccccc = 3,\n        ddddddddddddd = 4\n    />\n    function bar() {}\n}\n');
+    });
+
+    it("Attr single line", async () => {
+        const options = { attrSingleLine: true };
+        const response = await format('class foo { </ aaaaaaaaaaaaa = 1, bbbbbbbbbbbbb = 2, ccccccccccccc = 3, ddddddddddddd = 4 /> function bar() {} }', options);
+        expect(response).toBe('class foo {\n    </ aaaaaaaaaaaaa = 1, bbbbbbbbbbbbb = 2, ccccccccccccc = 3, ddddddddddddd = 4 />\n    function bar() {}\n}\n');
+    });
+
 });

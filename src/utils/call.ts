@@ -19,6 +19,19 @@ type nodeCallData = {
 };
 
 /**
+ * Returns branch ending in CallExpression, may use def
+ */
+export const getNodeCall = (branch: AST.Node[]): AST.Node[] => {
+    if (branch.at(-1).type === "CallExpression") return branch;
+    const def = getNodeDef(branch);
+    if (!def.length) return [];
+    const node = <AST.VariableDeclarator>def.at(-1);
+    if (node.type !== "VariableDeclarator") return [];
+    if (node.init.type !== "CallExpression") return [];
+    return def.concat([node.init]);
+}
+
+/**
  * Return call definition node, plus the parameter index at pos
  * - Requires documentText in case pos is between params
  * - Since we don`t know if pos is before/after comma

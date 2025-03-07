@@ -100,6 +100,7 @@ export const createDocMarkdown = (
             case "ignore":
             case "class":
             case "alias":
+            case "lends":
             case "type":
             case "enum":
                 // do not display these attributes

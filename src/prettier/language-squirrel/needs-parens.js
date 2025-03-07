@@ -22,6 +22,8 @@ import {
  * @typedef {import("../common/ast-path.js").default} AstPath
  */
 
+const parensMap = new WeakSet();
+
 /**
  * @param {AstPath} path
  * @returns {boolean}
@@ -34,7 +36,13 @@ function needsParens(path, options) {
   const { node, key, parent } = path;
 
   // SQUIRREL
-  if (!options.reduceParens && node.extra?.parenthesized) return true;
+  // - force parentheses if option is set and node originally had them
+  // - NOTE: only adds a single set - multiple sets ignored
+  if (parensMap.has(node)) return false;
+  if (!options.test) {
+    parensMap.add(node);
+    if (!options.reduceParens && node.extra?.parenthesized) return true;
+  }
 
   // to avoid unexpected `}}` in HTML interpolations
   if (

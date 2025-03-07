@@ -10,6 +10,7 @@ import {
     getNodeSymbols,
     filterRootSymbols,
     filterOverloadedSymbols,
+    getNodeAugmentSymbols,
 } from "./symbol";
 import {
     CompletionItem,
@@ -31,11 +32,11 @@ import { getSuperDefs } from "./super";
 import { getNodeSignature } from "./signature";
 import { adjustDocPos } from "./location";
 import { addRootPrefix, nodeHasRootPrefix, removeRootPrefix } from "./root";
-import * as path from "path";
 import { getNodeDef, getNodeVal } from "./definition";
 import { stringToNode } from "./create";
 import { isValidName } from "./identifier";
 import constants from "../constants";
+import * as path from "path";
 
 export const uniqueCompletions = (
     completions: CompletionItem[],
@@ -96,7 +97,9 @@ export const getCompletions = (branch: AST.Node[]): CompletionItem[] => {
 export const getMemberCompletions = (branch: AST.Node[]): CompletionItem[] => {
     const node = branch.at(-1);
     if (!node) return [];
-    let symbols = getNodeExtendedSymbols(branch);
+    let symbols = getNodeAugmentSymbols(branch).concat(
+        getNodeExtendedSymbols(branch),
+    );
     symbols = filterOverloadedSymbols(symbols);
     symbols = filterMetaSymbols(symbols);
     symbols = filterAllowedSymbols(symbols, node);

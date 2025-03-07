@@ -21,7 +21,8 @@ function printEnumMember(path, options, print) {
   let idDoc = print("id");
 
   if (node.computed) {
-    idDoc = ["[", idDoc, "]"];
+    const space = options.computedPropertySpacing ? " " : "";
+    idDoc = ["[", space, idDoc, space, "]"];
   }
 
   let initializerDoc = "";

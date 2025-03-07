@@ -57,7 +57,8 @@ function getCommentChildNodes(node, options) {
     !isNonEmptyArray(node.value.typeParameters) &&
     node.value.body
   ) {
-    return [...(node.decorators || []), node.key, node.value.body];
+    // return attributes prop so it can have comments added to it
+    return [...(node.decorators || []), node.key, node.value.body, ...(node.attributes ? [node.attributes] : [])];
   }
 }
 

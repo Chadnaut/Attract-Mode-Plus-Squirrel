@@ -55,12 +55,12 @@ function printMemberLookup(path, options, print) {
     return [node.extra.root ? "::" : ".", property];
   }
 
+  const space = options.computedPropertySpacing ? " " : "";
   if (!node.property || isNumericLiteral(node.property)) {
-    const spacing = options.computedPropertySpacing ? " " : "";
-    return ["[", spacing, property, spacing, "]"];
+    return ["[", space, property, space, "]"];
   }
 
-  return group(["[", indent([softline, property]), softline, "]"]);
+  return group(["[", space, indent([softline, property]), softline, space, "]"]);
 }
 
 export { printMemberExpression, printMemberLookup };

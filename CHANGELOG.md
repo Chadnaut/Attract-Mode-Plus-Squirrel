@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.9.11] - 2025-03-07
+
+### Added
+
+- Setting to prevent attribute wrapping
+- Docblock augments attribute for completion forwarding
+
+### Changed
+
+- VSCode minimum version bumped to 1.70.0
+
+### Fixed
+
+- Formatter keeps even more parentheses
+- Comment formatting inside attributes
+
 ## [0.9.10] - 2025-03-06
 
 ### Added

@@ -124,9 +124,9 @@ function shouldQuotePropertyKey(path, options) {
 function printPropertyKey(path, options, print) {
   const { node } = path;
 
-  const spacing = options.computedPropertySpacing ? " " : "";
   if (node.computed) {
-    return ["[", spacing, print("key"), spacing, "]"];
+    const space = options.computedPropertySpacing ? " " : "";
+    return ["[", space, print("key"), space, "]"];
   }
 
   const { parent } = path;

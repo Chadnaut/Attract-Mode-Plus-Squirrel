@@ -19,8 +19,9 @@ export const getSuperDef = (
     const nodeDef = getNodeDef(branch);
     if (!isClassDef(nodeDef)) return [];
     const nodeVal = getNodeVal(nodeDef);
-    const superBranch = nodeVal.concat([(<AST.ClassDeclaration>nodeVal.at(-1)).superClass]);
-    const superDef = getNodeDef(superBranch, stack);
+    const superNode = (<AST.ClassDeclaration>nodeVal.at(-1)).superClass;
+    if (!superNode) return [];
+    const superDef = getNodeDef(nodeVal.concat([superNode]), stack);
     if (!isClassDef(superDef)) return [];
     return superDef;
 };

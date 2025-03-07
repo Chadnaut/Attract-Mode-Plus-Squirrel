@@ -2,7 +2,7 @@
     "name": "am-squirrel",
     "displayName": "AM+ Squirrel",
     "description": "Squirrel for Attract-Mode Plus.",
-    "version": "0.9.10",
+    "version": "0.9.11",
     "license": "MIT",
     "publisher": "Chadnaut",
     "author": {
@@ -56,7 +56,7 @@
         "package": "vsce package"
     },
     "engines": {
-        "vscode": "^1.69.1"
+        "vscode": "^1.70.0"
     },
     "main": "./dist/extension.js",
     "activationEvents": [
@@ -263,7 +263,7 @@
                         },
                         "attrSpacing": {
                             "type": "boolean",
-                            "description": "Spaces between attribute operator."
+                            "description": "Spaces between attribute assignment."
                         },
                         "condenseParens": {
                             "type": "boolean",
@@ -272,6 +272,10 @@
                         "reduceParens": {
                             "type": "boolean",
                             "description": "Remove unnecessary parentheses."
+                        },
+                        "attrSingleLine": {
+                            "type": "boolean",
+                            "description": "Prevent attribute wrapping."
                         },
                         "semi": {
                             "type": "boolean",
@@ -290,6 +294,7 @@
                         "attrSpacing": false,
                         "condenseParens": false,
                         "reduceParens": true,
+                        "attrSingleLine": false,
                         "semi": true,
                         "useTabs": false
                     }
@@ -432,7 +437,7 @@
     },
     "devDependencies": {
         "@types/jest": "^29.5.14",
-        "@types/vscode": "=1.69.1",
+        "@types/vscode": "=1.70.0",
         "babel-jest": "^29.7.0",
         "cross-env": "^7.0.3",
         "esbuild": "^0.25.0",
@@ -445,7 +450,7 @@
         "typescript": "^5.8.2"
     },
     "overrides": {
-        "@types/vscode": "=1.69.1"
+        "@types/vscode": "=1.70.0"
     },
     "dependencies": {
         "jest-docblock": "^29.7.0",

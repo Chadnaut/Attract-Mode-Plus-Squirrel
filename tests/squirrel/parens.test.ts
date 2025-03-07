@@ -1,15 +1,8 @@
-import {
-    beforeEach,
-    describe,
-    fdescribe,
-    expect,
-    it,
-    fit,
-} from "@jest/globals";
+import { describe, expect, it } from "@jest/globals";
 import { parse, lineLoc, dump } from "../utils";
 import { SQTree as qt } from "../../src/ast";
 
-describe("Parensthesis", () => {
+describe("Parenthesis", () => {
 
     it("Single", () => {
         const response = parse("(1)");
@@ -20,6 +13,51 @@ describe("Parensthesis", () => {
             }, lineLoc(0, 3))],
             [],
             lineLoc(0, 3)
+        ));
+    });
+
+    it("Nested", () => {
+        const response = parse("(((1)+2)+3)");
+        expect(response).toEqual(qt.Program(
+            [qt.ExpressionStatement(
+                {...qt.BinaryExpression("+",
+                    {...qt.BinaryExpression("+",
+                        {...qt.IntegerLiteral(1, "1", lineLoc(3, 4)),
+                            extra: { parenthesized: true }},
+                        qt.IntegerLiteral(2, "2", lineLoc(6, 7)),
+                        lineLoc(2, 7)
+                    ), extra: { parenthesized: true }},
+                    qt.IntegerLiteral(3, "3", lineLoc(9, 10)),
+                    lineLoc(1, 10)
+                ), extra: { parenthesized: true }},
+                lineLoc(0, 11)
+            )],
+            [],
+            lineLoc(0, 11)
+        ));
+    });
+
+    it("Sequential", () => {
+        const response = parse("((1+2)+(3+4))");
+        expect(response).toEqual(qt.Program(
+            [qt.ExpressionStatement(
+                {...qt.BinaryExpression("+",
+                    {...qt.BinaryExpression("+",
+                        qt.IntegerLiteral(1, "1", lineLoc(2, 3)),
+                        qt.IntegerLiteral(2, "2", lineLoc(4, 5)),
+                        lineLoc(2, 5)
+                    ), extra: { parenthesized: true }},
+                    {...qt.BinaryExpression("+",
+                        qt.IntegerLiteral(3, "3", lineLoc(8, 9)),
+                        qt.IntegerLiteral(4, "4", lineLoc(10, 11)),
+                        lineLoc(8, 11)
+                    ), extra: { parenthesized: true }},
+                    lineLoc(1, 12)
+                ), extra: { parenthesized: true }},
+                lineLoc(0, 13)
+            )],
+            [],
+            lineLoc(0, 13)
         ));
     });
 

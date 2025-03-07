@@ -23,6 +23,8 @@ import {
   isObjectProperty,
   shouldFlatten,
 } from "../utils/index.js";
+import { startSpace, endSpace } from "../utils/get-space.js";
+import pathNeedsParens from "../needs-parens.js";
 
 /** @typedef {import("../../document/builders.js").Doc} Doc */
 
@@ -294,6 +296,12 @@ function printBinaryishExpressions(
     lineBeforeOperator ? "" : " ",
     shouldGroup ? group(right, { shouldBreak }) : right,
   );
+
+  // SQUIRREL
+  // - wrap binaryexp in parentheses as necessary
+  if (!pathNeedsParens(path, { ...options, test: true }) && pathNeedsParens(path, options)) {
+    parts = ["", "(", startSpace(parts, options), ...parts, endSpace(parts, options), ")"]; // SQ
+  }
 
   // The root comments are already printed, but we need to manually print
   // the other ones since we don't call the normal print on BinaryExpression,

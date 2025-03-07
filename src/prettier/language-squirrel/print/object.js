@@ -107,13 +107,15 @@ function printObject(path, options, print) {
   const leftBrace =
     node.attributes ? "</" : node.type === "RecordExpression" ? "#{" : node.exact ? "{|" : "{";
   const rightBrace = node.attributes ? "/>" : node.exact ? "|}" : "}";
-  const spacing = (options.objectCurlySpacing || node.attributes) ? line : softline;
+  const space = node.attributes ? (options.attrSingleLine ? " " : line) : (options.objectCurlySpacing ? line : softline);
+  const partLine = node.attributes ? (options.attrSingleLine ? " " : line) : line;
+  const partHardline = node.attributes ? (options.attrSingleLine ? " " : hardline) : hardline;
 
   /** @type {Doc[]} */
   let separatorParts = [];
   const props = propsAndLoc.map((prop) => {
     const result = [...separatorParts, group(prop.printed)];
-    separatorParts = [separator, line];
+    separatorParts = [separator, partLine];
     if (
       (prop.node.type === "TSPropertySignature" ||
         prop.node.type === "TSMethodSignature" ||
@@ -124,7 +126,7 @@ function printObject(path, options, print) {
       separatorParts.shift();
     }
     if (isNextLineEmpty(prop.node, options)) {
-      separatorParts.push(hardline);
+      separatorParts.push(partHardline);
     }
     return result;
   });
@@ -181,14 +183,14 @@ function printObject(path, options, print) {
         ? printHardlineAfterHeritage(parent)
         : "",
       leftBrace,
-      indent([spacing, ...props]),
+      indent([space, ...props]),
       ifBreak(
         canHaveTrailingSeparator &&
           (separator !== "," || shouldPrintComma(options))
           ? separator
           : "",
       ),
-      spacing,
+      space,
       rightBrace,
     ];
   }

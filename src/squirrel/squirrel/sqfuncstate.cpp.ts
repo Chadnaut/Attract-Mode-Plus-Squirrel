@@ -445,7 +445,7 @@ export class SQFuncState extends SQFuncStateStruct {
                 const computed = !!(_arg0 & NEW_SLOT_COMPUTED_FLAG);
                 const method = !!(_arg0 & NEW_SLOT_METHOD_FLAG);
                 const attributes = hasattrs ? <AST.ObjectExpression>this.PopNode() : null;
-                const loc = qt.LocSpan(_arg4, GetFullLoc(value ?? key));
+                const loc = qt.LocSpan(attributes ? GetFullLoc(attributes) : _arg4, GetFullLoc(value ?? key));
                 let prop;
 
                 if (method) {

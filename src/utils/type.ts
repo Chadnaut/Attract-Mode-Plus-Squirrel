@@ -38,7 +38,6 @@ export const getNodeInstanceType = (
         isArr = !!nodeId.length;
     }
 
-    // if (!nodeId.length) nodeId = addBranchId(getNodeDef(nodeVal));
     if (!nodeId.length) nodeId = addBranchId(getNodeDef(branch));
 
     // @param {type}, and @type force the type
@@ -48,6 +47,7 @@ export const getNodeInstanceType = (
         getDocAttr(getNodeDoc(addBranchId(nodeVal)), "type");
 
     if (attr) {
+        // create a node, used to find typedef classes
         const n = attrToNode(attr, true);
         if (n) {
             const attrBranch = [program, n];
@@ -77,7 +77,8 @@ export const getNodeInstanceType = (
 /**
  * Get node type definition-node
  * - Used to provide type members, such as "string".len()
- * - Type-def declaration must @lend itself for use
+ * - Class must @lends itself for use
+ * - Class id must match the node its defining (simpler to find)
  */
 export const getNodeTypeDef = (branch: AST.Node[]): AST.Node[] => {
     const type = getNodeInstanceType(branch);

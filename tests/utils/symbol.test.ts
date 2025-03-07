@@ -1,9 +1,9 @@
 import { describe, expect, it } from "@jest/globals";
 import { parseExtra as parse, dump, lineLoc, pos } from "../utils";
-import { Position, SymbolKind } from "vscode";
-import { getNodeSymbols, getAncestorSymbols, getNodeExtendedSymbols, getNodeSymbol } from "../../src/utils/symbol";
+import { SymbolKind } from "vscode";
+import { getNodeSymbols, getAncestorSymbols, getNodeExtendedSymbols, getNodeSymbol, getNodeAugmentSymbols } from "../../src/utils/symbol";
 import { AST, SQTree as qt } from "../../src/ast";
-import { getNodeAtPos, getBranchAtPos } from "../../src/utils/find";
+import { getBranchAtPos } from "../../src/utils/find";
 import { createNodeMaps } from "../../src/utils/map";
 import { addBranchId } from "../../src/utils/identifier";
 
@@ -218,5 +218,47 @@ describe("Symbol", () => {
         const dc = qt.VariableDeclaration("const", [dr]);
         createNodeMaps(dc);
         expect(getNodeSymbol([id])?.kind).toBe(SymbolKind.Constant);
+    });
+
+    it("getNodeAugmentSymbols", () => {
+        const program = parse(`class foo { function bar() {} } class moo { /** @augments a */ constructor(a) {} } moo(foo())`);
+        const branch = getBranchAtPos(program, pos(85)).slice(0, -1);
+        expect(getNodeAugmentSymbols(branch)).toHaveLength(1);
+    });
+
+    it("getNodeAugmentSymbols, no param", () => {
+        const program = parse(`class foo { function bar() {} } class moo { /** @augments a */ constructor() {} } moo(foo())`);
+        const branch = getBranchAtPos(program, pos(84)).slice(0, -1);
+        expect(getNodeAugmentSymbols(branch)).toHaveLength(0);
+    });
+
+    it("getNodeAugmentSymbols, no arg", () => {
+        const program = parse(`class foo { function bar() {} } class moo { /** @augments a */ constructor(a) {} } moo()`);
+        const branch = getBranchAtPos(program, pos(85)).slice(0, -1);
+        expect(getNodeAugmentSymbols(branch)).toHaveLength(0);
+    });
+
+    it("getNodeAugmentSymbols, no augments", () => {
+        const program = parse(`class foo { function bar() {} } class moo { constructor(a) {} } moo(foo())`);
+        const branch = getBranchAtPos(program, pos(66)).slice(0, -1);
+        expect(getNodeAugmentSymbols(branch)).toHaveLength(0);
+    });
+
+    it("getNodeAugmentSymbols, no constructor", () => {
+        const program = parse(`class foo { function bar() {} } class moo {} moo(foo())`);
+        const branch = getBranchAtPos(program, pos(47)).slice(0, -1);
+        expect(getNodeAugmentSymbols(branch)).toHaveLength(0);
+    });
+
+    it("getNodeAugmentSymbols, no call", () => {
+        const program = parse(`class foo {} foo`);
+        const branch = getBranchAtPos(program, pos(15));
+        expect(getNodeAugmentSymbols(branch)).toHaveLength(0);
+    });
+
+    it("getNodeAugmentSymbols, not class", () => {
+        const program = parse(`moo()`);
+        const branch = getBranchAtPos(program, pos(2));
+        expect(getNodeAugmentSymbols(branch)).toHaveLength(0);
     });
 });

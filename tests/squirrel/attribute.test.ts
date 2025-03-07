@@ -114,7 +114,7 @@ describe("Attribute", () => {
                                 lineLoc(15, 18)
                             )
                         ], true, lineLoc(13, 20)),
-                        lineLoc(21, 26)
+                        lineLoc(13, 26)
                     )
                 ], lineLoc(11, 29)),
                 null,
@@ -152,7 +152,7 @@ describe("Attribute", () => {
                                 lineLoc(15, 18)
                             )
                         ], true, lineLoc(13, 20)),
-                        lineLoc(21, 36)
+                        lineLoc(13, 36)
                     )
                 ], lineLoc(11, 38)),
                 null,

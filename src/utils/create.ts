@@ -7,21 +7,23 @@ import { updateNodeTokenFromType } from "./token";
 
 /**
  * Attempt to create a node representing the given string
- * - Does NOT attach it to the program
+ * - Returns a single node - string cannot be multi-node `a | b`
+ * - Does NOT attach the new node to the program
+ * - Used for doc @type returns, which informs definition, which is used for completions
  */
 export const stringToNode = (
     value: string,
     loc?: SourceLocation,
 ): AST.Node | undefined => {
     if (!value) return;
-    const parts = value.split(".");
+    const members = value.trim().split(".");
+    let member;
     let node: AST.Node;
 
-    while (parts.length) {
-        const name = parts.shift();
-        const type = squirrelToNodeType(<SquirrelType>name);
-        const prop = type ? <AST.Node>{ type } : qt.Identifier(name);
-        if (type) updateNodeTokenFromType(prop, <SquirrelType>name);
+    while (( member = members.shift() )) {
+        const type = squirrelToNodeType(<SquirrelType>member);
+        const prop = type ? <AST.Node>{ type } : qt.Identifier(member);
+        if (type) updateNodeTokenFromType(prop, <SquirrelType>member);
         node = node ? qt.MemberExpression(node, prop) : prop;
     }
 

@@ -120,12 +120,12 @@ function printArray(path, options, print) {
           : shouldUseConciseFormatting
             ? ifBreak(",", "", { groupId })
             : ifBreak(",");
-    const spacing = options.arrayBracketSpacing ? " " : "";
+    const space = options.arrayBracketSpacing ? " " : "";
     parts.push(
       group(
         [
           openBracket,
-          spacing,
+          space,
           indent([
             softline,
             shouldUseConciseFormatting
@@ -142,7 +142,7 @@ function printArray(path, options, print) {
                 ],
             printDanglingComments(path, options),
           ]),
-          spacing,
+          space,
           softline,
           closeBracket,
         ],

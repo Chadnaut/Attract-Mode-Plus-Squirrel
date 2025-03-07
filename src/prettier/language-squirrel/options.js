@@ -64,6 +64,13 @@ const options = {
     description: "Remove unnecessary parentheses.",
     oppositeDescription: "Do not remove unnecessary parentheses.",
   },
+  attrSingleLine: {
+    category: CATEGORY_SQUIRREL,
+    type: "boolean",
+    default: false,
+    description: "Prevent attribute wrapping.",
+    oppositeDescription: "Allow attribute wrapping.",
+  },
   spaceInParens: {
     category: CATEGORY_SQUIRREL,
     type: "boolean",

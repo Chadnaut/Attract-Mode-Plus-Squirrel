@@ -1,6 +1,6 @@
-import { AST, SQTree as qt } from "../ast";
+import { AST } from "../ast";
 import { getDocAttr, getNodeDoc } from "../doc/find";
-import { attrToNode, stringToNode } from "./create";
+import { attrToNode } from "./create";
 import { createNodeMaps } from "./map";
 import { getBranchClassDef, getBranchProgram } from "./find";
 import { addBranchId } from "./identifier";

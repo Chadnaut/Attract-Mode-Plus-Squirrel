@@ -124,6 +124,23 @@ f.alpha(); // `alpha` will not appear as a completion
 f.beta();
 ```
 
+## Wrappers
+
+Sometimes a Class will be used as a wrapper to provide additional functionality for a built-in element. The following attributes can be useful to forward the passed elements completions. NOTE: The `_get` and `_set` forwarding must be implemented by the Class.
+
+- `@augments {param}` - The parameter whose definition will be forwarded as Class completions.
+
+```ts
+class Foo {
+    /**
+     * @augments element The named arg provides completions for this class
+     */
+    constructor(element) {}
+
+    // Forwarding implementation here
+}
+```
+
 ## Snippets
 
 DocBlocks can be used to create snippets, which are completions that insert pre-defined text.
