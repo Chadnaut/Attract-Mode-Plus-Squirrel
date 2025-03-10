@@ -312,9 +312,9 @@ function printLambdaFunctionBody(
     return [
       " ",
       group([
-        ifBreak("", ["(", startSpace(bodyDoc, options)]),
+        // ifBreak("", ["(", startSpace(bodyDoc, options)]),
         indent([softline, bodyDoc]),
-        ifBreak("", [endSpace(bodyDoc, options), ")"]),
+        // ifBreak("", [endSpace(bodyDoc, options), ")"]),
         trailingComma,
         trailingSpace,
       ]),

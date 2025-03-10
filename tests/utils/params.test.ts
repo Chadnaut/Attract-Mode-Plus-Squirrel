@@ -1,10 +1,34 @@
-import { getNodeCallParamInfo, getNodeParamInfo, getNodeParams, getParamCompletionItems, isRestNode, setRestNode } from '../../src/utils/params';
+import { getNodeCallParamInfo, getNodeParamInfo, getNodeParams, getParamSuggestions, getParamSymbols, isRestNode, setRestNode } from '../../src/utils/params';
 import { describe, expect, it } from "@jest/globals";
-import { dump, parseExtra as parse, pos } from "../utils";
+import { dump, parseExtra as parse, parseForce, pos } from "../utils";
 import { SQTree as qt } from "../../src/ast";
 import { getBranchAtPos } from '../../src/utils/find';
 
 describe("Params", () => {
+
+    it("getParamSymbols", () => {
+        const program = parse('function foo(a) {}');
+        const n = getBranchAtPos(program, pos(14));
+        const params = getParamSymbols(n);
+        expect(params).toHaveLength(1);
+        expect(params[0].documentation).toBeUndefined();
+    });
+
+    it("getParamSymbols, incomplete", () => {
+        const program = parseForce('function foo(a)');
+        const n = getBranchAtPos(program, pos(14));
+        const params = getParamSymbols(n);
+        expect(params).toHaveLength(1);
+        expect(params[0].documentation).toBeUndefined();
+    });
+
+    it("getParamSymbols, info", () => {
+        const program = parse('/** @param {integer} a Here */ function foo(a) {}');
+        const n = getBranchAtPos(program, pos(45));
+        const params = getParamSymbols(n);
+        expect(params).toHaveLength(1);
+        expect(params[0].documentation).toBe("Here");
+    });
 
     it("getNodeParams, None", () => {
         const program = parse('function foo() {}');
@@ -130,55 +154,55 @@ describe("Params", () => {
 
     // -------------------------------------------------------------------------
 
-    it("getParamCompletionItems, invalid", () => {
+    it("getParamSuggestions, invalid", () => {
         const text = "identifier";
         const program = parse(text);
-        const items = getParamCompletionItems(text, program, pos(5));
+        const items = getParamSuggestions(text, program, pos(5));
         expect(items).toHaveLength(0);
     });
 
-    it("getParamCompletionItems, array", () => {
+    it("getParamSuggestions, array", () => {
         const text = `local arr=["a","b","c"]; /** @param {string(=arr)} a */ function foo(a) {}; foo("");`;
         const program = parse(text);
-        const items = getParamCompletionItems(text, program, pos(81));
+        const items = getParamSuggestions(text, program, pos(81));
         expect(items).toHaveLength(3);
     });
 
-    it("getParamCompletionItems, array missing", () => {
+    it("getParamSuggestions, array missing", () => {
         const text = `/** @param {string(=arr)} a */ function foo(a) {}; foo("");`;
         const program = parse(text);
-        const items = getParamCompletionItems(text, program, pos(56));
+        const items = getParamSuggestions(text, program, pos(56));
         expect(items).toHaveLength(0);
     });
 
-    it("getParamCompletionItems, FunctionDeclaration, none", () => {
+    it("getParamSuggestions, FunctionDeclaration, none", () => {
         const text = "function foo(a) {}; foo(10);";
         const program = parse(text);
-        const items = getParamCompletionItems(text, program, pos(25));
+        const items = getParamSuggestions(text, program, pos(25));
         expect(items).toHaveLength(0);
     });
 
-    it("getParamCompletionItems, FunctionExpression, none", () => {
+    it("getParamSuggestions, FunctionExpression, none", () => {
         const text = "local foo = function(a) {}; foo(10);";
         const program = parse(text);
-        const items = getParamCompletionItems(text, program, pos(33));
+        const items = getParamSuggestions(text, program, pos(33));
         expect(items).toHaveLength(0);
     });
 
-    it("getParamCompletionItems, FunctionDeclaration, options", () => {
+    it("getParamSuggestions, FunctionDeclaration, options", () => {
         const text = "/** @param {(z|y|x)} a */ function foo(a) {}; foo(10);";
         const program = parse(text);
-        const items = getParamCompletionItems(text, program, pos(51));
+        const items = getParamSuggestions(text, program, pos(51));
         expect(items).toHaveLength(3);
         expect(items[0].label).toEqual({ label: "z" });
         expect(items[1].label).toEqual({ label: "y" });
         expect(items[2].label).toEqual({ label: "x" });
     });
 
-    it("getParamCompletionItems, FunctionExpression, options", () => {
+    it("getParamSuggestions, FunctionExpression, options", () => {
         const text = "/** @param {(z|y|x)} a */ local foo = function(a) {}; foo(10);";
         const program = parse(text);
-        const items = getParamCompletionItems(text, program, pos(59));
+        const items = getParamSuggestions(text, program, pos(59));
         expect(items).toHaveLength(3);
         expect(items[0].label).toEqual({ label: "z" });
         expect(items[1].label).toEqual({ label: "y" });

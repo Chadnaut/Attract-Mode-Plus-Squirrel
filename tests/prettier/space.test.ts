@@ -41,6 +41,18 @@ describe("Space", () => {
         expect(response).toBe('if ((true));\n');
     });
 
+    it("Reduce Parens Lambda", async () => {
+        const options = { reduceParens: true };
+        const response = await format('@(x) ((x ? 1 : -1))', options);
+        expect(response).toBe('@(x) x ? 1 : -1\n');
+    });
+
+    it("No Reduce Parens Lambda", async () => {
+        const options = { reduceParens: false };
+        const response = await format('@(x) ((x ? 1 : -1))', options);
+        expect(response).toBe('@(x) (x ? 1 : -1)\n');
+    });
+
     // --------------------------------
 
     it("No space in parens", async () => {

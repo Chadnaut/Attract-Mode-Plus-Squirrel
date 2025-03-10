@@ -10,7 +10,7 @@ import {
 } from "vscode";
 import { docPosToPos } from "../utils/location";
 import { AST } from "../ast";
-import { getParamCompletionItems } from "../utils/params";
+import { getParamSuggestions } from "../utils/params";
 import { getBranchAtPos } from "../utils/find";
 import { requestProgram } from "../utils/program";
 
@@ -41,7 +41,7 @@ export class SquirrelCompletionItemParamProvider
                 if (pos.index !== node.loc.start.index + 1) return;
 
                 const text = document.getText();
-                return getParamCompletionItems(text, program, pos);
+                return getParamSuggestions(text, program, pos);
             },
         );
     }

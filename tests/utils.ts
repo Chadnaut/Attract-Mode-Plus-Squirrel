@@ -135,7 +135,7 @@ export class MockTextDocument implements TextDocument {
         try {
             const lines = this.value.split("\n");
             const line = lines[position.line].slice(0, position.character);
-            return lines.slice(0, position.line - 1).concat([line]).join("\n").length;
+            return [...lines.slice(0, position.line - 1), line].join("\n").length;
         } catch (err) {
             return this.value.length;
         }

@@ -52,7 +52,7 @@ const esbuildProblemMatcherPlugin = {
 
   setup(build) {
     build.onStart(() => {
-      console.log('[watch] build started');
+      console.info('[watch] build started');
     });
     build.onEnd(result => {
       result.errors.forEach(({ text, location }) => {
@@ -60,7 +60,7 @@ const esbuildProblemMatcherPlugin = {
         if (location == null) return;
         console.error(`    ${location.file}:${location.line}:${location.column}:`);
       });
-      console.log('[watch] build finished');
+      console.info('[watch] build finished');
     });
   }
 };

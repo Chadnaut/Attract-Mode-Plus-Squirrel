@@ -41,7 +41,7 @@ export const getInlayHints = (
         const call = <AST.CallExpression>node;
         const { callee, arguments: args } = call;
         if (args.length) {
-            const calleeBranch = branch.concat([callee]);
+            const calleeBranch = [...branch, callee];
             const nodeDef = getNodeDef(calleeBranch);
             if (nodeDef.length) {
                 // Cache since this is called every scroll tick
@@ -72,6 +72,6 @@ export const getInlayHints = (
     }
 
     return hints.concat(
-        getNodeVisitors(node).flatMap((child) => getInlayHints(branch.concat([child]), loc)),
+        getNodeVisitors(node).flatMap((child) => getInlayHints([...branch, child], loc)),
     );
 };

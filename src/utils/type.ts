@@ -14,7 +14,7 @@ import { attrToNode, stringToNode } from "./create";
 /**
  * Return evaluated node type
  * - "Instance" if node is class instance
- * - type if node extra contains @type, used for Generators
+ * - type if node extra contains "type" (used for Generators)
  * - Node AST type for others
  */
 export const getNodeInstanceType = (
@@ -32,10 +32,9 @@ export const getNodeInstanceType = (
     // nodes with complex types `@param {array(string)}` wont be found using getNodeDef
     // attempt to use the member object
     if (node.type === "MemberExpression") {
-        nodeId = addBranchId(
-            getNodeDef(branch.concat([(<AST.MemberExpression>node).object])),
-        );
-        isArr = !!nodeId.length;
+        const m = <AST.MemberExpression>node;
+        nodeId = addBranchId(getNodeDef([...branch, m.object]));
+        isArr = !!nodeId.length && (m.property.type === "IntegerLiteral");
     }
 
     if (!nodeId.length) nodeId = addBranchId(getNodeDef(branch));
@@ -45,6 +44,15 @@ export const getNodeInstanceType = (
         getNodeParamInfo(nodeId)?.attribute ??
         getDocAttr(getNodeDoc(nodeId), "type") ??
         getDocAttr(getNodeDoc(addBranchId(nodeVal)), "type");
+
+    if (!attr) {
+        // PropertyDefinition
+        const propBranch = (branch.at(-2)?.type === "PropertyDefinition") ? branch : nodeVal;
+        const propDef = <AST.PropertyDefinition>propBranch.at(-2);
+        if (propDef?.type === "PropertyDefinition") {
+            attr = getDocAttr(getNodeDoc([...propBranch.slice(0, -1), propDef.key]), "type");
+        }
+    }
 
     if (attr) {
         // create a node, used to find typedef classes
@@ -77,7 +85,7 @@ export const getNodeInstanceType = (
 /**
  * Get node type definition-node
  * - Used to provide type members, such as "string".len()
- * - Class must @lends itself for use
+ * - Class must lend itself for use
  * - Class id must match the node its defining (simpler to find)
  */
 export const getNodeTypeDef = (branch: AST.Node[]): AST.Node[] => {

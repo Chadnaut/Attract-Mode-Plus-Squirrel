@@ -28,7 +28,7 @@ export const getNodeCall = (branch: AST.Node[]): AST.Node[] => {
     const node = <AST.VariableDeclarator>def.at(-1);
     if (node.type !== "VariableDeclarator") return [];
     if (node.init.type !== "CallExpression") return [];
-    return def.concat([node.init]);
+    return [...def, node.init];
 }
 
 /**
@@ -120,8 +120,8 @@ export const getCallExpressionName = (branch: AST.Node[]): string => {
         case "MemberExpression":
             const { object, property } = <AST.MemberExpression>callee;
             const name =
-                getBranchId(branch.concat([callee], [object]))?.name ?? "";
-            const prop = getBranchId(branch.concat([callee], [property]))?.name;
+                getBranchId([...branch, callee, object])?.name ?? "";
+            const prop = getBranchId([...branch, callee, property])?.name;
             method = `${name}.${prop}`;
             break;
         case "Identifier":

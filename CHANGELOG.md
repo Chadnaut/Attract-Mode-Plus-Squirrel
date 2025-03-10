@@ -2,12 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.9.12] - 2025-03-10
+
+### Added
+
+- DocBlock property types
+- DocBlock augments completions
+- Function parameter completions
+
+### Fixed
+
+- Prevent completions appearing for declaration ids
+
 ## [0.9.11] - 2025-03-07
 
 ### Added
 
 - Setting to prevent attribute wrapping
-- Docblock augments attribute for completion forwarding
+- DocBlock augments attribute for completion forwarding
 
 ### Changed
 

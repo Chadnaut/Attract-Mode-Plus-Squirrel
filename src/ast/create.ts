@@ -412,7 +412,7 @@ export class SQTree {
         type: "FunctionDeclaration",
         id,
         params,
-        body,
+        body: Array.isArray(body?.body) ? body : null,
         local,
         loc,
         range: this.LocRange(loc),
@@ -541,7 +541,7 @@ export class SQTree {
         type: "FunctionExpression",
         id: null,
         params,
-        body,
+        body: Array.isArray(body?.body) ? body : null,
         loc,
         range: this.LocRange(loc),
     });

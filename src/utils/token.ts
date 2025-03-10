@@ -200,31 +200,31 @@ export const tokenizeNode = (
                 const { left, right } = <AST.AssignmentExpression>node;
                 inheritToken(
                     builder,
-                    branch.concat([left]),
-                    branch.concat([right]),
+                    [...branch, left],
+                    [...branch, right],
                 );
             }
             break;
         }
         case "Property": {
             const { key, value } = <AST.Property>node;
-            inheritToken(builder, branch.concat([key]), branch.concat([value]));
+            inheritToken(builder, [...branch, key], [...branch, value]);
             break;
         }
         case "PropertyDefinition": {
             const { key, value } = <AST.PropertyDefinition>node;
-            inheritToken(builder, branch.concat([key]), branch.concat([value]));
+            inheritToken(builder, [...branch, key], [...branch, value]);
             break;
         }
         case "VariableDeclarator": {
             const { id, init } = <AST.VariableDeclarator>node;
-            inheritToken(builder, branch.concat([id]), branch.concat([init]));
+            inheritToken(builder, [...branch, id], [...branch, init]);
             break;
         }
     }
 
     getNodeVisitors(node).forEach((child) =>
-        tokenizeNode(builder, branch.concat([child])),
+        tokenizeNode(builder, [...branch, child]),
     );
     return node;
 };

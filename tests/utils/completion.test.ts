@@ -65,12 +65,35 @@ describe("Completion", () => {
         const program = parse("local x = 1; local y = x");
         const items = getCompletions(getBranchAtPos(program, pos(24)));
         expect(items).toHaveLength(1);
+        expect(items[0].label["label"]).toBe("x");
     });
 
     it("getCompletions, allow outer declaration", () => {
         const program = parse("local foo = function() { local x = 1; local y = x }");
         const items = getCompletions(getBranchAtPos(program, pos(49)));
         expect(items).toHaveLength(2);
+        expect(items[0].label["label"]).toBe("x");
+        expect(items[1].label["label"]).toBe("foo");
+    });
+
+    it("getCompletions, params", () => {
+        const program = parse("/** @param {integer} alpha Here */ function foo(alpha) { a }");
+        const items = getCompletions(getBranchAtPos(program, pos(58)));
+        expect(items).toHaveLength(2);
+        expect(items[0].label["label"]).toBe("foo");
+        expect(items[1].label["label"]).toBe("alpha");
+        expect(items[1].detail).toBe("(parameter) alpha: integer");
+        expect(items[1].documentation).toBe("Here");
+    });
+
+    it("getCompletions, params rest", () => {
+        const program = parse("/** @param {integer} ...rest Here */ function foo(...) { a }");
+        const items = getCompletions(getBranchAtPos(program, pos(58)));
+        expect(items).toHaveLength(2);
+        expect(items[0].label["label"]).toBe("foo");
+        expect(items[1].label["label"]).toBe("vargv");
+        expect(items[1].detail).toBe("(parameter) ...rest: integer");
+        expect(items[1].documentation).toBe("Here");
     });
 
     it("getCompletions, member", () => {

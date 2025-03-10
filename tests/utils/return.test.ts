@@ -1,9 +1,8 @@
 import { describe, expect, it } from "@jest/globals";
 import { parseForceExtra as parse, dump, pos } from "../utils";
 import { getNodeReturn } from "../../src/utils/return";
-import { getNodeAtPos, getBranchAtPos } from "../../src/utils/find";
+import { getBranchAtPos } from "../../src/utils/find";
 import { AST, SQTree as qt } from "../../src/ast";
-import { getNodeInstanceType } from "../../src/utils/type";
 
 describe("ReturnArgument", () => {
     it("ReturnArgument", () => {

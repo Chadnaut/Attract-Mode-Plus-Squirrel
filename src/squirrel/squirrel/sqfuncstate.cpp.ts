@@ -173,7 +173,7 @@ export class SQFuncState extends SQFuncStateStruct {
     IsLocal = (stkpos: number): boolean =>
     {
         if (stkpos >= this._vlocals.length) return false;
-        else if (this._vlocals[stkpos]._name._type != OT.NULL) return true;
+        else if (this._vlocals[stkpos]?._name._type != OT.NULL) return true;
         return false;
     };
 
@@ -465,34 +465,36 @@ export class SQFuncState extends SQFuncStateStruct {
             }
             case _OP._FUNCTION_DECLARATION: {
                 const func = this._functions[_arg1];
+                const params = func?._params;
                 const local = _arg3 == 1;
                 const id = <AST.Identifier>this.PopNode();
                 const body = <AST.FunctionBody>func?.PopNode();
-                const loc = qt.LocSpan(_arg4, GetFullLoc(body));
                 this.PushNode(qt.FunctionDeclaration(
                     id,
-                    func?._params,
+                    params,
                     body,
                     local,
-                    loc
+                    qt.LocSpan(_arg4, GetFullLoc(body ?? params?.at(-1) ?? id))
                 ));
                 break;
             }
             case _OP._FUNCTION_EXPRESSION: {
                 const func = this._functions[_arg1];
+                const params = func?._params;
                 const body = <AST.FunctionBody>func?.PopNode();
                 this.PushNode(qt.FunctionExpression(
-                    func?._params,
+                    params,
                     body,
-                    qt.LocSpan(_arg3, GetFullLoc(body))
+                    qt.LocSpan(_arg3, GetFullLoc(body ?? params?.at(-1)))
                 ));
                 break;
             }
             case _OP._LAMBDA_EXPRESSION: {
                 const func = this._functions[_arg1];
+                const params = func?._params;
                 const body = <AST.FunctionBody>func?.PopNode();
                 this.PushNode(qt.LambdaExpression(
-                    func?._params,
+                    params,
                     body,
                     qt.LocSpan(_arg3, GetFullLoc(body))
                 ));

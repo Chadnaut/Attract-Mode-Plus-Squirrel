@@ -1,12 +1,12 @@
 import { describe, expect, it } from "@jest/globals";
-import { AST, SQTree as qt } from "../../src/ast";
 import { getNodeInstanceType, getNodeTypeDef } from "../../src/utils/type";
 import { parseForceExtra as parse, pos } from "../utils";
-import { getNodeAtPos, getBranchAtPos } from "../../src/utils/find";
+import { getBranchAtPos } from "../../src/utils/find";
 import { getNodeDef, getNodeVal } from "../../src/utils/definition";
-import { getTypeMemberCompletions } from "../../src/utils/completion";
+import { getMemberCompletions, getTypeMemberCompletions } from "../../src/utils/completion";
 import { getNodeSignature } from "../../src/utils/signature";
 import { getNodeReturn } from "../../src/utils/return";
+import { getHoverInfo } from "../../src/utils/hover";
 
 describe("Type", () => {
 
@@ -32,6 +32,38 @@ describe("Type", () => {
         const program = parse('local node = 123');
         const n = getBranchAtPos(program, pos(8));
         expect(getNodeInstanceType(n).at(-1)["name"]).toEqual("IntegerLiteral");
+    });
+
+    it("getNodeInstanceType, PropertyDefinition, type", () => {
+        const program = parse('class foo { /** @type {integer} */ bar = null; } foo().bar;');
+        const n = getBranchAtPos(program, pos(56));
+        expect(getNodeInstanceType(n).at(-1)["name"]).toEqual("IntegerLiteral");
+    });
+
+    it("getNodeInstanceType, PropertyDefinition, type none", () => {
+        const program = parse('class foo { /** @type {integer} */ bar = null; } foo().bar.x;');
+        const n = getBranchAtPos(program, pos(60));
+        expect(getNodeInstanceType(n)).toHaveLength(0); // no props of integer
+    });
+
+    it("getMemberCompletions, PropertyDefinition override", () => {
+        const program = parse('/** @lends */ class StringLiteral { function len() {} }; class foo { /** @type {string} */ x = 123; } foo()');
+        const branch = getBranchAtPos(program, pos(107));
+        const prop = getBranchAtPos(program, pos(92));
+        const items = getMemberCompletions(branch);
+        expect(items).toHaveLength(1);
+        expect(items[0].insertText).toBe('x');
+        expect(getHoverInfo(prop).contents["value"]).toContain("(property) foo.x: string");
+    });
+
+    it("getTypeMemberCompletions, PropertyDefinition type override", () => {
+        const program = parse('/** @lends */ class StringLiteral { function len() {} }; class foo { /** @type {string} */ x = 123; } foo().x');
+        const branch = getBranchAtPos(program, pos(109));
+        const items = getTypeMemberCompletions(branch);
+        expect(items).toHaveLength(1);
+        expect(items[0].insertText).toBe('len');
+        expect(getHoverInfo(branch).contents["value"]).toContain("(property) foo.x: string");
+        expect(getNodeInstanceType(branch).at(-1)["name"]).toEqual("StringLiteral");
     });
 
     it("getNodeInstanceType, ClassDeclaration", () => {
@@ -214,9 +246,11 @@ describe("Type", () => {
 
     it("getTypeMemberCompletions, type override", () => {
         const program = parse('/** @lends */ class StringLiteral { function len() {} }; /** @type {string} */ local x = 123; x');
-        const items = getTypeMemberCompletions(getBranchAtPos(program, pos(95)));
+        const branch = getBranchAtPos(program, pos(95));
+        const items = getTypeMemberCompletions(branch);
         expect(items).toHaveLength(1);
         expect(items[0].insertText).toBe('len');
+        expect(getHoverInfo(branch).contents["value"]).toContain("local x: string");
     });
 
     it("getTypeMemberCompletions, type array elements", () => {

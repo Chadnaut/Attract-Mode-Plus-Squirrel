@@ -207,4 +207,40 @@ describe("Doc Markdown", () => {
         const doc = createDocMarkdown(getNodeDoc(n).attributes);
         expect(doc.value).toBe("Desc");
     });
+
+    it("does not print certain attributes", () => {
+        const db = createDoc(qt.CommentBlock(`
+ * @constructor
+ * @description
+ * @inheritdoc!
+ * @inheritdoc
+ * @variation
+ * @augments
+ * @external
+ * @constant
+ * @method
+ * @ignore
+ * @class
+ * @alias
+ * @lends
+ * @type
+ * @enum
+            `, true));
+        const md = createDocMarkdown(db.attributes);
+        expect(md.value).not.toContain("constructor");
+        expect(md.value).not.toContain("description");
+        expect(md.value).not.toContain("inheritdoc!");
+        expect(md.value).not.toContain("inheritdoc");
+        expect(md.value).not.toContain("variation");
+        expect(md.value).not.toContain("augments");
+        expect(md.value).not.toContain("external");
+        expect(md.value).not.toContain("constant");
+        expect(md.value).not.toContain("method");
+        expect(md.value).not.toContain("ignore");
+        expect(md.value).not.toContain("class");
+        expect(md.value).not.toContain("alias");
+        expect(md.value).not.toContain("lends");
+        expect(md.value).not.toContain("type");
+        expect(md.value).not.toContain("enum");
+    });
 });

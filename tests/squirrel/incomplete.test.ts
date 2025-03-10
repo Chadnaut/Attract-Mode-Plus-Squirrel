@@ -258,6 +258,11 @@ describe("Incomplete", () => {
         ));
     });
 
+    it("Function without body", () => {
+        const response = parse("function foo\ncall()\nfunction bar { call(); }\n");
+        expect(response.body[0]["body"]).toBeNull();
+    });
+
     /*
         // normal (good)
         callexp

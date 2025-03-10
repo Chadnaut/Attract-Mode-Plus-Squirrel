@@ -16,7 +16,7 @@ import {
 } from "../utils/completion";
 import { docPosToPos } from "../utils/location";
 import { AST } from "../ast";
-import { getBranchAtPos } from "../utils/find";
+import { getBranchAtPos, getNodeBeforePos, getNodeIsDecId } from "../utils/find";
 import { requestProgram } from "../utils/program";
 import { getCommentAtPosition } from "../doc/find";
 
@@ -40,7 +40,9 @@ export class SquirrelCompletionItemMemberProvider
                 const pos = docPosToPos(document, position);
                 if (getCommentAtPosition(program, pos)) return;
 
-                let branch = getBranchAtPos(program, pos);
+                // let branch = getBranchAtPos(program, pos);
+                let branch = getNodeBeforePos(program, pos);
+                if (!branch.length) branch = getBranchAtPos(program, pos);
                 if (!branch.length) return;
 
                 // quote is for computed member["completions"]
@@ -58,8 +60,11 @@ export class SquirrelCompletionItemMemberProvider
 
                 // find completions from member object
                 if (branch.at(-1).type === "MemberExpression") {
-                    branch = branch.concat([(<AST.MemberExpression>branch.at(-1)).object]);
+                    branch = [...branch, (<AST.MemberExpression>branch.at(-1)).object];
                 }
+
+                // exit if node is declaration id
+                if (getNodeIsDecId(branch)) return;
 
                 // WARNING - Invalid member expression (missing obj) will mis-fire completion
 

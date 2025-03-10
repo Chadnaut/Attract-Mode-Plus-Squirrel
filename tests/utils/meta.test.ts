@@ -1,7 +1,7 @@
 import { describe, expect, it } from "@jest/globals";
 import { parseExtra as parse, parseForceExtra, pos } from "../utils";
-import { getMemberCompletions, getTypeMemberCompletions } from "../../src/utils/completion";
-import { getNodeAtPos, getBranchAtPos } from "../../src/utils/find";
+import { getMemberCompletions } from "../../src/utils/completion";
+import { getBranchAtPos } from "../../src/utils/find";
 import { AST, SQTree as qt } from "../../src/ast";
 import { attachMeta, createMetaNode, getMetaNode } from "../../src/utils/meta";
 import { getDeprecateNodes } from "../../src/utils/deprecated";
@@ -86,8 +86,8 @@ describe("Meta", () => {
     });
 
     it("Getter Setter", () => {
-        const program = parse("class foo { /** @property {integer} bar here */ function _set() /** @property {integer} bar here */ function _get() {} }; foo()");
-        const items = getMemberCompletions(getBranchAtPos(program, pos(123)));
+        const program = parse("class foo { /** @property {integer} bar here */ function _set() {} /** @property {integer} bar here */ function _get() {} }; foo()");
+        const items = getMemberCompletions(getBranchAtPos(program, pos(126)));
         expect(items.length).toEqual(1);
         expect(items[0].detail).toBe("(property) foo.bar: integer");
         expect(items[0].insertText).toBe("bar");

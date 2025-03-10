@@ -14,6 +14,7 @@ import { AST } from "../ast";
 import { docPosToPos } from "../utils/location";
 import { getBranchAtPos } from "../utils/find";
 import { getSnippetCompletions } from "../doc/snippets";
+import { hasNodeDec } from "../utils/definition";
 
 export class SquirrelCompletionItemSnippetProvider
     implements CompletionItemProvider
@@ -34,6 +35,8 @@ export class SquirrelCompletionItemSnippetProvider
         return requestProgram(document, token, (program: AST.Program) => {
             const pos = docPosToPos(document, position);
             const branch = getBranchAtPos(program, pos);
+            if (hasNodeDec(<AST.Identifier>branch.at(-1))) return;
+
             const isProperty = branch.at(-2)?.type === "PropertyDefinition";
             const completions = [program, ...getProgramImports(program)]
                 .flatMap((p) => getSnippetCompletions(p))

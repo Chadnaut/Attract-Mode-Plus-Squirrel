@@ -16,7 +16,7 @@ const getDocReturnNode = (branch: AST.Node[]): AST.Node[] => {
 
     const node = attrToNode(attr);
     createNodeMaps(node, branch);
-    return branch.concat([node]);
+    return [...branch, node];
 };
 
 /**
@@ -50,7 +50,7 @@ export const getNodeReturn = (
         case "FunctionDeclaration": {
             const children = (<AST.FunctionDeclaration>node).body?.body ?? [];
             for (const child of children) {
-                const n = getNodeReturn(branch.concat([child]));
+                const n = getNodeReturn([...branch, child]);
                 if (n.length) return n;
             }
             break;
@@ -58,7 +58,7 @@ export const getNodeReturn = (
         case "FunctionExpression": {
             const children = (<AST.FunctionExpression>node).body?.body ?? [];
             for (const child of children) {
-                const n = getNodeReturn(branch.concat([child]));
+                const n = getNodeReturn([...branch, child]);
                 if (n.length) return n;
             }
             break;
@@ -70,16 +70,16 @@ export const getNodeReturn = (
             }
             const children = n.value?.body?.body ?? [];
             for (const child of children) {
-                const n = getNodeReturn(branch.concat([child]));
+                const n = getNodeReturn([...branch, child]);
                 if (n.length) return n;
             }
             break;
         }
         case "LambdaExpression": {
-            return branch.concat([(<AST.LambdaExpression>node).body]);
+            return [...branch, (<AST.LambdaExpression>node).body];
         }
         case "ReturnStatement": {
-            return branch.concat([(<AST.ReturnStatement>node).argument]);
+            return [...branch, (<AST.ReturnStatement>node).argument];
         }
     }
     return [];

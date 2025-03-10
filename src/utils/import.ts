@@ -125,7 +125,7 @@ export const getNodeImportFilename = (
     if (nodeFilenameMap.has(arg)) return nodeFilenameMap.get(arg);
 
     const sourceName = getBranchProgram(branch).sourceName;
-    const value = resolveBinaryExpression(branch.concat([arg]), sourceName);
+    const value = resolveBinaryExpression([...branch, arg], sourceName);
     if (!value || value.indexOf("[") !== -1) {
         nodeFilenameMap.set(arg, undefined);
         return;

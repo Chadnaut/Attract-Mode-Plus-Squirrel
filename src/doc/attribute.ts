@@ -23,8 +23,8 @@ export const createParamAttr = (branch: AST.Node[]): DocAttr | undefined => {
         }
         case "AssignmentPattern": {
             const { left, right } = <AST.AssignmentPattern>node;
-            const name = getBranchId(branch.concat([left]))?.name ?? "";
-            const type = nodeToSquirrelType(branch.concat([right]));
+            const name = getBranchId([...branch, left])?.name ?? "";
+            const type = nodeToSquirrelType([...branch, right]);
             return { kind: "param", type, name };
         }
     }

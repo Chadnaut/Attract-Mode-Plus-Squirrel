@@ -1,4 +1,4 @@
-import { getParamCompletionItems } from '../../src/utils/params';
+import { getParamSuggestions } from '../../src/utils/params';
 import { describe, expect, it } from "@jest/globals";
 import { dump, parseExtra as parse, pos } from "../utils";
 import { SQTree as qt } from "../../src/ast";
@@ -46,57 +46,57 @@ beforeEach(() => {
     getConfigValueFunc = (v, def) => def;
 });
 
-describe("ParamMacro", () => {
+describe("Suggestions", () => {
 
-    it("getParamCompletionItems, $module", () => {
+    it("getParamSuggestions, $module", () => {
         const text = "/** @param {($module)} a */ function foo(a) {}; foo(10);";
         const program = parse(text);
-        const items = getParamCompletionItems(text, program, pos(53));
+        const items = getParamSuggestions(text, program, pos(53));
         expect(items).toHaveLength(1);
         expect(items[0].label).toBe("mock-module");
     });
 
-    it("getParamCompletionItems, $nut", () => {
+    it("getParamSuggestions, $nut", () => {
         const text = "/** @param {($nut)} a */ function foo(a) {}; foo(10);";
         const program = parse(text);
-        const items = getParamCompletionItems(text, program, pos(50));
+        const items = getParamSuggestions(text, program, pos(50));
         expect(items).toHaveLength(1);
         expect(items[0].label).toBe("mock-nut");
     });
 
-    it("getParamCompletionItems, $image", () => {
+    it("getParamSuggestions, $image", () => {
         const text = '/** @param {($image)} a */ function foo(a) {}; foo("");';
         const program = parse(text);
-        const items = getParamCompletionItems(text, program, pos(52));
+        const items = getParamSuggestions(text, program, pos(52));
         expect(items).toHaveLength(1);
         expect(items[0].label).toBe("mock-image");
     });
 
-    it("getParamCompletionItems, $video", () => {
+    it("getParamSuggestions, $video", () => {
         const text = '/** @param {($video)} a */ function foo(a) {}; foo("");';
         const program = parse(text);
-        const items = getParamCompletionItems(text, program, pos(52));
+        const items = getParamSuggestions(text, program, pos(52));
         expect(items).toHaveLength(1);
         expect(items[0].label).toBe("mock-video");
     });
 
-    it("getParamCompletionItems, $audio", () => {
+    it("getParamSuggestions, $audio", () => {
         const text = '/** @param {($audio)} a */ function foo(a) {}; foo("");';
         const program = parse(text);
-        const items = getParamCompletionItems(text, program, pos(52));
+        const items = getParamSuggestions(text, program, pos(52));
         expect(items).toHaveLength(1);
         expect(items[0].label).toBe("mock-audio");
     });
 
-    it("getParamCompletionItems, $shader", () => {
+    it("getParamSuggestions, $shader", () => {
         const text = '/** @param {($shader)} a */ function foo(a) {}; foo("");';
         const program = parse(text);
-        const items = getParamCompletionItems(text, program, pos(53));
+        const items = getParamSuggestions(text, program, pos(53));
         expect(items).toHaveLength(1);
         expect(items[0].label).toBe("mock-shader");
     });
 
-    it("getParamCompletionItems, $artwork", () => {
+    it("getParamSuggestions, $artwork", () => {
         getConfigValueFunc = (v, def) => {
             switch (v) {
                 case constants.SCAN_ARTWORK_ENABLED:
@@ -111,7 +111,7 @@ describe("ParamMacro", () => {
 
         const text = '/** @param {($artwork)} a */ function foo(a) {}; foo("");';
         const program = parse(text);
-        const items = getParamCompletionItems(text, program, pos(54));
+        const items = getParamSuggestions(text, program, pos(54));
         expect(items).toHaveLength(2);
         expect(items[0].label).toBe("one");
         expect(items[1].label).toBe("two");

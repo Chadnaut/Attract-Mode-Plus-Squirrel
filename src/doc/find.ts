@@ -83,7 +83,7 @@ export const getNodeDoc = (
 export const getDocTargetBranch = (branch: AST.Node[]): AST.Node[] => {
     const node = branch.at(-1);
     return node?.type === "VariableDeclaration"
-        ? branch.concat([(<AST.VariableDeclaration>node).declarations[0]])
+        ? [...branch, (<AST.VariableDeclaration>node).declarations[0]]
         : branch;
 };
 

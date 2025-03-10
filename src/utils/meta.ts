@@ -144,8 +144,8 @@ export const createMetaNode = (
 
     const classNode = <AST.Class>branch.at(-1);
     const classBody = classNode.body;
-    const propBranch = branch.concat([classBody], [prop]);
-    const keyBranch = branch.concat([classBody], [prop], [key]);
+    const propBranch = [...branch, classBody, prop];
+    const keyBranch = [...branch, classBody, prop, key];
 
     setNodeNamespace(propBranch, classNode);
     setNodeDec(key, propBranch);

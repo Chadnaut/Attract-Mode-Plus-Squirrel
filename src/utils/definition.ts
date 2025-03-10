@@ -16,6 +16,7 @@ import { addBranchId } from "./identifier";
 import { getNodeExtendedClasses } from "./super";
 import { getNodeParams, isRestNode } from "./params";
 import { getNodeTypeDef } from "./type";
+import { getNodeAugmentVal } from './augment';
 
 // -----------------------------------------------------------------------------
 /*
@@ -259,7 +260,7 @@ export const resolveNodeChild = (
         const arr = (<AST.ArrayExpression>node).elements ?? [];
         let index = (id.type === "IntegerLiteral") ? (<AST.IntegerLiteral>id).value : arr.length-1;
         index = Math.min(Math.max(0, index), arr.length-1);
-        return branch.concat([arr[index]]);
+        return [...branch, arr[index]];
     }
 
     const name = getBranchId(idBranch)?.name;
@@ -327,12 +328,12 @@ const resolveNodeVal = (
 
     switch (node.type) {
         case "AssignmentPattern":
-            return resolveNodeVal(branch.concat([(<AST.AssignmentPattern>node).right]), stack);
+            return resolveNodeVal([...branch, (<AST.AssignmentPattern>node).right], stack);
         case "EnumMember":
-            return resolveNodeVal(branch.concat([(<AST.EnumMember>node).init]), stack);
+            return resolveNodeVal([...branch, (<AST.EnumMember>node).init], stack);
         case "CallExpression": {
             // getNodeReturn may return @return nodes
-            const callBranch = branch.concat([(<AST.CallExpression>node).callee]);
+            const callBranch = [...branch, (<AST.CallExpression>node).callee];
             return resolveNodeVal(getNodeReturn(resolveNodeVal(callBranch)), stack);
         }
         default: {
@@ -367,11 +368,18 @@ const resolveNodeDef = (
     switch (node.type) {
         case "MemberExpression": {
             const { object, property } = <AST.MemberExpression>node;
-            const obj = resolveNodeVal(branch.concat([object]), stack);
-            let objProp = resolveNodeChild(obj, branch.concat([property]), stack);
+            const objBranch = [...branch, object];
+            const propBranch = [...branch, property];
+            const obj = resolveNodeVal(objBranch, stack);
+            let objProp = resolveNodeChild(obj, propBranch, stack);
             if (!objProp.length) {
-                // this resolves @type or @lends nodes
-                objProp = resolveNodeChild(getNodeTypeDef(obj), branch.concat([property]), stack);
+                // @type or @lends nodes
+                objProp = resolveNodeChild(getNodeTypeDef(obj), propBranch, stack);
+            }
+            if (!objProp.length) {
+                // @augments node
+                const augObj = getNodeAugmentVal(objBranch);
+                objProp = resolveNodeChild(augObj, propBranch, stack);
             }
             setNodeDefMap(node, objProp);
             return objProp;

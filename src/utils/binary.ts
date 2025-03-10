@@ -45,9 +45,9 @@ export const resolveBinaryExpression = (branch: AST.Node[], sourceName: string, 
         case "BinaryExpression": {
             const { left, right, operator } = <AST.BinaryExpression>node;
             if (operator !== "+") return;
-            const leftVal = resolveBinaryExpression(branch.concat([left]), sourceName);
+            const leftVal = resolveBinaryExpression([...branch, left], sourceName);
             if (typeof leftVal !== "string") return;
-            const rightVal = resolveBinaryExpression(branch.concat([right]), sourceName);
+            const rightVal = resolveBinaryExpression([...branch, right], sourceName);
             if (typeof rightVal !== "string") return;
             return leftVal + rightVal;
         }

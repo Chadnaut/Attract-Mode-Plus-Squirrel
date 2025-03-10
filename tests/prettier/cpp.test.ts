@@ -189,11 +189,11 @@ describe("CPP", () => {
     });
     it("Conditional", async () => {
         const response = await formatCPP("@()true?1:0\n");
-        expect(response).toBe("@() ( true ? 1 : 0 )\n");
+        expect(response).toBe("@() true ? 1 : 0\n");
     });
     it("Conditional, Assigned", async () => {
         const response = await formatCPP("local   x = @() 1?2:3");
-        expect(response).toBe("local x = @() ( 1 ? 2 : 3 );\n");
+        expect(response).toBe("local x = @() 1 ? 2 : 3;\n");
     });
     it("Conditional, Sequence Parens", async () => {
         const response = await formatCPP("local   x = @() (1,2,3)");

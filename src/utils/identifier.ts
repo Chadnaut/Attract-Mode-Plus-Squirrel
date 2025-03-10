@@ -34,45 +34,45 @@ const getBranchWithId = (
             return branch;
         case "VariableDeclarator":
             // local `ID = 123`
-            return branch.concat([<AST.Identifier>((<AST.VariableDeclarator>node).id)]);
+            return [...branch, <AST.Identifier>((<AST.VariableDeclarator>node).id)];
         case "FunctionDeclaration": {
             // `function ID {}`
             const n = (<AST.FunctionDeclaration>node).id;
             const e = <AST.MemberExpression>n;
-            if (e?.type === "MemberExpression") return branch.concat([e.property]);
-            return branch.concat([n]);
+            if (e?.type === "MemberExpression") return [...branch, e.property];
+            return [...branch, n];
         }
         case "Property":
             // class foo { `ID = value` }
-            return branch.concat([<AST.Identifier>((<AST.Property>node).key)]);
+            return [...branch, <AST.Identifier>((<AST.Property>node).key)];
         case "EnumDeclaration":
             // `enum ID {}`
-            return branch.concat([<AST.Identifier>((<AST.EnumDeclaration>node).id)]);
+            return [...branch, <AST.Identifier>((<AST.EnumDeclaration>node).id)];
         case "EnumMember":
             // enum e { `ID = value` }
-            return branch.concat([<AST.Identifier>((<AST.EnumMember>node).id)]);
+            return [...branch, <AST.Identifier>((<AST.EnumMember>node).id)];
         case "ClassDeclaration": {
             // `class ID {}`
             const n = (<AST.ClassDeclaration>node).id;
             const e = <AST.MemberExpression>n;
-            if (e?.type === "MemberExpression") return branch.concat([e.property]);
-            return branch.concat([n]);
+            if (e?.type === "MemberExpression") return [...branch, e.property];
+            return [...branch, n];
         }
         case "PropertyDefinition":
             // local obj = { `ID = val` }
-            return branch.concat([<AST.Identifier>((<AST.PropertyDefinition>node).key)]);
+            return [...branch, <AST.Identifier>((<AST.PropertyDefinition>node).key)];
         case "MethodDefinition":
             // class foo { `function ID() {}` }
-            return branch.concat([<AST.Identifier>((<AST.MethodDefinition>node).key)]);
+            return [...branch, <AST.Identifier>((<AST.MethodDefinition>node).key)];
         case "AssignmentPattern":
             // SPECIAL: function param
             // function (`::ID = value`)
-            return branch.concat([<AST.Identifier>((<AST.AssignmentPattern>node).left)]);
+            return [...branch, <AST.Identifier>((<AST.AssignmentPattern>node).left)];
         case "AssignmentExpression":
             // SPECIAL: newslot declaration
             // `ID <- value`
             return isNewSlotAssignment([node])
-                ? branch.concat([<AST.Identifier>(<AST.AssignmentExpression>node).left])
+                ? [...branch, <AST.Identifier>(<AST.AssignmentExpression>node).left]
                 : branch;
         case "FunctionExpression":
         case "ClassExpression":

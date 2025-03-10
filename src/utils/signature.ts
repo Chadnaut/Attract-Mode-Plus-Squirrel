@@ -77,7 +77,7 @@ const nodeSignatureMap = new WeakMap<AST.Node, string>();
 
 /**
  * Return node signature string for nodeValue nodes
- * - FunctionDeclaration = function foo(x: any): void
+ * - FunctionDeclaration = function foo(x: any): null
  */
 export const getNodeSignature = (branch: AST.Node[]): string | undefined => {
     const node = branch.at(-1);
@@ -256,12 +256,13 @@ export const getSignatureSuffix = (branch: AST.Node[]): string => {
         return init ? ` = ${init.raw}` : formatReturnType("any");
     }
 
+    const docType = getDocAttr(getNodeDoc(branch), "type")?.type;
+    if (docType) return formatReturnType(docType);
+
     const nodeValue = getNodeVal(branch);
     const callableNode = getBranchCallable(nodeValue);
     if (callableNode.length) {
-        const returnName =
-            getDocAttr(getNodeDoc(addBranchId(nodeValue)), "type")?.type ??
-            getNodeDisplayType(getNodeReturn(callableNode));
+        const returnName = getNodeDisplayType(getNodeReturn(callableNode));
         return formatReturnType(returnName);
     }
 

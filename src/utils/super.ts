@@ -21,7 +21,7 @@ export const getSuperDef = (
     const nodeVal = getNodeVal(nodeDef);
     const superNode = (<AST.ClassDeclaration>nodeVal.at(-1)).superClass;
     if (!superNode) return [];
-    const superDef = getNodeDef(nodeVal.concat([superNode]), stack);
+    const superDef = getNodeDef([...nodeVal, superNode], stack);
     if (!isClassDef(superDef)) return [];
     return superDef;
 };

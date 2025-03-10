@@ -1,6 +1,6 @@
 import { describe, expect, it } from "@jest/globals";
 import { SquirrelCompletionItemSnippetProvider } from "../../src/providers/squirrelCompletionItemSnippetProvider";
-import { MockTextDocument, parseExtra as parse } from "../utils";
+import { MockTextDocument, parseForceExtra as parse } from "../utils";
 import { CompletionTriggerKind, Position, Event, commands, CompletionItemKind, CompletionItem } from "vscode";
 import { addProgram } from "../../src/utils/program";
 import { addSnippetCompletion } from "../../src/doc/snippets";
@@ -77,5 +77,23 @@ describe("SquirrelCompletionItemSnippetProvider", () => {
         addSnippetCompletion(program, { kind: CompletionItemKind.Color } as CompletionItem);
 
         expect(await s.provideCompletionItems(d, p, t, r)).toHaveLength(1);
+    });
+
+    it("Identifier", async () => {
+        const getItems = async (text: string, col?: number) => {
+            const s = new SquirrelCompletionItemSnippetProvider()
+            const d = new MockTextDocument(text);
+            const p = new Position(0, col ?? text.length);
+            const r = { triggerKind: CompletionTriggerKind.TriggerCharacter, triggerCharacter: "." };
+            addProgram(d.uri.path, parse(d.getText()));
+            return s.provideCompletionItems(d, p, t, r);
+        }
+
+        expect(await getItems("local x = x")).not.toBeUndefined();
+        expect(await getItems("local x")).toBeUndefined();
+        expect(await getItems("function x")).toBeUndefined();
+        expect(await getItems("class x")).toBeUndefined();
+        expect(await getItems("class foo { x }", 13)).toBeUndefined();
+        expect(await getItems("local t = { x }", 13)).toBeUndefined();
     });
 });

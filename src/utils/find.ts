@@ -1,10 +1,33 @@
 import { AST } from "../ast";
 import { locContainsPos, posAfterOrEqual, posBeforeOrEqual } from "./location";
 import { isNewSlotAssignment } from "./root";
-import { getNodeChildren, getNodeVisitors } from './map';
+import { getNodeChildren, getNodeVisitors } from "./map";
 import { NodeType } from "../ast/ast";
 import { addBranchId } from "./identifier";
 import { getNodeDisplayType } from "./signature";
+
+/**
+ * Returns true when branch is id of declarator
+ * - Used by member provider when branch may be invalid
+ */
+export const getNodeIsDecId = (branch: AST.Node[]): boolean => {
+    switch (branch.at(-1)?.type) {
+        case "VariableDeclaration":
+        case "FunctionDeclaration":
+            return true;
+        case "Identifier":
+            switch (branch.at(-3)?.type) {
+                case "ClassDeclaration":
+                case "PropertyDefinition":
+                case "Property":
+                    return true;
+                default:
+                    return false;
+            }
+        default:
+            return false;
+    }
+};
 
 /**
  * Returns true if node has an init value
@@ -20,7 +43,7 @@ export const nodeHasInit = (node: AST.Node): boolean => {
         default:
             return false;
     }
-}
+};
 
 /** Return branch with added init node */
 export const getBranchWithInitKey = (branch: AST.Node[]): AST.Node[] => {
@@ -36,7 +59,7 @@ export const getBranchWithInitKey = (branch: AST.Node[]): AST.Node[] => {
         default:
             return nodeHasInit(node) ? branch : [];
     }
-}
+};
 
 /**
  * Return branch with init value, empty array if none
@@ -49,19 +72,19 @@ export const getBranchWithInitValue = (branch: AST.Node[]): AST.Node[] => {
     const node = branch.at(-1);
     switch (node?.type) {
         case "VariableDeclarator":
-            return branch.concat([(<AST.VariableDeclarator>node).init]);
+            return [...branch, (<AST.VariableDeclarator>node).init];
         case "PropertyDefinition":
-            return branch.concat([(<AST.PropertyDefinition>node).value]);
+            return [...branch, (<AST.PropertyDefinition>node).value];
         case "Property":
-            return branch.concat([(<AST.Property>node).value]);
+            return [...branch, (<AST.Property>node).value];
         case "AssignmentExpression":
             return isNewSlotAssignment(branch)
-                ? branch.concat([(<AST.AssignmentExpression>node).right])
+                ? [...branch, (<AST.AssignmentExpression>node).right]
                 : [];
         default:
             return [];
     }
-}
+};
 
 /**
  * Return callable node, or undefined
@@ -83,7 +106,7 @@ export const getBranchCallable = (branch: AST.Node[]): AST.Node[] => {
 };
 
 /**
- * Return branch trimmed to Function ancestor
+ * Return branch trimmed to Function ancestor, or empty array
  */
 export const getBranchFunctionDef = (branch: AST.Node[]): AST.Node[] => {
     let i = branch.length;
@@ -95,7 +118,7 @@ export const getBranchFunctionDef = (branch: AST.Node[]): AST.Node[] => {
                 return branch.slice(0, i);
             case "MethodDefinition":
             case "FunctionDeclaration":
-                return branch.slice(0, i+1);
+                return branch.slice(0, i + 1);
         }
     }
     return [];
@@ -111,16 +134,19 @@ export const getBranchClassDef = (branch: AST.Node[]): AST.Node[] => {
         case "ClassDeclaration":
             return branch;
         default:
-            if (getBranchWithInitValue(branch).at(-1)?.type === "ClassExpression") return branch;
+            if (
+                getBranchWithInitValue(branch).at(-1)?.type ===
+                "ClassExpression"
+            )
+                return branch;
             return getBranchClassDef(branch.slice(0, -1));
     }
 };
 
 export const getBranchWithSuperClass = (branch: AST.Node[]): AST.Node[] => {
     const superVal = (<AST.ClassDeclaration>branch.at(-1))?.superClass;
-    return superVal ? branch.concat([superVal]) : [];
-}
-
+    return superVal ? [...branch, superVal] : [];
+};
 
 export const getBranchWithConstructor = (branch: AST.Node[]): AST.Node[] =>
     getNodeChildren(branch).find(
@@ -146,7 +172,7 @@ export const isNodeBlock = (node: AST.Node): boolean => {
         default:
             return false;
     }
-}
+};
 
 /**
  * Return node branch (including node) where end node is a block element
@@ -156,8 +182,8 @@ export const isNodeBlock = (node: AST.Node): boolean => {
 export const getBranchBlock = (branch: AST.Node[]): AST.Node[] => {
     let i = branch.length - 1;
     while (i >= 0 && !isNodeBlock(branch.at(i))) i--;
-    return branch.slice(0, i+1);
-}
+    return branch.slice(0, i + 1);
+};
 
 export const getBranchProgram = (branch: AST.Node[]): AST.Program =>
     <AST.Program>branch.at(0);
@@ -171,17 +197,22 @@ export const isSameBranch = (a: AST.Node[], b: AST.Node[]): boolean =>
 /**
  * Returns end node matching type, pops until found
  */
-export const getBranchNodeByType = (branch: AST.Node[], type: NodeType): AST.Node =>
-    getBranchEndingAtType(branch, type).at(-1);
+export const getBranchNodeByType = (
+    branch: AST.Node[],
+    type: NodeType,
+): AST.Node => getBranchEndingAtType(branch, type).at(-1);
 
 /**
  * Returns branch slice ending at given type if it exists in the branch, or an empty branch if it doesn't
  */
-export const getBranchEndingAtType = (branch: AST.Node[], type: NodeType): AST.Node[] => {
+export const getBranchEndingAtType = (
+    branch: AST.Node[],
+    type: NodeType,
+): AST.Node[] => {
     let i = branch.length - 1;
     while (i >= 0 && branch.at(i).type !== type) i--;
-    return branch.slice(0, i+1);
-}
+    return branch.slice(0, i + 1);
+};
 
 /** Return array of nodes from program, up to and including node at position */
 export const getBranchAtPos = (
@@ -205,7 +236,7 @@ export const getBranchAtPos = (
         }
     }
     return branch;
-}
+};
 
 /** Return end node at position */
 export const getNodeAtPos = (
@@ -224,9 +255,9 @@ export const getNodeAfterPos = (
         if (posAfterOrEqual(child.loc?.start, pos)) {
             return [
                 ...branch,
-                (child.type === "ExpressionStatement")
+                child.type === "ExpressionStatement"
                     ? (<AST.ExpressionStatement>child).expression
-                    : child
+                    : child,
             ];
         }
     }
@@ -244,9 +275,9 @@ export const getNodeBeforePos = (
         if (posBeforeOrEqual(child.loc?.start, pos)) {
             return [
                 ...branch,
-                (child.type === "ExpressionStatement")
+                child.type === "ExpressionStatement"
                     ? (<AST.ExpressionStatement>child).expression
-                    : child
+                    : child,
             ];
         }
     }
@@ -274,7 +305,7 @@ export const getNodeArrayElementType = (branch: AST.Node[]): string => {
         if (types.length > 1) return "any";
     }
 
-    return (types.length === 1)
-        ? getNodeDisplayType(branch.concat([elements[0]]))
+    return types.length === 1
+        ? getNodeDisplayType([...branch, elements[0]])
         : "any";
-}
+};

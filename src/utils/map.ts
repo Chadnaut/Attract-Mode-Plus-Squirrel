@@ -99,19 +99,19 @@ const updateParamsToken = (branch: AST.Node[]) => {
                 id.type = "Identifier";
                 id.name = "...";
                 setRestNode(paramBranch); // track this is a rest node
-                setNodeDec(id, branch.concat([id]));
+                setNodeDec(id, [...branch, id]);
                 setNodeToken(id, "parameter");
                 break;
             }
             case "Identifier": {
                 const id = <AST.Identifier>param;
-                setNodeDec(id, branch.concat([id]));
+                setNodeDec(id, [...branch, id]);
                 setNodeToken(id, "parameter");
                 break;
             }
             case "AssignmentPattern": {
                 const id = <AST.Identifier>(<AST.AssignmentPattern>param).left;
-                setNodeDec(id, branch.concat([id]));
+                setNodeDec(id, [...branch, id]);
                 setNodeToken(id, "parameter");
                 break;
             }
@@ -162,7 +162,7 @@ const getNodeChildrenVisitorsFlat = (branch: AST.Node[]): AST.Node[][] => {
         }
     }
 
-    return body.filter((n) => !!n).map((n) => branch.concat([n]));
+    return body.filter((n) => !!n).map((n) => [...branch, n]);
 };
 
 /** Returns branch containing ALL children nodes */
@@ -188,7 +188,7 @@ export const getNodeChildren = (branch: AST.Node[]): AST.Node[][] => {
                     // promote value to higher level
                     return (<AST.VariableDeclaration>child).declarations.map(
                         (d) => {
-                            return childBranch.concat([d]);
+                            return [...childBranch, d];
                         },
                     );
                 case "ExpressionStatement":
@@ -246,7 +246,7 @@ export const createNodeMaps = (
         clearNodeTypes(program);
     }
 
-    branch = branch.concat([node]);
+    branch = [...branch, node];
 
     switch (node.type) {
         case "MemberExpression": {

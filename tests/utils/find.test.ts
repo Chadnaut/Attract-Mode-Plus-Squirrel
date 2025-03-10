@@ -1,10 +1,24 @@
 import { describe, expect, it } from "@jest/globals";
 import { AST, SQTree as qt } from "../../src/ast";
 import { dump, parseExtra as parse, pos } from "../utils";
-import { getNodeAfterPos, getNodeAtPos, getBranchCallable, getBranchFunctionDef, getBranchClassDef, getNodeBeforePos, nodeHasInit, isNodeBlock, getBranchBlock, getBranchAtPos, getBranchWithInitKey, getBranchWithInitValue, getNodeOverloads, getNodeArrayElementType } from "../../src/utils/find";
+import { getNodeAfterPos, getNodeAtPos, getBranchCallable, getBranchFunctionDef, getBranchClassDef, getNodeBeforePos, nodeHasInit, isNodeBlock, getBranchBlock, getBranchAtPos, getBranchWithInitKey, getBranchWithInitValue, getNodeOverloads, getNodeArrayElementType, getNodeIsDecId } from "../../src/utils/find";
 import { addBranchId } from "../../src/utils/identifier";
 
 describe("Find", () => {
+
+    it("getNodeIsDecId", () => {
+        expect(getNodeIsDecId([])).toBe(false);
+        expect(getNodeIsDecId([qt.Identifier(null)])).toBe(false);
+        expect(getNodeIsDecId([qt.Identifier(null), null, qt.Identifier(null)])).toBe(false);
+
+        expect(getNodeIsDecId([qt.VariableDeclaration()])).toBe(true);
+        expect(getNodeIsDecId([qt.FunctionDeclaration(null, null, null)])).toBe(true);
+        expect(getNodeIsDecId([qt.ClassDeclaration(null, null), null, qt.Identifier(null)])).toBe(true);
+        expect(getNodeIsDecId([qt.PropertyDefinition(null), null, qt.Identifier(null)])).toBe(true);
+        expect(getNodeIsDecId([qt.Property(null, null, null), null, qt.Identifier(null)])).toBe(true);
+    });
+
+    // -------------------------------------------------------------------------
 
     it("getBranchWithInitKey, invalid", () => {
         expect(getBranchWithInitKey([])).toEqual([]);

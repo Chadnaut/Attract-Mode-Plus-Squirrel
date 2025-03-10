@@ -710,8 +710,20 @@ describe("Signature", () => {
 
     it("getSignatureSuffix, param", () => {
         const program = parse('function foo (a = 123) {}');
-        const n = getBranchAtPos(program, pos(15));
-        expect(getSignatureSuffix(n)).toBeTruthy();
+        const n = getBranchAtPos(program, pos(15)).slice(0, -1);
+        expect(getSignatureSuffix(n)).toBe(": integer");
+    });
+
+    it("getSignatureSuffix, param type", () => {
+        const program = parse('function foo (a) { a }');
+        const n = getBranchAtPos(program, pos(20));
+        expect(getSignatureSuffix(n)).toBe(": any");
+    });
+
+    it("getSignatureSuffix, call", () => {
+        const program = parse('/** @type {string} */ function foo (a = 123) {}');
+        const n = getBranchAtPos(program, pos(32));
+        expect(getSignatureSuffix(n)).toBe(": string");
     });
 
 });

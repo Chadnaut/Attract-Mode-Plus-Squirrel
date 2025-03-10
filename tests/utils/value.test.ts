@@ -63,7 +63,7 @@ describe("NodeValue", () => {
         expect(val?.type).toBe("IntegerLiteral");
     });
 
-    it("getParamCompletionItems, array sabotage", () => {
+    it("getParamSuggestions, array sabotage", () => {
         const program = parse("local x = [1]; x[0]")
         delete program.body[0]["declarations"][0]["init"]["elements"];
         const n = getBranchAtPos(program, pos(19));

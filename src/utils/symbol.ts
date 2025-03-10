@@ -1,18 +1,17 @@
 import { getNodeComputed } from './meta';
 import { getNodeDoc, getDocAttr } from "./../doc/find";
-import { SymbolKind, DocumentSymbol } from "vscode";
+import { SymbolKind, DocumentSymbol, MarkdownString } from "vscode";
 import { nodeToDocRange } from "./location";
 import { AST } from "../ast";
 import { addRootPrefix, getNewSlotAssignment } from "./root";
-import { addBranchId, getNodeName, hasNodeId } from "./identifier";
+import { addBranchId, hasNodeId } from "./identifier";
 import { metaSymbolNames } from "./kind";
-import { getNodeDef, getNodeVal } from "./definition";
-import { getBranchClassDef, getBranchWithConstructor, isNodeBlock, isSameBranch, nodeHasInit } from "./find";
-import { getSuperDefs, isClassDef } from "./super";
+import { getNodeVal } from "./definition";
+import { getBranchClassDef, isNodeBlock, isSameBranch, nodeHasInit } from "./find";
+import { getSuperDefs } from "./super";
 import { getNodeEnumType } from "./enum";
 import { getNodeChildren } from "./map";
-import { getNodeParams } from './params';
-import { getNodeCall } from './call';
+import { getNodeAugmentVal } from './augment';
 
 // -----------------------------------------------------------------------------
 
@@ -30,10 +29,9 @@ export const getNodeSymbol = (branch: AST.Node[]): DocumentSymbolExtra =>
 // -----------------------------------------------------------------------------
 
 export class DocumentSymbolExtra extends DocumentSymbol {
-    // program?: AST.Program;
-    // node?: AST.Identifier;
     branch: AST.Node[];
     insertText?: string;
+    documentation?: string | MarkdownString;
 }
 
 const importSymbolKinds = [
@@ -327,34 +325,8 @@ export const getNodeExtendedSymbols = (
 
 /**
  * Returns symbols for augments attribute
- * - Class constructor may specify a param for @ augments
- * - The def of this param is added to the completions for this class
- * - Used to assist "wrapper" classes to return better completions
- * - NOTE: the actual forwarding of wrapper get/set must be added by the user
  */
 export const getNodeAugmentSymbols = (
     branch: AST.Node[],
-): DocumentSymbolExtra[] => {
-    const val = getNodeVal(branch);
-    if (!isClassDef(val)) return [];
-
-    const call = getNodeCall(branch);
-    if (!call.length) return [];
-
-    const constBranch = getBranchWithConstructor(val);
-    if (!constBranch.length) return [];
-
-    const doc = getNodeDoc(constBranch);
-    const attr = getDocAttr(doc, "augments");
-    if (!attr) return [];
-
-    const paramNames = getNodeParams(constBranch).map((b) => getNodeName(b));
-    const index = paramNames.indexOf(attr.name);
-    if (index == -1) return [];
-
-    const arg = (<AST.CallExpression>call.at(-1)).arguments[index];
-    if (!arg) return [];
-
-    const argVal = getNodeVal(branch.concat([arg]));
-    return getNodeExtendedSymbols(argVal);
-}
+): DocumentSymbolExtra[] =>
+    getNodeExtendedSymbols(getNodeAugmentVal(branch));

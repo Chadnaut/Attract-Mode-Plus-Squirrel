@@ -35,6 +35,7 @@ import { addRootPrefix, nodeHasRootPrefix, removeRootPrefix } from "./root";
 import { getNodeDef, getNodeVal } from "./definition";
 import { stringToNode } from "./create";
 import { isValidName } from "./identifier";
+import { getParamSymbols } from "./params";
 import constants from "../constants";
 import * as path from "path";
 
@@ -87,6 +88,9 @@ export const getCompletions = (branch: AST.Node[]): CompletionItem[] => {
     // only root symbols if given node has '::'
     if (nodeHasRootPrefix(node)) symbols = filterRootSymbols(symbols);
 
+    // params
+    symbols.push(...getParamSymbols(branch));
+
     return symbolsToCompletions(branch, symbols, false);
 };
 
@@ -97,9 +101,10 @@ export const getCompletions = (branch: AST.Node[]): CompletionItem[] => {
 export const getMemberCompletions = (branch: AST.Node[]): CompletionItem[] => {
     const node = branch.at(-1);
     if (!node) return [];
-    let symbols = getNodeAugmentSymbols(branch).concat(
-        getNodeExtendedSymbols(branch),
-    );
+    let symbols = [
+        ...getNodeAugmentSymbols(branch),
+        ...getNodeExtendedSymbols(branch),
+    ];
     symbols = filterOverloadedSymbols(symbols);
     symbols = filterMetaSymbols(symbols);
     symbols = filterAllowedSymbols(symbols, node);
@@ -197,7 +202,7 @@ const symbolsToCompletion = (
         ? removeRootPrefix(symbol.insertText)
         : symbol.insertText;
 
-    const docBlock = getNodeDoc(symbol.branch);
+    const documentation = symbol.documentation ?? getNodeDoc(symbol.branch)?.markdown;
     const signature = getNodeSignature(symbol.branch);
     const label = <CompletionItemLabel>{
         label: labelName,
@@ -219,9 +224,7 @@ const symbolsToCompletion = (
 
     item.sortText = removeRootPrefix(labelName);
     item.filterText = removeRootPrefix(labelName);
-    // item.filterText = item.sortText = localName.toLowerCase();
-    // item.filterText = localName.toLowerCase();
-    if (docBlock?.markdown) item.documentation = docBlock.markdown;
+    if (documentation) item.documentation = documentation;
 
     return item;
 };

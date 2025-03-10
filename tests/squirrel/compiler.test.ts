@@ -1,16 +1,8 @@
-import {
-    beforeEach,
-    describe,
-    fdescribe,
-    expect,
-    it,
-    fit,
-} from "@jest/globals";
+import { describe, expect, it } from "@jest/globals";
 import { SQCompiler } from "../../src/squirrel/squirrel/sqcompiler.cpp";
 import { SQVM } from "../../src/squirrel/squirrel/sqvm.cpp";
 import { parse, lineLoc, dump } from "../utils";
 import { SquirrelParser } from "../../src/squirrel/parser";
-import { SQFuncStateStruct } from "../../src/squirrel/squirrel/sqfuncstate.h";
 import { SQSharedState } from "../../src/squirrel/squirrel/sqstate.cpp";
 import { SQTree as qt } from "../../src/ast/create";
 

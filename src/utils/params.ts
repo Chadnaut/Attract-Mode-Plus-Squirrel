@@ -1,4 +1,4 @@
-import { CompletionItem, CompletionItemKind, ParameterInformation } from "vscode";
+import { CompletionItem, ParameterInformation, SymbolKind } from "vscode";
 import { AST } from "../ast";
 import { DocAttr } from "../doc/kind";
 import { getBranchFunctionDef, getBranchWithConstructor } from "./find";
@@ -15,6 +15,8 @@ import { getNodeCallData } from "./call";
 import { createNodeArrayCompletions } from "./completion";
 import { getNodeToken } from "./token";
 import { getModuleCompletions } from "./module";
+import { DocumentSymbolExtra } from "./symbol";
+import { getNodeName } from "./identifier";
 
 export class ParameterInformationExtra extends ParameterInformation {
     attribute?: DocAttr;
@@ -28,6 +30,26 @@ export const setRestNode = (branch: AST.Node[]) =>
 /** Returns true if rest node */
 export const isRestNode = (branch: AST.Node[]): boolean =>
     restNodeMap.has(branch.at(-1));
+
+/** Return array of param symbols for entire branch */
+export const getParamSymbols = (branch: AST.Node[]): DocumentSymbolExtra[] => {
+    const symbols = [];
+    let b = branch;
+    while (b.length) {
+        b = getBranchFunctionDef(b.slice(0, -1));
+        symbols.push(...getNodeParams(b).map((param) => {
+            const name = isRestNode(param) ? "vargv" : getNodeName(param);
+            return <DocumentSymbolExtra>{
+                name,
+                kind: SymbolKind.Variable,
+                branch: param,
+                insertText: name,
+                documentation: getNodeParamInfo(param)?.documentation,
+            };
+        }));
+    }
+    return symbols;
+}
 
 /**
  * Return array of node params, or empty array
@@ -43,19 +65,21 @@ export const getNodeParams = (branch: AST.Node[]): AST.Node[][] => {
             return getNodeParams(getBranchWithConstructor(branch));
         }
         case "MethodDefinition":
-            return ((<AST.MethodDefinition>node).value?.params ?? []).map((n) => branch.concat([n]));
+            return ((<AST.MethodDefinition>node).value?.params ?? []).map((n) => [...branch, n]);
         case "FunctionDeclaration":
-            return ((<AST.FunctionDeclaration>node).params ?? []).map((n) => branch.concat([n]));
+            return ((<AST.FunctionDeclaration>node).params ?? []).map((n) => [...branch, n]);
         case "FunctionExpression":
-            return ((<AST.FunctionExpression>node).params ?? []).map((n) => branch.concat([n]));
+            return ((<AST.FunctionExpression>node).params ?? []).map((n) => [...branch, n]);
         case "LambdaExpression":
-            return ((<AST.LambdaExpression>node).params ?? []).map((n) => branch.concat([n]));
+            return ((<AST.LambdaExpression>node).params ?? []).map((n) => [...branch, n]);
         default:
             return [];
     }
 };
 
-/** Return true if node is parameter */
+/**
+ * Return true if node ID is parameter (not AssignmentPattern)
+ */
 export const getNodeIsParameter = (branch: AST.Node[]): boolean =>
     getNodeToken(branch.at(-1)) === "parameter";
 
@@ -104,8 +128,8 @@ export const setNodeCallParamInfo = (
     nodeCallParamInfoMap.set(node, info);
 }
 
-/** Get parameter completion items */
-export const getParamCompletionItems = (
+/** Get parameter suggestions */
+export const getParamSuggestions = (
     documentText: string,
     program: AST.Program,
     pos: AST.Position,

@@ -30,6 +30,10 @@ describe("Misc", () => {
         expect(n.GetNumericConstant(123)).toEqual({ _type: OT.INTEGER, _unVal: 123});
         expect(n.GetNumericConstantF(123)).toEqual({ _type: OT.FLOAT, _unVal: 123});
 
+        n._vlocals = [null];
+        expect(n.IsLocal(0)).toBe(true);
+        expect(n.IsLocal(1)).toBe(false);
+
         const s = new SQFuncStateStruct();
         expect(() => s.Error(undefined, undefined)).not.toThrow();
 
