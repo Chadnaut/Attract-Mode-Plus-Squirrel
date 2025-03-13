@@ -1,7 +1,7 @@
 import { describe, expect, it } from "@jest/globals";
 import { SquirrelHoverDefinitionProvider } from "../../src/providers/squirrelHoverDefinitionProvider";
 import { MockTextDocument, parseExtra as parse } from "../utils";
-import { CompletionTriggerKind, Position, Event, commands } from "vscode";
+import { CompletionTriggerKind, Position, Event, commands, Hover } from "vscode";
 import { addProgram } from "../../src/utils/program";
 
 jest.spyOn(commands, "executeCommand").mockImplementation((name, uri): any => {
@@ -40,7 +40,7 @@ describe("SquirrelHoverDefinitionProvider", () => {
         const p = new Position(0, 3);
         addProgram(d.uri.path, parse(d.getText()));
 
-        expect(await s.provideHover(d, p, t)).toBeTruthy();
+        expect(await s.provideHover(d, p, t)).toBeInstanceOf(Hover);
     });
 
 });

@@ -97,6 +97,10 @@ export const getPrettierOptions = (): Options => {
         constants.CODE_FORMATTING_ATTR_SINGLE_LINE,
         false,
     );
+    const attrSameLine = getConfigValue(
+        constants.CODE_FORMATTING_ATTR_SAME_LINE,
+        false,
+    );
     const attrSpacing = getConfigValue(
         constants.CODE_FORMATTING_ATTR_SPACING,
         false,
@@ -123,6 +127,7 @@ export const getPrettierOptions = (): Options => {
         condenseParens,
         reduceParens,
         attrSingleLine,
+        attrSameLine,
         spaceInParens,
         attrSpacing,
         printWidth,

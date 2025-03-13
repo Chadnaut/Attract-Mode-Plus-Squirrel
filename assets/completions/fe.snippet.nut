@@ -44,27 +44,11 @@
 /**
  * @keyword UserConfig Add UserConfig class snippet
  * @snippet
- * class UserConfig </ help="Configuration Description" /> {
- *     </ label=" ", help=" ", options=" ", order=1 />
- *     divider = " ";
- *
- *     </ label="Text", help="Text entry", order=2 />
- *     text_value = "string";
- *
- *     </ label="Option", help="Select an option", options="Yes,No", order=3 />
- *     option_value = "Yes";
- *
- *     </ label="Input", help="Select an input", is_input=true, order=4 />
- *     input_value = "A";
- *
- *     </ label="Display", help="This setting is unique per display", per_display=true, order=5 />
- *     display_value = "string";
- *
- *     </ label="Func", help="Call a function", is_function=true, order=6 />
- *     func_value = "config_func";
- * }
- *
- * function config_func(config) {
- *     return "done";
+ * class UserConfig </ help="Description placeholder" /> {
+ *     </ label="String", help="Type any text", order=1 /> text = "string"
+ *     </ label="Button", help="Press any key", is_input=true, order=3 /> input = "A"
+ *     </ label="Choice", help="Choose option", options="Yes,No", order=2 /> option = "Yes"
+ *     </ label="Unique", help="Display owned", per_display=true, order=4 /> unique = "string"
+ *     </ label="Method", help="Call function", is_function=true, order=5 /> callback = "funcname"
  * }
  */

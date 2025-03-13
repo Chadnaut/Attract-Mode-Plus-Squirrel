@@ -62,7 +62,7 @@ fe <- {
     add_listbox = add_listbox1,
     /**
      * @inheritdoc
-     * @version 🔶AM+_3.1.0 https://github.com/oomek/attractplus/blob/3.1.0/Layouts.md?plain=1
+     * @version 🔶AM+_3.1.0 https://github.com/oomek/attractplus/blob/3.1.0/Layouts.md?plain=1#L577
      */
     add_music = add_music1,
     /**
@@ -72,7 +72,7 @@ fe <- {
     add_surface = add_surface1,
     /**
      * @inheritdoc
-     * @version 🔶AM+_3.1.0 https://github.com/oomek/attractplus/blob/3.1.0/Layouts.md?plain=1
+     * @version 🔶AM+_3.1.0 https://github.com/oomek/attractplus/blob/3.1.0/Layouts.md?plain=1#L364
      */
     add_surface = add_surface2,
     /**
@@ -318,7 +318,7 @@ fe <- {
      * @param {*} env The object to use as the current environment.
      * @param {string} name The name of the callback function.
      * @version AM_1.4.1 https://github.com/mickelson/attract/blob/v1.4.1/Layouts.md?plain=1#L632
-     * @callback
+     * @example
      * ```
      * add_signal_handler(this, "on_signal");
      * function on_signal(action) {
@@ -456,7 +456,7 @@ fe <- {
      * @method
      * @param {string} filename The filename to check. Relative to the application, or absolute.
      * @returns {integer}
-     * @version 🔶AM+_3.1.0 https://github.com/oomek/attractplus/blob/3.1.0/Layouts.md?plain=1
+     * @version 🔶AM+_3.1.0 https://github.com/oomek/attractplus/blob/3.1.0/Layouts.md?plain=1#L1182
      */
     get_file_mtime = function (filename) {},
 

@@ -240,28 +240,16 @@ function printClassProperty(path, options, print) {
   }
 
   if (node.attributes) {
-      parts.push(print("attributes"), hardline);
+      parts.push(print("attributes"), options.attrSameLine ? " " : hardline);
   }
 
   parts.push(
     printPropertyKey(path, options, print),
   );
 
-  const isAbstractProperty =
-    node.type === "TSAbstractPropertyDefinition" ||
-    node.type === "TSAbstractAccessorProperty";
-
-  return [
-    printAssignment(
-      path,
-      options,
-      print,
-      parts,
-      " =",
-      isAbstractProperty ? undefined : "value",
-    ),
-    semi,
-  ];
+  return (node.attributes && options.attrSameLine)
+    ? [group([parts, " = ", print("value")]), semi]
+    : [printAssignment(path, options, print, parts, " =", "value"), semi];
 }
 
 function printClassBody(path, options, print) {

@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.9.13] - 2025-03-13
+
+### Added
+
+- Horizontal rule completion
+- Attribute snippet
+- Setting for attribute on same line as property
+
+### Fixed
+
+- Syntax highlighting regression
+- Metamethod completion regression
+- Signal suggestion description
+
 ## [0.9.12] - 2025-03-10
 
 ### Added

@@ -1,5 +1,5 @@
 import { Position, Range, TabInputText, TextDocument, window } from "vscode";
-import { adjustDocPos } from "./location";
+import { positionTranslate } from "./location";
 
 // -----------------------------------------------------------------------------
 
@@ -38,6 +38,6 @@ export const getWordPrefix = (
     if (!wordRange) wordRange = new Range(position, position);
     // if (!wordRange) return "";
     const wordStart = wordRange.start;
-    const prefixRange = new Range(adjustDocPos(wordStart, -length), wordStart);
+    const prefixRange = new Range(positionTranslate(wordStart, -length), wordStart);
     return document.getText(prefixRange);
 };

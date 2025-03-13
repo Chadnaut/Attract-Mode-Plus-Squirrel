@@ -104,12 +104,14 @@ function printObject(path, options, print) {
     : node.type === "TSInterfaceBody" || node.type === "TSTypeLiteral"
       ? ifBreak(semi, ";")
       : ",";
-  const leftBrace =
-    node.attributes ? "</" : node.type === "RecordExpression" ? "#{" : node.exact ? "{|" : "{";
-  const rightBrace = node.attributes ? "/>" : node.exact ? "|}" : "}";
-  const space = node.attributes ? (options.attrSingleLine ? " " : line) : (options.objectCurlySpacing ? line : softline);
-  const partLine = node.attributes ? (options.attrSingleLine ? " " : line) : line;
-  const partHardline = node.attributes ? (options.attrSingleLine ? " " : hardline) : hardline;
+
+  const attr = !!node.attributes;
+  const noWrap = attr && options.attrSingleLine;
+  const leftBrace = attr ? "</" : "{";
+  const rightBrace = attr ? "/>" : "}";
+  const space = attr ? (noWrap ? " " : line) : (options.objectCurlySpacing ? line : softline);
+  const partLine = attr ? (noWrap ? " " : line) : line;
+  const partHardline = attr ? (noWrap ? " " : hardline) : hardline;
 
   /** @type {Doc[]} */
   let separatorParts = [];

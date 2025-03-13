@@ -30,7 +30,7 @@ describe("SquirrelDocumentLogLinkProvider", () => {
         const d = new MockTextDocument("value");
         addProgram(d.uri.path, parse(d.getText()));
 
-        expect(await s.provideDocumentLinks(d, t)).toBeTruthy();
+        expect(await s.provideDocumentLinks(d, t)).toHaveLength(0);
     });
 
 });

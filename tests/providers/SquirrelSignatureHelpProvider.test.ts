@@ -1,7 +1,7 @@
 import { describe, expect, it } from "@jest/globals";
 import { SquirrelSignatureHelpProvider } from "../../src/providers/squirrelSignatureHelpProvider";
 import { MockTextDocument, parseExtra as parse } from "../utils";
-import { CompletionTriggerKind, Position, Event, commands } from "vscode";
+import { CompletionTriggerKind, Position, Event, commands, SignatureHelp } from "vscode";
 import { addProgram } from "../../src/utils/program";
 
 jest.spyOn(commands, "executeCommand").mockImplementation((name, uri): any => {
@@ -41,7 +41,7 @@ describe("SquirrelSignatureHelpProvider", () => {
         const p = new Position(0, 24);
         addProgram(d.uri.path, parse(d.getText()));
 
-        expect(await s.provideSignatureHelp(d, p, t, null)).toBeTruthy();
+        expect(await s.provideSignatureHelp(d, p, t, null)).toBeInstanceOf(SignatureHelp);
     });
 
 });

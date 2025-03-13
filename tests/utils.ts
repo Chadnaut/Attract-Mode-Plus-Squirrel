@@ -1,4 +1,4 @@
-import { TextDocument, Position, Range, EndOfLine, Uri } from "vscode";
+import { TextDocument, Position, Range, EndOfLine, Uri, TextLine } from "vscode";
 import * as prettier from "prettier/standalone";
 import { ParserOptions, SquirrelParser } from "../src/squirrel/parser";
 import { SQTree as qt } from "../src/ast";
@@ -84,6 +84,7 @@ export const format = async (code: string, options = {}): Promise<string> =>
         condenseParens: false,
         reduceParens: true,
         attrSingleLine: false,
+        attrSameLine: false,
         attrSpacing: true,
         printWidth: 80,
         tabWidth: 4,
@@ -107,6 +108,7 @@ export const formatCPP = async (code: string, options = {}): Promise<string> =>
         condenseParens: false,
         reduceParens: true,
         attrSingleLine: false,
+        attrSameLine: false,
         attrSpacing: true,
         printWidth: 80,
         tabWidth: 4,
@@ -130,7 +132,22 @@ export class MockTextDocument implements TextDocument {
     eol: EndOfLine;
     lineCount: number;
     save(): Thenable<boolean> { throw new Error("Method not implemented."); }
-    lineAt(position: unknown): import("vscode").TextLine { throw new Error("Method not implemented."); }
+    lineAt(line: number | Position): TextLine {
+        if (typeof line !== "number") line = line.line;
+        try {
+            const lines = this.value.split("\n");
+            return <TextLine>{
+                lineNumber: line,
+                text: lines[line],
+                range: null,
+                rangeIncludingLineBreak: null,
+                firstNonWhitespaceCharacterIndex: -1,
+                isEmptyOrWhitespace: false,
+            }
+        } catch (err) {
+            return;
+        }
+    }
     offsetAt(position: Position): number {
         try {
             const lines = this.value.split("\n");

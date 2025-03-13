@@ -27,7 +27,7 @@ class feSound {
     /**
      * The volume of the sound.
      * @default `100.0`
-     * @version 🔶AM+_3.1.0 https://github.com/oomek/attractplus/blob/3.1.0/Layouts.md?plain=1
+     * @version 🔶AM+_3.1.0 https://github.com/oomek/attractplus/blob/3.1.0/Layouts.md?plain=1#L2252
      */
     volume = 0.0;
 

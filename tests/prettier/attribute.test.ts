@@ -59,4 +59,18 @@ describe("Attribute", () => {
         expect(response).toBe('class foo {\n    </ aaaaaaaaaaaaa = 1, bbbbbbbbbbbbb = 2, ccccccccccccc = 3, ddddddddddddd = 4 />\n    function bar() {}\n}\n');
     });
 
+    // -------------------------------------------------------------------------
+
+    it("Attr multi same line", async () => {
+        const options = { attrSingleLine: false, attrSameLine: true };
+        const response = await format('class foo { </ aaaaaaaaaaaaa = 1, bbbbbbbbbbbbb = 2, ccccccccccccc = 3, ddddddddddddd = 4 /> key = 123; }', options);
+        expect(response).toBe('class foo {\n    </\n        aaaaaaaaaaaaa = 1,\n        bbbbbbbbbbbbb = 2,\n        ccccccccccccc = 3,\n        ddddddddddddd = 4\n    /> key = 123;\n}\n');
+    });
+
+    it("Attr single same line", async () => {
+        const options = { attrSingleLine: true, attrSameLine: true };
+        const response = await format('class foo { </ aaaaaaaaaaaaa = 1, bbbbbbbbbbbbb = 2, ccccccccccccc = 3, ddddddddddddd = 4 /> key = 123; }', options);
+        expect(response).toBe('class foo {\n    </ aaaaaaaaaaaaa = 1, bbbbbbbbbbbbb = 2, ccccccccccccc = 3, ddddddddddddd = 4 /> key = 123;\n}\n');
+    });
+
 });

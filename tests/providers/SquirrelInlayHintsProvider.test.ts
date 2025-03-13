@@ -34,7 +34,7 @@ describe("SquirrelInlayHintsProvider", () => {
         const r = new Range(0, 0, 0, 0);
         addProgram(d.uri.path, parse(d.getText()));
 
-        expect(s.provideInlayHints(d, r, t)).toBeTruthy();
+        expect(await s.provideInlayHints(d, r, t)).toHaveLength(0);
     });
 
 });

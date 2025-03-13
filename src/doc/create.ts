@@ -143,9 +143,11 @@ export const updateNodeDoc = (program: AST.Program): AST.Program => {
         docBlocks.push(docBlock);
 
         // docBlocks may contain magic completions, or a snippet
-        createDocSnippetCompletions(docBlock, program).forEach((completion) => {
-            addSnippetCompletion(program, completion);
-        });
+        createDocSnippetCompletions(docBlock, program)
+            .filter((completion) => !!completion)
+            .forEach((completion) => {
+                addSnippetCompletion(program, completion);
+            });
 
         // SPECIAL - first docblock gets attached to program
         let isProgramDoc = false;

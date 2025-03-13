@@ -75,10 +75,12 @@ export default {
     CODE_FORMATTING_CONDENSE_PARENS: `AM-Squirrel.codeFormatting.style.condenseParens`,
     CODE_FORMATTING_REDUCE_PARENS: `AM-Squirrel.codeFormatting.style.reduceParens`,
     CODE_FORMATTING_ATTR_SINGLE_LINE: `AM-Squirrel.codeFormatting.style.attrSingleLine`,
+    CODE_FORMATTING_ATTR_SAME_LINE: `AM-Squirrel.codeFormatting.style.attrSameLine`,
     CODE_FORMATTING_ATTR_SPACING: `AM-Squirrel.codeFormatting.style.attrSpacing`,
     CODE_FORMATTING_SEMI: `AM-Squirrel.codeFormatting.style.semi`,
     CODE_FORMATTING_USE_TABS: `AM-Squirrel.codeFormatting.style.useTabs`,
     CODE_FORMATTING_PRINT_WIDTH: `AM-Squirrel.codeFormatting.printWidth`,
+    CODE_FORMATTING_RULE_MODE: `AM-Squirrel.codeFormatting.ruleWidth`,
     CODE_FORMATTING_TAB_WIDTH: `AM-Squirrel.codeFormatting.tabWidth`,
 
     FORMATTING_ERROR_TITLE: 'Unable to format document.',
@@ -93,6 +95,11 @@ export default {
     DOCBLOCK_TRIGGER: ["/", "*"],
     DOCBLOCK_ATTR_PREFIX: "@",
     DOCBLOCK_ATTR_TRIGGER: ["@"],
+    DOCBLOCK_HR_TRIGGER: ["-", "=", "/", "*", "_"], // ["#", "_"] don't work...
+    DOCBLOCK_HR_COUNT: 3,
+
+    ATTRIBUTE_TRIGGER: ["<", "/"],
+    ATTRIBUTE_PREFIX: "</",
 
     // code completion settings
     COMPLETIONS_ENABLED: `AM-Squirrel.completions.showCompletions`,

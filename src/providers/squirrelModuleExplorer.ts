@@ -67,19 +67,18 @@ export class AttractModuleTreeDataProvider
                     : info.description
                 : "";
 
-            resolve({
-                label,
-                description,
-                iconPath: this.iconPath,
-                tooltip: info.description,
-                resourceUri: element.resource,
-                collapsibleState: TreeItemCollapsibleState.None,
-                command: <Command>{
-                    command: "vscode.open",
-                    arguments: [element.resource],
-                    title: "Open",
-                },
-            });
+            const item = new TreeItem(label);
+            item.description = description;
+            item.iconPath = this.iconPath;
+            item.tooltip = info.description;
+            item.resourceUri = element.resource;
+            item.collapsibleState = TreeItemCollapsibleState.None;
+            item.command = <Command>{
+                command: "vscode.open",
+                arguments: [element.resource],
+                title: "Open",
+            };
+            resolve(item);
         });
     }
 

@@ -30,7 +30,7 @@ import { AST } from "../ast";
 import { getNodeTypeDef } from "./type";
 import { getSuperDefs } from "./super";
 import { getNodeSignature } from "./signature";
-import { adjustDocPos } from "./location";
+import { positionTranslate } from "./location";
 import { addRootPrefix, nodeHasRootPrefix, removeRootPrefix } from "./root";
 import { getNodeDef, getNodeVal } from "./definition";
 import { stringToNode } from "./create";
@@ -254,7 +254,7 @@ export const formatMemberCompletions = (
             } else {
                 item.insertText = `[${insertText}]`;
                 item.additionalTextEdits = [
-                    TextEdit.delete(new Range(adjustDocPos(pos, -1), pos)),
+                    TextEdit.delete(new Range(positionTranslate(pos, -1), pos)),
                 ];
             }
         }
@@ -266,11 +266,10 @@ export const createNodeArrayCompletions = (
     program: AST.Program,
 ): CompletionItem[] => {
     const node = stringToNode(name);
-
-    const branch = [program, node];
+    const branch = getNodeVal([program, node]);
     const arr = <AST.ArrayExpression>getNodeVal(branch).at(-1);
     if (arr?.type === "ArrayExpression") {
-        const description = getCompletionDescription(program);
+        const description = getCompletionDescription(getBranchProgram(branch));
         return arr.elements
             .map((child) => child["value"])
             .filter((value) => value !== undefined)

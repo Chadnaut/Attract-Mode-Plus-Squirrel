@@ -5,7 +5,7 @@ import {
     SemanticTokensLegend,
     Range,
 } from "vscode";
-import { adjustDocPos, nodeToDocRange } from "./location";
+import { positionTranslate, nodeToDocRange } from "./location";
 import { getNodeDef, hasNodeDec } from "./definition";
 import { addBranchId } from "./identifier";
 import { AST, SQTree as qt } from "../ast";
@@ -112,7 +112,7 @@ export const applyToken = (
 
     if (node.extra?.root) {
         // adjust range for root identifiers to skip "::"
-        range = new Range(adjustDocPos(range.start, 2), range.end);
+        range = new Range(positionTranslate(range.start, 2), range.end);
     }
 
     if (!range) return;

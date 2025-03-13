@@ -64,7 +64,7 @@ describe("SquirrelCompletionItemParamProvider", () => {
         const r = { triggerKind: CompletionTriggerKind.TriggerCharacter, triggerCharacter: "." };
         addProgram(d.uri.path, parse(d.getText()));
 
-        expect(await s.provideCompletionItems(d, p, t, r)).toBeTruthy();
+        expect(await s.provideCompletionItems(d, p, t, r)).toHaveLength(0);
     });
 
 });

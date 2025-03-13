@@ -90,7 +90,7 @@ export const createDocMarkdown = (
         if (META_KINDS.includes(attr.kind)) break;
         switch (attr.kind) {
             case "constructor":
-            case "description":
+            case "description": // prints first
             case "inheritdoc!":
             case "inheritdoc":
             case "variation":
@@ -98,6 +98,7 @@ export const createDocMarkdown = (
             case "external":
             case "constant":
             case "version": // prints last
+            case "global":
             case "method":
             case "ignore":
             case "class":

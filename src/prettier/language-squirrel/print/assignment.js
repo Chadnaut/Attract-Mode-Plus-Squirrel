@@ -152,7 +152,11 @@ function chooseLayout(path, options, print, leftDoc, rightPropertyName) {
     return "break-after-operator";
   }
 
-  if (path.parent.attributes && !options.attrSpacing) return "chain-tail-arrow-chain";
+  if (path.parent.attributes) {
+    if (!options.attrSpacing) return "chain-tail-arrow-chain";
+    if (options.attrSingleLine) return "never-break-after-operator";
+  }
+
   if (
     node.type === "ImportAttribute" ||
     (rightNode.type === "CallExpression" &&

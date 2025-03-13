@@ -235,20 +235,21 @@ class feRectangle {
      *
      * This property will auto-adjust to preserve roundness.
      * @default `0.0`
-     * @version 🔶AM+_3.1.0 https://github.com/oomek/attractplus/blob/3.1.0/Layouts.md?plain=1
+     * @version 🔶AM+_3.1.0 https://github.com/oomek/attractplus/blob/3.1.0/Layouts.md?plain=1#L2191
      */
+    corner_radius = 0.0;
 
     /**
      * The corner x radius.
      * @default `0.0`
-     * @version 🔶AM+_3.1.0 https://github.com/oomek/attractplus/blob/3.1.0/Layouts.md?plain=1
+     * @version 🔶AM+_3.1.0 https://github.com/oomek/attractplus/blob/3.1.0/Layouts.md?plain=1#L2194
      */
     corner_radius_x = 0.0;
 
     /**
      * The corner y radius.
      * @default `0.0`
-     * @version 🔶AM+_3.1.0 https://github.com/oomek/attractplus/blob/3.1.0/Layouts.md?plain=1
+     * @version 🔶AM+_3.1.0 https://github.com/oomek/attractplus/blob/3.1.0/Layouts.md?plain=1#L2196
      */
     corner_radius_y = 0.0;
 
@@ -257,20 +258,21 @@ class feRectangle {
      *
      * This property will auto-adjust to preserve roundness.
      * @default `0.0`
-     * @version 🔶AM+_3.1.0 https://github.com/oomek/attractplus/blob/3.1.0/Layouts.md?plain=1
+     * @version 🔶AM+_3.1.0 https://github.com/oomek/attractplus/blob/3.1.0/Layouts.md?plain=1#L2198
      */
+    corner_ratio = 0.0;
 
     /**
      * The corner x radius, as a fraction of the width `0.0...0.5`.
      * @default `0.0`
-     * @version 🔶AM+_3.1.0 https://github.com/oomek/attractplus/blob/3.1.0/Layouts.md?plain=1
+     * @version 🔶AM+_3.1.0 https://github.com/oomek/attractplus/blob/3.1.0/Layouts.md?plain=1#L2201
      */
     corner_ratio_x = 0.0;
 
     /**
      * The corner y radius, as a fraction of the height `0.0...0.5`.
      * @default `0.0`
-     * @version 🔶AM+_3.1.0 https://github.com/oomek/attractplus/blob/3.1.0/Layouts.md?plain=1
+     * @version 🔶AM+_3.1.0 https://github.com/oomek/attractplus/blob/3.1.0/Layouts.md?plain=1#L2203
      */
     corner_ratio_y = 0.0;
 
@@ -279,7 +281,7 @@ class feRectangle {
      *
      * More points produce smooth curves, while fewer points result in flat bevels.
      * @default `12`
-     * @version 🔶AM+_3.1.0 https://github.com/oomek/attractplus/blob/3.1.0/Layouts.md?plain=1
+     * @version 🔶AM+_3.1.0 https://github.com/oomek/attractplus/blob/3.1.0/Layouts.md?plain=1#L2205
      */
     corner_points = 0;
 
@@ -356,7 +358,7 @@ class feRectangle {
      * Set the corner radius.
      * @param {float} x The corner x radius.
      * @param {float} y The corner y radius.
-     * @version 🔶AM+_3.1.0 https://github.com/oomek/attractplus/blob/3.1.0/Layouts.md?plain=1
+     * @version 🔶AM+_3.1.0 https://github.com/oomek/attractplus/blob/3.1.0/Layouts.md?plain=1#L2236
      */
     function set_corner_radius(x, y) {}
 
@@ -364,7 +366,7 @@ class feRectangle {
      * Set the corner ratio.
      * @param {float} x The corner x radius, as a fraction of the width `0.0...0.5`.
      * @param {float} y The corner y radius, as a fraction of the height `0.0...0.5`.
-     * @version 🔶AM+_3.1.0 https://github.com/oomek/attractplus/blob/3.1.0/Layouts.md?plain=1
+     * @version 🔶AM+_3.1.0 https://github.com/oomek/attractplus/blob/3.1.0/Layouts.md?plain=1#L2237
      */
     function set_corner_ratio(x, y) {}
 

@@ -5,8 +5,11 @@ import { SQTree as qt } from "../ast/create";
 // ------------------------------------------------------
 // VSCode Position
 
-/** Adjust document position character by offset */
-export const adjustDocPos = (position: Position, offset: number): Position =>
+/**
+ * Adjust document position character by offset
+ * - A safe position.translate
+ */
+export const positionTranslate = (position: Position, offset: number): Position =>
     new Position(position.line, Math.max(0, position.character + offset));
 
 // ------------------------------------------------------

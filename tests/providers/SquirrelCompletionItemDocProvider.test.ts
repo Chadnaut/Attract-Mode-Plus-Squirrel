@@ -84,7 +84,7 @@ describe("SquirrelCompletionItemDocProvider", () => {
         const r = { triggerKind: CompletionTriggerKind.TriggerCharacter, triggerCharacter: "." };
         addProgram(d.uri.path, parse(d.getText()));
 
-        expect(await s.provideCompletionItems(d, p, t, r)).toBeTruthy();
+        expect((await s.provideCompletionItems(d, p, t, r)).length).toBeGreaterThan(0);
     });
 
     it("Comment", async () => {
@@ -94,7 +94,7 @@ describe("SquirrelCompletionItemDocProvider", () => {
         const r = { triggerKind: CompletionTriggerKind.TriggerCharacter, triggerCharacter: "." };
         addProgram(d.uri.path, parse(d.getText()));
 
-        expect(await s.provideCompletionItems(d, p, t, r)).toBeTruthy();
+        expect((await s.provideCompletionItems(d, p, t, r)).length).toBeGreaterThan(0);
     });
 
 });

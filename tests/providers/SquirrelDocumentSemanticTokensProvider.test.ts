@@ -30,7 +30,7 @@ describe("SquirrelDocumentSemanticTokensProvider", () => {
         const d = new MockTextDocument("");
         addProgram(d.uri.path, parse(d.getText()));
 
-        expect(await s.provideDocumentSemanticTokens(d, t)).toBeTruthy();
+        expect(await s.provideDocumentSemanticTokens(d, t)).toHaveLength(0);
     });
 
 });

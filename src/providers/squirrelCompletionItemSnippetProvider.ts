@@ -15,6 +15,9 @@ import { docPosToPos } from "../utils/location";
 import { getBranchAtPos } from "../utils/find";
 import { getSnippetCompletions } from "../doc/snippets";
 import { hasNodeDec } from "../utils/definition";
+import { getCommentAtPosition } from "../doc/find";
+
+const wordRegex = new RegExp(/^[A-Za-z_ <]/);
 
 export class SquirrelCompletionItemSnippetProvider
     implements CompletionItemProvider
@@ -30,14 +33,16 @@ export class SquirrelCompletionItemSnippetProvider
         if (!this.enabled) return;
 
         const wordPrefix = getWordPrefix(document, position, 1);
-        if ([".", '"', "*"].includes(wordPrefix)) return;
+        if (wordPrefix && !wordRegex.test(wordPrefix)) return;
 
         return requestProgram(document, token, (program: AST.Program) => {
             const pos = docPosToPos(document, position);
-            const branch = getBranchAtPos(program, pos);
-            if (hasNodeDec(<AST.Identifier>branch.at(-1))) return;
+            if (getCommentAtPosition(program, pos)) return;
 
+            const branch = getBranchAtPos(program, pos);
             const isProperty = branch.at(-2)?.type === "PropertyDefinition";
+            if (!isProperty && hasNodeDec(<AST.Identifier>branch.at(-1))) return;
+
             const completions = [program, ...getProgramImports(program)]
                 .flatMap((p) => getSnippetCompletions(p))
                 .filter(

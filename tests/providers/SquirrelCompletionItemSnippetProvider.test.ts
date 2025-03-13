@@ -89,11 +89,12 @@ describe("SquirrelCompletionItemSnippetProvider", () => {
             return s.provideCompletionItems(d, p, t, r);
         }
 
-        expect(await getItems("local x = x")).not.toBeUndefined();
+        expect(await getItems("local x = y")).not.toBeUndefined();
+        expect(await getItems("// local x = y")).toBeUndefined();
         expect(await getItems("local x")).toBeUndefined();
         expect(await getItems("function x")).toBeUndefined();
         expect(await getItems("class x")).toBeUndefined();
-        expect(await getItems("class foo { x }", 13)).toBeUndefined();
+        expect(await getItems("class foo { x }", 13)).not.toBeUndefined(); // snippet for propertyDef
         expect(await getItems("local t = { x }", 13)).toBeUndefined();
     });
 });

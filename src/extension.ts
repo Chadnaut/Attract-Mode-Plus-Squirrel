@@ -4,6 +4,8 @@ import { ExtensionContext, languages } from "vscode";
 import constants from "./constants";
 import * as path from "path";
 
+import { SquirrelCompletionItemAttributeProvider } from "./providers/squirrelCompletionItemAttributeProvider";
+import { SquirrelCompletionItemDocRuleProvider } from "./providers/squirrelCompletionItemDocRuleProvider";
 import { SquirrelCompletionItemDocMemberProvider } from "./providers/squirrelCompletionItemDocMemberProvider";
 import { SquirrelCompletionItemDocProvider } from "./providers/squirrelCompletionItemDocProvider";
 import { SquirrelCompletionItemMagicProvider } from "./providers/squirrelCompletionItemMagicProvider";
@@ -102,6 +104,8 @@ export const activate = (context: ExtensionContext) => {
     const completionItemParamProvider = new SquirrelCompletionItemParamProvider();
     const completionItemMagicProvider = new SquirrelCompletionItemMagicProvider();
     const completionItemDocProvider = new SquirrelCompletionItemDocProvider();
+    const completionItemDocRuleProvider = new SquirrelCompletionItemDocRuleProvider();
+    const completionItemAttributeProvider = new SquirrelCompletionItemAttributeProvider();
     const completionItemDocMemberProvider = new SquirrelCompletionItemDocMemberProvider();
     const documentSemanticTokensProvider = new SquirrelDocumentSemanticTokensProvider();
     const inlayHintsProvider = new SquirrelInlayHintsProvider();
@@ -199,6 +203,9 @@ export const activate = (context: ExtensionContext) => {
         onConfigChange(constants.COLOR_PICKER_ENABLED, (enabled) => {
             colorProvider.enabled = enabled;
         }),
+        onConfigChange(constants.CODE_FORMATTING_RULE_MODE, (mode) => {
+            completionItemDocRuleProvider.mode = mode;
+        }),
 
         // ---------------------------------------------------------------------
 
@@ -282,6 +289,20 @@ export const activate = (context: ExtensionContext) => {
             selector,
             completionItemDocMemberProvider,
             ...constants.DOCBLOCK_ATTR_TRIGGER,
+        ),
+
+        // Completions for docBlock rule
+        languages.registerCompletionItemProvider(
+            selector,
+            completionItemDocRuleProvider,
+            ...constants.DOCBLOCK_HR_TRIGGER,
+        ),
+
+        // Completions for attributes
+        languages.registerCompletionItemProvider(
+            selector,
+            completionItemAttributeProvider,
+            ...constants.ATTRIBUTE_TRIGGER,
         ),
 
         // Completions for snippets

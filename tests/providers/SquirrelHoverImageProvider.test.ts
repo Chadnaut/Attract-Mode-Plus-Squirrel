@@ -1,7 +1,7 @@
 import { describe, expect, it } from "@jest/globals";
 import { SquirrelHoverImageProvider } from "../../src/providers/squirrelHoverImageProvider";
 import { MockTextDocument, parseExtra as parse } from "../utils";
-import { CompletionTriggerKind, Position, Event, commands } from "vscode";
+import { CompletionTriggerKind, Position, Event, commands, Hover } from "vscode";
 import { addProgram } from "../../src/utils/program";
 import { forwardSlash } from "../../src/utils/file";
 import * as path from "path";
@@ -43,7 +43,7 @@ describe("SquirrelHoverImageProvider", () => {
         const p = new Position(0, 3);
         addProgram(d.uri.path, parse(d.getText()));
 
-        expect(await s.provideHover(d, p, t)).toBeTruthy();
+        expect(await s.provideHover(d, p, t)).toBeInstanceOf(Hover);
     });
 
 });

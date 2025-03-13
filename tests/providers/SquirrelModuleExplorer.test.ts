@@ -1,6 +1,6 @@
 import { describe, expect, it } from "@jest/globals";
 import { AttractModuleTreeDataProvider, SquirrelModuleExplorer } from "../../src/providers/squirrelModuleExplorer";
-import { Uri, commands, window } from "vscode";
+import { TreeItem, Uri, commands, window } from "vscode";
 
 const modulePaths = ['a', 'b'];
 let info = {};
@@ -31,8 +31,7 @@ describe("SquirrelModuleExplorer", () => {
 
     it("Disposes", () => {
         const s = new SquirrelModuleExplorer()
-        s.dispose();
-        expect(s).toBeTruthy();
+        expect(() => s.dispose()).not.toThrow();
     });
 
     it("dataProvider", () => {
@@ -42,7 +41,7 @@ describe("SquirrelModuleExplorer", () => {
 
     it("getTreeItem", async () => {
         const s = new AttractModuleTreeDataProvider()
-        expect(await s.getTreeItem({ label: "label", resource: Uri.parse("mock") })).toBeTruthy();
+        expect(await s.getTreeItem({ label: "label", resource: Uri.parse("mock") })).toBeInstanceOf(TreeItem);
     });
 
     it("getChildren", async () => {

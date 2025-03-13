@@ -2,7 +2,7 @@
     "name": "am-squirrel",
     "displayName": "AM+ Squirrel",
     "description": "Squirrel for Attract-Mode Plus.",
-    "version": "0.9.12",
+    "version": "0.9.13",
     "license": "MIT",
     "publisher": "Chadnaut",
     "author": {
@@ -247,7 +247,7 @@
                     "properties": {
                         "objectCurlySpacing": {
                             "type": "boolean",
-                            "description": "Spaces between curly braces."
+                            "description": "Spaces between table braces."
                         },
                         "arrayBracketSpacing": {
                             "type": "boolean",
@@ -259,23 +259,27 @@
                         },
                         "spaceInParens": {
                             "type": "boolean",
-                            "description": "Spaces between parentheses."
-                        },
-                        "attrSpacing": {
-                            "type": "boolean",
-                            "description": "Spaces between attribute assignment."
+                            "description": "Parentheses space."
                         },
                         "condenseParens": {
                             "type": "boolean",
-                            "description": "Condense nested parentheses."
+                            "description": "Parentheses condensed when nested."
                         },
                         "reduceParens": {
                             "type": "boolean",
-                            "description": "Remove unnecessary parentheses."
+                            "description": "Parentheses removed when unnecessary."
+                        },
+                        "attrSpacing": {
+                            "type": "boolean",
+                            "description": "Attribute spaces between operator."
                         },
                         "attrSingleLine": {
                             "type": "boolean",
-                            "description": "Prevent attribute wrapping."
+                            "description": "Attribute on a single line."
+                        },
+                        "attrSameLine": {
+                            "type": "boolean",
+                            "description": "Attribute inline with property."
                         },
                         "semi": {
                             "type": "boolean",
@@ -291,10 +295,11 @@
                         "arrayBracketSpacing": false,
                         "computedPropertySpacing": false,
                         "spaceInParens": false,
-                        "attrSpacing": false,
                         "condenseParens": false,
                         "reduceParens": true,
+                        "attrSpacing": false,
                         "attrSingleLine": false,
+                        "attrSameLine": false,
                         "semi": true,
                         "useTabs": false
                     }
@@ -334,19 +339,35 @@
                     "minimum": 10,
                     "markdownDescription": "Fit code within this line limit."
                 },
-                "AM-Squirrel.attract-Mode.path": {
+                "AM-Squirrel.codeFormatting.ruleWidth": {
                     "order": 7,
+                    "type": "string",
+                    "enum": [
+                        "print",
+                        "ruler",
+                        ""
+                    ],
+                    "enumItemLabels": [
+                        "Print Width",
+                        "Ruler Width",
+                        "Disabled"
+                    ],
+                    "default": "print",
+                    "markdownDescription": "Fit horizontal rule completion within this line limit."
+                },
+                "AM-Squirrel.attract-Mode.path": {
+                    "order": 8,
                     "type": "string",
                     "markdownDescription": "Path of your AM+ installation, containing the `modules`, `plugins` and `layouts` folders. Required for Live reload, Document links and Missing file warnings."
                 },
                 "AM-Squirrel.attract-Mode.artwork": {
-                    "order": 8,
+                    "order": 9,
                     "type": "string",
                     "default": "snap,marquee,flyer,wheel",
                     "markdownDescription": "Labels to display for artwork resource completions."
                 },
                 "AM-Squirrel.attract-Mode.integration": {
-                    "order": 9,
+                    "order": 10,
                     "type": "object",
                     "markdownDescription": "Controls the integration with Attract-Mode.",
                     "additionalProperties": false,
@@ -376,25 +397,25 @@
                     }
                 },
                 "AM-Squirrel.attract-Mode.liveReloadExtensions": {
-                    "order": 10,
+                    "order": 11,
                     "type": "string",
                     "default": ".nut;.frag;.vert;.cfg;.am;.msg",
                     "markdownDescription": "Extensions that trigger AM+ live reload when saved."
                 },
                 "AM-Squirrel.checkConflicts": {
-                    "order": 11,
+                    "order": 12,
                     "type": "boolean",
                     "default": true,
                     "markdownDescription": "Check for conflicting extensions on startup."
                 },
                 "AM-Squirrel.package.author": {
-                    "order": 12,
+                    "order": 13,
                     "type": "string",
                     "default": "username",
                     "markdownDescription": "Author for DocBlock package completions."
                 },
                 "AM-Squirrel.package.url": {
-                    "order": 13,
+                    "order": 14,
                     "type": "string",
                     "default": "https://github.com/user/repo",
                     "markdownDescription": "URL for DocBlock package completions."

@@ -14,6 +14,7 @@ export const getNodeIsDecId = (branch: AST.Node[]): boolean => {
     switch (branch.at(-1)?.type) {
         case "VariableDeclaration":
         case "FunctionDeclaration":
+        case "MethodDefinition":
             return true;
         case "Identifier":
             switch (branch.at(-3)?.type) {

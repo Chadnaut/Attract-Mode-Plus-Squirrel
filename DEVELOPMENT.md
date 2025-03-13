@@ -34,7 +34,7 @@
 
 ### Debug Console
 
-- `console.log` messages within the development host window will be displayed in the *editor* `Debug Console` tab
+- `console` log messages within the development host window will be displayed in the *editor* `Debug Console` tab
 
 ## Known Issues
 

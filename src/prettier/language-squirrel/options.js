@@ -68,8 +68,15 @@ const options = {
     category: CATEGORY_SQUIRREL,
     type: "boolean",
     default: false,
-    description: "Prevent attribute wrapping.",
-    oppositeDescription: "Allow attribute wrapping.",
+    description: "Attributes never wrap.",
+    oppositeDescription: "Attributes wrap.",
+  },
+  attrSameLine: {
+    category: CATEGORY_SQUIRREL,
+    type: "boolean",
+    default: false,
+    description: "Attributes on same line as property.",
+    oppositeDescription: "Attributes on separate line to property.",
   },
   spaceInParens: {
     category: CATEGORY_SQUIRREL,

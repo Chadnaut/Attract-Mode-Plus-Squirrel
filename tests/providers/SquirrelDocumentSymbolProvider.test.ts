@@ -39,7 +39,7 @@ describe("SquirrelDocumentSymbolProvider", () => {
         const d = new MockTextDocument("");
         addProgram(d.uri.path, parse(d.getText()));
 
-        expect(await s.provideDocumentSymbols(d, t)).toBeTruthy();
+        expect(await s.provideDocumentSymbols(d, t)).toHaveLength(0);
     });
 
 });
