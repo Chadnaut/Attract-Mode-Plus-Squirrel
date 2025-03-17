@@ -5,8 +5,6 @@ import {
     MarkdownString,
     SnippetString,
 } from "vscode";
-import constants from "../constants";
-import { loadSnippets } from "../utils/snippets";
 import { AST } from "../ast";
 import { DocAttr, DocBlock } from "./kind";
 import { createDocMarkdown } from "./markdown";
@@ -16,19 +14,7 @@ import {
     getCommitCharacters,
 } from "../utils/completion";
 import { printDocAttrs } from "./print";
-import { getBranchProgram } from "../utils/find";
-import { CommentBlock } from "../ast/ast";
-import { getCommentDocBlock } from "./find";
-import { getImportAttrs } from "../utils/program";
-
-export const docBlockSnippets = loadSnippets(constants.SNIPPETS_PATH);
-
-/** Kinds of doc attributes with names */
-export const NamedDocAttrKinds = docBlockSnippets
-    .filter((snippet) =>
-        snippet.insertText.valueOf()["value"].match(/(\${\d+:name}|\s\${1\|)/i),
-    )
-    .map((snippet) => (<CompletionItemLabel>snippet.label).label);
+import { getImportAttrs, getProgramImports } from "../utils/program";
 
 // -----------------------------------------------------------------------------
 
@@ -49,40 +35,36 @@ export const getSnippetCompletions = (
 
 // -----------------------------------------------------------------------------
 
-export const getDocBlockSnippets = (
-    comment: CommentBlock,
-): CompletionItem[] => {
-    let snippets = docBlockSnippets.slice(0);
-    const doc = getCommentDocBlock(comment);
-    if (doc?.branch.length === 1) {
-        snippets = injectRequiresCompletion(
-            getBranchProgram(doc.branch),
-            snippets,
-        );
-    }
-    return snippets;
+export const getProgramSnippets = (program: AST.Program): CompletionItem[] => {
+    if (!program) return [];
+    return filterSnippets(
+        program,
+        [program, ...getProgramImports(program)].flatMap((p) =>
+            getSnippetCompletions(p),
+        ),
+    );
 };
 
-/** Replace @requires snippet with package summary */
-const injectRequiresCompletion = (
+/** Replace requires-type snippet with import summary */
+export const filterSnippets = (
     program: AST.Program,
     snippets: CompletionItem[],
 ): CompletionItem[] => {
+    const index = snippets.findIndex(
+        (snippet) => (<CompletionItemLabel>snippet.label)?.label === "requires",
+    );
+    if (index == -1) return snippets;
+
     let importText = printDocAttrs(getImportAttrs(program));
-    if (importText) {
-        const index = snippets.findIndex(
-            (snippet) =>
-                (<CompletionItemLabel>snippet.label).label === "requires",
-        );
+    if (!importText) return snippets;
+    importText = importText.replace(/^ /gm, "").replace(/\r?\n$/, "");
 
-        const prev = snippets[index];
-        const item = new CompletionItem(prev.label, prev.kind);
-        item.documentation = prev.documentation;
-        item.insertText =
-            "requires\n" + importText.replace(/^ /gm, "").replace(/\n$/, "");
+    const prev = snippets[index];
+    const item = new CompletionItem(prev.label, prev.kind);
+    item.documentation = prev.documentation;
+    item.insertText = "requires\n" + importText;
 
-        snippets.splice(index, 1, item);
-    }
+    snippets.splice(index, 1, item);
     return snippets;
 };
 
@@ -103,58 +85,50 @@ export const createDocSnippetCompletions = (
         const attr = docBlock.attributes[i];
         let kind: CompletionItemKind;
 
-        switch (attr.kind) {
-            case "magic": {
-                kind = CompletionItemKind.Event;
-                // no break
-            }
-            case "keyword": {
-                let nextAttr: DocAttr = undefined;
-                let snippetAttr = undefined;
-                let done = false;
-                const keyword_attrs = [];
-                keyword_attrs.push({
-                    kind: "description",
-                    documentation: attr.documentation,
-                });
-                while (!done) {
-                    nextAttr = docBlock.attributes[i + 1];
-                    switch (nextAttr?.kind) {
-                        case "snippet":
-                            if (kind === undefined)
-                                kind = CompletionItemKind.Snippet;
-                            snippetAttr = nextAttr;
+        if (attr.kind === "keyword") {
+            let nextAttr: DocAttr = undefined;
+            let snippetAttr = undefined;
+            let done = false;
+            const keyword_attrs = [];
+            keyword_attrs.push({
+                kind: "description",
+                documentation: attr.documentation,
+            });
+            while (!done) {
+                nextAttr = docBlock.attributes[i + 1];
+                switch (nextAttr?.kind) {
+                    case "snippet":
+                        snippetAttr = nextAttr;
+                        if (kind === undefined)
+                            kind = CompletionItemKind.Snippet;
+                        i++;
+                        break;
+                    case "kind":
+                        kind = stringToCompletionKind(nextAttr.name);
+                        i++;
+                        break;
+                    case "keyword":
+                        done = true;
+                        break;
+                    default:
+                        if (nextAttr) {
+                            keyword_attrs.push(nextAttr);
                             i++;
-                            break;
-                        case "kind":
-                            kind = stringToCompletionKind(nextAttr.name);
-                            i++;
-                            break;
-                        case "magic":
-                        case "keyword":
+                        } else {
                             done = true;
-                            break;
-                        default:
-                            if (nextAttr) {
-                                keyword_attrs.push(nextAttr);
-                                i++;
-                            } else {
-                                done = true;
-                            }
-                            break;
-                    }
+                        }
+                        break;
                 }
-                const item = createDocSnippetCompletion(
-                    attr.name,
-                    createDocMarkdown(keyword_attrs).value,
-                    snippetAttr?.documentation ?? attr.name,
-                    kind ?? CompletionItemKind.Keyword,
-                    description,
-                    program,
-                );
-                items.push(item);
-                break;
             }
+            const item = createDocSnippetCompletion(
+                attr.name,
+                createDocMarkdown(keyword_attrs).value,
+                snippetAttr?.documentation ?? attr.name,
+                kind ?? CompletionItemKind.Keyword,
+                description,
+                program,
+            );
+            items.push(item);
         }
     }
 
@@ -184,7 +158,7 @@ export const createDocSnippetCompletion = (
         item.documentation.appendMarkdown(documentation);
         item.documentation.supportHtml = true;
     }
-    item.insertText = new SnippetString(insertText);
+    item.insertText = new SnippetString(insertText.replace(/\*\\\//g, '*/'));
     item.commitCharacters = getCommitCharacters(kind);
 
     // special hard-coded commits

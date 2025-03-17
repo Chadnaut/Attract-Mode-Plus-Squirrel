@@ -11,8 +11,9 @@ import {
 import { getCommentBlockAtPosition } from "../doc/find";
 import { docPosToPos } from "../utils/location";
 import { AST } from "../ast";
-import { getDocBlockSnippets } from "../doc/snippets";
+import { getProgramSnippets } from "../doc/snippets";
 import { requestProgram } from "../utils/program";
+import { stringToCompletionKind } from "../utils/kind";
 
 /** DocBlock attribute completions */
 export class SquirrelCompletionItemDocMemberProvider
@@ -36,7 +37,8 @@ export class SquirrelCompletionItemDocMemberProvider
                 const pos = docPosToPos(document, position);
                 const comment = getCommentBlockAtPosition(program, pos);
                 if (!comment) return;
-                return getDocBlockSnippets(comment);
+                const kind = stringToCompletionKind("attr");
+                return getProgramSnippets(program).filter((item) => item.kind === kind);
             },
         );
     }

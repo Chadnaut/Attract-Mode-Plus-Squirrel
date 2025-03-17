@@ -19,6 +19,7 @@ import { SquirrelDocumentDropEditProvider } from "./providers/squirrelDocumentDr
 import { SquirrelDocumentFormattingEditProvider } from "./providers/squirrelDocumentFormattingEditProvider";
 import { SquirrelDocumentLinkProvider } from "./providers/squirrelDocumentLinkProvider";
 import { SquirrelDocumentLogLinkProvider } from "./providers/squirrelDocumentLogLinkProvider";
+import { SquirrelDocumentLogSemanticTokensProvider } from "./providers/squirrelDocumentLogSemanticTokensProvider";
 import { SquirrelDocumentSemanticTokensProvider } from "./providers/squirrelDocumentSemanticTokensProvider";
 import { SquirrelDocumentSymbolProvider } from "./providers/squirrelDocumentSymbolProvider";
 import { SquirrelHoverDefinitionProvider } from "./providers/squirrelHoverDefinitionProvider";
@@ -37,6 +38,7 @@ import { refreshArtworkLabels } from "./utils/media";
 import { SquirrelConflictCheck } from "./utils/conflict";
 import { onConfigChange } from "./utils/config";
 import { tokenLegend } from "./utils/token";
+import { SquirrelLauncher } from "./utils/launcher";
 
 export const activate = (context: ExtensionContext) => {
     console.info(`Activate ${constants.TITLE}`);
@@ -49,6 +51,11 @@ export const activate = (context: ExtensionContext) => {
 
     // log selector has no scheme, it applies to everything - including output panel
     const logSelector = constants.LOG_LANGUAGE_ID;
+
+    // docblock completions
+    const docblockNuts = [
+        path.join(constants.COMPLETIONS_PATH, "docblock.attributes.nut"),
+    ];
 
     // squirrel completions
     const languageNuts = [
@@ -107,6 +114,7 @@ export const activate = (context: ExtensionContext) => {
     const completionItemDocRuleProvider = new SquirrelCompletionItemDocRuleProvider();
     const completionItemAttributeProvider = new SquirrelCompletionItemAttributeProvider();
     const completionItemDocMemberProvider = new SquirrelCompletionItemDocMemberProvider();
+    const documentLogSemanticTokensProvider = new SquirrelDocumentLogSemanticTokensProvider();
     const documentSemanticTokensProvider = new SquirrelDocumentSemanticTokensProvider();
     const inlayHintsProvider = new SquirrelInlayHintsProvider();
     const signatureHelpProvider = new SquirrelSignatureHelpProvider();
@@ -121,6 +129,7 @@ export const activate = (context: ExtensionContext) => {
     const colorProvider = new SquirrelDocumentColorProvider();
     const moduleExplorer = new SquirrelModuleExplorer();
     const programProvider = new ProgramProvider();
+    const launchProvider = new SquirrelLauncher(outputChannelProvider);
 
     // Add subscriptions for providers
     // - On unload each subscribed item will be disposed
@@ -132,6 +141,11 @@ export const activate = (context: ExtensionContext) => {
         onConfigChange(constants.DOCBLOCK_COMPLETIONS_ENABLED, (enabled) => {
             completionItemDocMemberProvider.enabled = enabled;
             completionItemDocProvider.enabled = enabled;
+            docblockNuts.forEach((file) =>
+                enabled
+                    ? addProgramFile(file)
+                    : removeProgram(file),
+            );
         }),
         onConfigChange(constants.COMPLETIONS_ENABLED, (enabled) => {
             completionItemProvider.enabled = enabled;
@@ -169,18 +183,30 @@ export const activate = (context: ExtensionContext) => {
         onConfigChange(constants.LIVE_RELOAD_EXTENSIONS, (extensions) => {
             liveReloadProvider.extensions = extensions;
         }),
-        onConfigChange(constants.ATTRACT_MODE_PATH, (_path) => {
+        onConfigChange(constants.ATTRACT_MODE_LAUNCH_ENABLED, (enabled) => {
+            launchProvider.enabled = enabled;
+        }),
+        onConfigChange(constants.ATTRACT_MODE_PATH, (path) => {
             refreshArtworkLabels();
-            outputChannelProvider.restart();
+            launchProvider.path = path;
+            outputChannelProvider.path = path;
+        }),
+        onConfigChange(constants.LOG_OUTPUT, (output) => {
+            outputChannelProvider.watch = output?.startsWith("logfile-");
+            outputChannelProvider.enabled = (output && output !== "none");
+            launchProvider.logOutput = output;
+        }),
+        onConfigChange(constants.ATTRACT_MODE_EXECUTABLE, (filename) => {
+            launchProvider.filename = filename;
+        }),
+        onConfigChange(constants.ATTRACT_MODE_CONFIG, (config) => {
+            launchProvider.config = config;
         }),
         onConfigChange(constants.ATTRACT_MODE_ARTWORK, (_labels) => {
             refreshArtworkLabels();
         }),
         onConfigChange(constants.SCAN_ARTWORK_ENABLED, (_enabled) => {
             refreshArtworkLabels();
-        }),
-        onConfigChange(constants.LOG_ENABLED, (enabled) => {
-            outputChannelProvider.enabled = enabled;
         }),
         onConfigChange(constants.COMPLETIONS_SHOW_SQUIRREL, (enabled) => {
             languageNuts.forEach((file) =>
@@ -238,6 +264,13 @@ export const activate = (context: ExtensionContext) => {
 
         // Links to other documents from nut files (Ctrl + Click)
         languages.registerDocumentLinkProvider(selector, documentLinkProvider),
+
+        // Tokens used to style in-body parameters (cannot be done with syntax highlighting)
+        languages.registerDocumentSemanticTokensProvider(
+            logSelector,
+            documentLogSemanticTokensProvider,
+            tokenLegend,
+        ),
 
         // Links to other documents from log files (Ctrl + Click) links in output logs
         languages.registerDocumentLinkProvider(
@@ -345,6 +378,9 @@ export const activate = (context: ExtensionContext) => {
 
         // Diagnostics shows red-dotted-underline and messages in the problems tab
         diagnosticsProvider,
+
+        // Launcher allows AM+ to be run from a statusbar button
+        launchProvider,
 
         // Live-Reload integration with AM on document save
         liveReloadProvider,

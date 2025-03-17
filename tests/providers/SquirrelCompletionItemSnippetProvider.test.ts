@@ -59,7 +59,7 @@ describe("SquirrelCompletionItemSnippetProvider", () => {
         addProgram(d.uri.path, program);
         addSnippetCompletion(program, { kind: CompletionItemKind.Property } as CompletionItem);
         addSnippetCompletion(program, { kind: CompletionItemKind.Event } as CompletionItem);
-        addSnippetCompletion(program, { kind: CompletionItemKind.Color } as CompletionItem);
+        addSnippetCompletion(program, { kind: CompletionItemKind.Keyword } as CompletionItem);
 
         expect(await s.provideCompletionItems(d, p, t, r)).toHaveLength(1);
     });
@@ -74,7 +74,7 @@ describe("SquirrelCompletionItemSnippetProvider", () => {
         addProgram(d.uri.path, program);
         addSnippetCompletion(program, { kind: CompletionItemKind.Property } as CompletionItem);
         addSnippetCompletion(program, { kind: CompletionItemKind.Event } as CompletionItem);
-        addSnippetCompletion(program, { kind: CompletionItemKind.Color } as CompletionItem);
+        addSnippetCompletion(program, { kind: CompletionItemKind.Keyword } as CompletionItem);
 
         expect(await s.provideCompletionItems(d, p, t, r)).toHaveLength(1);
     });

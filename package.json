@@ -2,7 +2,7 @@
     "name": "am-squirrel",
     "displayName": "AM+ Squirrel",
     "description": "Squirrel for Attract-Mode Plus.",
-    "version": "0.9.13",
+    "version": "0.9.14",
     "license": "MIT",
     "publisher": "Chadnaut",
     "author": {
@@ -155,7 +155,7 @@
             "title": "AM+ Squirrel",
             "properties": {
                 "AM-Squirrel.languageSupport": {
-                    "order": 1,
+                    "order": 1.0,
                     "type": "object",
                     "markdownDescription": "Controls the language features. Some options require [suggestions](#editor.suggest.showClasses), [snippets](#editor.suggest.showSnippets), [inlayHints](#editor.inlayHints.enabled), or [hover](#editor.hover.enabled) to be enabled.",
                     "additionalProperties": false,
@@ -210,7 +210,7 @@
                     }
                 },
                 "AM-Squirrel.completions": {
-                    "order": 2,
+                    "order": 2.0,
                     "type": "object",
                     "markdownDescription": "Controls the completions that appear while typing.",
                     "additionalProperties": false,
@@ -240,7 +240,7 @@
                     }
                 },
                 "AM-Squirrel.codeFormatting.style": {
-                    "order": 3,
+                    "order": 3.0,
                     "type": "object",
                     "markdownDescription": "Controls the `Format Document` styling.",
                     "additionalProperties": false,
@@ -305,7 +305,7 @@
                     }
                 },
                 "AM-Squirrel.codeFormatting.braces": {
-                    "order": 4,
+                    "order": 3.1,
                     "type": "string",
                     "enum": [
                         "1tbs",
@@ -326,21 +326,21 @@
                     "markdownDescription": "Controls the format of braces relative to their statements."
                 },
                 "AM-Squirrel.codeFormatting.tabWidth": {
-                    "order": 5,
+                    "order": 3.2,
                     "type": "integer",
                     "default": 4,
                     "minimum": 0,
                     "markdownDescription": "Number of spaces to use per tab."
                 },
                 "AM-Squirrel.codeFormatting.printWidth": {
-                    "order": 6,
+                    "order": 3.3,
                     "type": "integer",
                     "default": 80,
                     "minimum": 10,
                     "markdownDescription": "Fit code within this line limit."
                 },
                 "AM-Squirrel.codeFormatting.ruleWidth": {
-                    "order": 7,
+                    "order": 3.4,
                     "type": "string",
                     "enum": [
                         "print",
@@ -355,19 +355,8 @@
                     "default": "print",
                     "markdownDescription": "Fit horizontal rule completion within this line limit."
                 },
-                "AM-Squirrel.attract-Mode.path": {
-                    "order": 8,
-                    "type": "string",
-                    "markdownDescription": "Path of your AM+ installation, containing the `modules`, `plugins` and `layouts` folders. Required for Live reload, Document links and Missing file warnings."
-                },
-                "AM-Squirrel.attract-Mode.artwork": {
-                    "order": 9,
-                    "type": "string",
-                    "default": "snap,marquee,flyer,wheel",
-                    "markdownDescription": "Labels to display for artwork resource completions."
-                },
                 "AM-Squirrel.attract-Mode.integration": {
-                    "order": 10,
+                    "order": 4.0,
                     "type": "object",
                     "markdownDescription": "Controls the integration with Attract-Mode.",
                     "additionalProperties": false,
@@ -376,13 +365,13 @@
                             "type": "boolean",
                             "description": "Live reload AM+ on document save."
                         },
-                        "logEnabled": {
+                        "launchEnabled": {
                             "type": "boolean",
-                            "description": "Display `last_run.log` contents in the output panel."
+                            "description": "Launch AM+ status-bar button."
                         },
                         "showMissing": {
                             "type": "boolean",
-                            "description": "Missing file warnings (requires AM Path, Problem detection)."
+                            "description": "Missing file warnings (requires AM+ Path, Problem detection)."
                         },
                         "scanArtwork": {
                             "type": "boolean",
@@ -391,34 +380,83 @@
                     },
                     "default": {
                         "liveReload": false,
-                        "logEnabled": true,
+                        "launchEnabled": true,
                         "showMissing": true,
                         "scanArtwork": true
                     }
                 },
+                "AM-Squirrel.attract-Mode.path": {
+                    "order": 4.1,
+                    "type": "string",
+                    "markdownDescription": "Path of your AM+ application, containing the `modules`, `plugins` and `layouts` folders. Required for Live reload, Document links and Missing file warnings."
+                },
+                "AM-Squirrel.attract-Mode.executable": {
+                    "order": 4.2,
+                    "type": "string",
+                    "default": "attractplus-console.exe",
+                    "markdownDescription": "Filename of your AM+ `console` executable."
+                },
+                "AM-Squirrel.attract-Mode.config": {
+                    "order": 4.3,
+                    "type": "string",
+                    "markdownDescription": "Path of your AM+ config. Defaults to your application path if empty."
+                },
+                "AM-Squirrel.attract-Mode.logOutput": {
+                    "order": 4.4,
+                    "type": "string",
+                    "enum": [
+                        "none",
+                        "console-info",
+                        "console-debug",
+                        "logfile-info",
+                        "logfile-debug"
+                    ],
+                    "enumItemLabels": [
+                        "None",
+                        "Console info",
+                        "Console debug",
+                        "Logfile info",
+                        "Logfile debug"
+                    ],
+                    "markdownEnumDescriptions": [
+                        "Disable logging.",
+                        "Launch with `info` logging, show `stdout`.",
+                        "Launch with `debug` logging, show `stdout`.",
+                        "Launch with `info` logging, show `last-run.log`.",
+                        "Launch with `debug` logging, show `last-run.log`."
+                    ],
+                    "default": "console-info",
+                    "markdownDescription": "Controls the information displayed in the output panel. Requires AM+ re-launch to take effect."
+                },
+                "AM-Squirrel.attract-Mode.artwork": {
+                    "order": 4.5,
+                    "type": "string",
+                    "default": "snap,marquee,flyer,wheel",
+                    "markdownDescription": "Labels to display for artwork resource completions in addition to `scanArtwork` items."
+                },
                 "AM-Squirrel.attract-Mode.liveReloadExtensions": {
-                    "order": 11,
+                    "order": 4.6,
                     "type": "string",
                     "default": ".nut;.frag;.vert;.cfg;.am;.msg",
                     "markdownDescription": "Extensions that trigger AM+ live reload when saved."
                 },
-                "AM-Squirrel.checkConflicts": {
-                    "order": 12,
-                    "type": "boolean",
-                    "default": true,
-                    "markdownDescription": "Check for conflicting extensions on startup."
-                },
                 "AM-Squirrel.package.author": {
-                    "order": 13,
+                    "order": 5.0,
                     "type": "string",
                     "default": "username",
                     "markdownDescription": "Author for DocBlock package completions."
                 },
                 "AM-Squirrel.package.url": {
-                    "order": 14,
+                    "order": 5.1,
                     "type": "string",
                     "default": "https://github.com/user/repo",
                     "markdownDescription": "URL for DocBlock package completions."
+                },
+                "AM-Squirrel.checkConflicts": {
+                    "order": 6.0,
+                    "type": "boolean",
+                    "default": true,
+                    "markdownDescription": "Check for conflicting extensions on startup."
                 }
             }
         },
@@ -442,8 +480,13 @@
         "commands": [
             {
                 "command": "attractModuleExplorer.refresh",
-                "title": "Refresh",
+                "title": "Attract-Mode: Refresh Modules",
                 "icon": "$(refresh)"
+            },
+            {
+                "command": "attractMode.launch",
+                "title": "Attract-Mode: Launch",
+                "icon": "$(play)"
             }
         ],
         "menus": {
@@ -454,7 +497,15 @@
                     "group": "navigation"
                 }
             ]
-        }
+        },
+        "semanticTokenScopes": [
+            {
+                "language": "am-log",
+                "scopes": {
+                    "link": ["constant.language.log"]
+                }
+            }
+        ]
     },
     "devDependencies": {
         "@types/jest": "^29.5.14",

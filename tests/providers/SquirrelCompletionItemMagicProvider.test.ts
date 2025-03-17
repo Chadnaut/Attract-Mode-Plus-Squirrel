@@ -45,7 +45,7 @@ describe("SquirrelCompletionItemMagicProvider", () => {
         const r = { triggerKind: CompletionTriggerKind.TriggerCharacter, triggerCharacter: "." };
         addProgram(d.uri.path, parse(d.getText()));
 
-        expect(await s.provideCompletionItems(d, p, t, r)).toEqual([]);
+        expect(await s.provideCompletionItems(d, p, t, r)).toBeUndefined();
     });
 
     it("String", async () => {

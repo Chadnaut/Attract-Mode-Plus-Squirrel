@@ -2,7 +2,6 @@ import {
     CancellationToken,
     CompletionContext,
     CompletionItem,
-    CompletionItemKind,
     CompletionItemProvider,
     CompletionTriggerKind,
     Position,
@@ -14,6 +13,7 @@ import { AST } from "../ast";
 import { getBranchAtPos } from "../utils/find";
 import { requestProgram, getProgramImports } from "../utils/program";
 import { getSnippetCompletions } from "../doc/snippets";
+import { stringToCompletionKind } from "../utils/kind";
 
 /*
     NOTE: computed["property"] StringLiterals are converted to Identifiers
@@ -44,10 +44,11 @@ export class SquirrelCompletionItemMagicProvider
             (program: AST.Program) => {
                 const pos = docPosToPos(document, position);
                 const branch = getBranchAtPos(program, pos);
-                if (branch.at(-1)?.type !== "StringLiteral") return [];
+                const kind = stringToCompletionKind("magic");
+                if (branch.at(-1)?.type !== "StringLiteral") return;
                 return [program, ...getProgramImports(program)]
                     .flatMap((p) => getSnippetCompletions(p))
-                    .filter((item) => item.kind === CompletionItemKind.Event);
+                    .filter((item) => item.kind === kind);
             },
         );
     }

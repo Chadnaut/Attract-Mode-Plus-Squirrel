@@ -222,6 +222,9 @@ const stringToCompletionKindMap = new Map<string, CompletionItemKind>([
     ["event", CompletionItemKind.Event],
     ["operator", CompletionItemKind.Operator],
     ["typeparameter", CompletionItemKind.TypeParameter],
+    // Special, used by keyword completion kinds
+    ["magic", CompletionItemKind.Event],
+    ["attr", CompletionItemKind.Constant],
 ]);
 
 /** SymbolKind to CompletionItemKind  */

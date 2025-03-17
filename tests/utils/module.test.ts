@@ -16,11 +16,12 @@ describe("Import", () => {
     it("parseVersion", () => {
         expect(parseVersion("v1.2.3")).toBe("1.2.3");
         expect(parseVersion("v1.23")).toBe("1.23");
+        expect(parseVersion("v1.23rc1 more")).toBe("1.23rc1");
         expect(parseVersion("version1.2.3")).toBe("1.2.3");
-        expect(parseVersion("version1")).toBe("1.0");
-        expect(parseVersion("version = 1")).toBe("1.0");
-        expect(parseVersion("version <- 1")).toBe("1.0");
-        expect(parseVersion("v1 v2 v3")).toBe("3.0");
+        expect(parseVersion("version1")).toBe("1");
+        expect(parseVersion("version = 1")).toBe("1");
+        expect(parseVersion("version <- 1")).toBe("1");
+        expect(parseVersion("v1 v2 v3")).toBe("3");
 
         expect(parseVersion("")).toBeUndefined();
         expect(parseVersion("v < 1")).toBeUndefined();
@@ -41,6 +42,7 @@ describe("Import", () => {
         expect(parseSummary("stuff\n\n\n/*\n    Summary here\n\n*/")).toBe("Summary here");
         expect(parseSummary("/*\n===\n\nAttract-Mode Frontend\r\nSummary here\n")).toBe("Summary here");
 
+        expect(parseSummary("/////////////\nfunction foo() {}\n// Summary here")).toBeUndefined(); // Not first comment
         expect(parseSummary("//\n// Summary here", 1)).toBeUndefined(); // after limit
         expect(parseSummary("// Summary")).toBeUndefined(); // no single words
         expect(parseSummary("// Attract-Mode Frontend Summary")).toBeUndefined(); // no keyword
@@ -68,21 +70,21 @@ describe("Import", () => {
         const module = path.join(__dirname, "../samples/modules/latedoc.nut");
         const info = getModuleInfo(module);
         expect(info.title).toBe("Latedoc");
-        expect(info.description).toBe("");
+        expect(info.description).toBe("Latedoc Module");
     });
 
     it("getModuleInfo, class", () => {
         const module = path.join(__dirname, "../samples/modules/class.nut");
         const info = getModuleInfo(module);
         expect(info.title).toBe("Class");
-        expect(info.description).toBe("");
+        expect(info.description).toBe("Class Module");
     });
 
     it("getModuleInfo, function", () => {
         const module = path.join(__dirname, "../samples/modules/func.nut");
         const info = getModuleInfo(module);
         expect(info.title).toBe("Func");
-        expect(info.description).toBe("");
+        expect(info.description).toBe("Func Module");
     });
 
     it("getModuleInfo, legacy", () => {
@@ -104,7 +106,7 @@ describe("Import", () => {
     it("getModuleInfo, docblock empty", () => {
         const module = path.join(__dirname, "../samples/modules/empty.nut");
         const info = getModuleInfo(module);
-        expect(info.description).toBe("");
+        expect(info.description).toBe("Empty Module");
         expect(info.url).toBe("");
         expect(info.version).toBe("");
     });

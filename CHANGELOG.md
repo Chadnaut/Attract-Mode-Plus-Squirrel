@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.9.14] - 2025-03-17
+
+### Added
+
+- Launch AM from the status-bar
+- Settings for output loglevel and stdout
+
+### Changed
+
+- Magic token snippet definitions
+- Log highlighting
+
 ## [0.9.13] - 2025-03-13
 
 ### Added

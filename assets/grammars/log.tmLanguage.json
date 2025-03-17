@@ -3,10 +3,10 @@
     "scopeName": "source.log",
     "patterns": [
 		{
-			"include": "#statements"
+			"include": "#errors"
 		},
 		{
-			"include": "#errors"
+			"include": "#statements"
 		},
 		{
 			"include": "#bullets"
@@ -35,6 +35,17 @@
                 {
                     "match": "\\d{1,2}:\\d{2}(:\\d{2}([.,]\\d{1,})?)?(Z| ?[+-]\\d{1,2}:\\d{2})?\\b",
                     "name": "comment.log"
+                },
+                {
+                    "match": "\\b(\\d+)(x)(\\d+)\\b",
+                    "captures": {
+                        "1": {
+                            "name": "constant.language.log"
+                        },
+                        "3": {
+                            "name": "constant.language.log"
+                        }
+                    }
                 },
                 {
                     "match": "\\b([0-9a-fA-F]{40}|[0-9a-fA-F]{10}|[0-9a-fA-F]{7})\\b",
@@ -166,39 +177,12 @@
         "statements": {
             "patterns": [
                 {
-                    "match": "^(Attract.*?) (?=v\\d)",
-                    "captures": {
-                        "1": {
-                            "name": "markup.inserted.log"
-                        }
-                    }
+                    "match": "^(Attract-Mode)( Plus)?",
+                    "name": "entity.name.type.class.log"
                 },
                 {
-                    "match": "^Config: (.*?)$",
-                    "captures": {
-                        "1": {
-                            "name": "constant.language.log"
-                        }
-                    }
-                },
-                {
-                    "match": "file: (.*?)\\. +Valid",
-                    "captures": {
-                        "1": {
-                            "name": "constant.language.log"
-                        }
-                    }
-                },
-                {
-                    "match": "(?<=^ - )Loaded layout: (.*?) \\(([^)]+)\\)$",
-                    "captures": {
-                        "1": {
-                            "name": "constant.language.log"
-                        },
-                        "2": {
-                            "name": "constant.language.log"
-                        }
-                    }
+                    "match": "(?<=^ \\W |^)([^ \\[][\\- _'*a-zA-Z\\/\\(\\)]+(?=(:| -)[ \r\n]))",
+                    "name": "storage.type.log"
                 }
             ]
         },
@@ -209,43 +193,23 @@
                     "name": "comment.log"
                 },
                 {
-                    "match": "^(AN ERROR HAS OCCUR*ED)",
-                    "name": "markup.deleted.log"
+                    "match": "Unexpectedly lost focus to: .*?\\n",
+                    "name": "comment.log"
                 },
                 {
-                    "match": "(?<=^[ \\-!]*)(Unexpectedly lost focus to:)",
-                    "captures": {
-                        "1": {
-                            "name": "comment.log"
-                        }
-                    }
+                    "match": "^Restarted looped video",
+                    "name": "comment.log"
                 },
                 {
-                    "match": "(?<=^\\*[A-Z]+ \\[[^]]*\\] )(.*?)(?= line \\[\\d+\\])",
-                    "captures": {
-                        "1": {
-                            "name": "constant.language.log"
-                        }
-                    }
+                    "match": "DEBUG_MAX_LINES exceeded.*?\n",
+                    "name": "comment.log"
                 },
                 {
-                    "match": "^(.*?)(?= line = \\(\\d+\\) column = \\(\\d+\\))",
-                    "captures": {
-                        "1": {
-                            "name": "constant.language.log"
-                        }
-                    }
+                    "match": "Valid settings are: [^$]*",
+                    "name": "comment.log"
                 },
                 {
-                    "match": "(?<=^Script Error) in (.*?\\.nut) (?!= - )",
-                    "captures": {
-                        "1": {
-                            "name": "constant.language.log"
-                        }
-                    }
-                },
-                {
-                    "match": "^(Script Error)",
+                    "match": "(AN ERROR HAS OCCUR*ED|Unrecog?nized|[Ff]ailure|[Ff]ailed|Unable|Layout is empty|Shaders are not available|Script file not found|Warning|(Script |[Hh]ttp )?[Ee]rror|ERROR)",
                     "name": "markup.deleted.log"
                 }
             ]
@@ -253,11 +217,11 @@
         "bullets": {
             "patterns": [
                 {
-                    "match": "^(\\*\\*\\*)",
-                    "name": "markup.inserted.log"
+                    "match": "^ \\W ",
+                    "name": "comment.log"
                 },
                 {
-                    "match": "^([ \\-\\*!]+)",
+                    "match": "^-*?\n",
                     "name": "comment.log"
                 }
             ]
@@ -265,8 +229,24 @@
         "keywords": {
             "patterns": [
                 {
-                    "match": "\\=",
+                    "match": "(?<=\\[)Transition(?=\\])",
+                    "name": "entity.name.type.enum.log"
+                },
+                {
+                    "match": "\\=>?",
                     "name": "keyword"
+                },
+                {
+                    "match": "SIG[A-Z]+",
+                    "name": "constant.language.log"
+                },
+                {
+                    "match": "NVAPI_OK",
+                    "name": "markup.inserted.log"
+                },
+                {
+                    "match": "NVAPI_[_A-Z]+",
+                    "name": "markup.deleted.log"
                 }
             ]
         }

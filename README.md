@@ -13,10 +13,13 @@ A suite of support tools to enhance your AM+ development experience, built upon 
 
 - VSCode > Settings > Extensions > AM+ Squirrel
   - Attract-Mode: Path > `Enter your AM+ path`
+  - Attract-Mode: Executable > `Enter your AM+ console executable`
   - Attract-Mode: Integration > Live reload AM+ > `Yes`
-- AM+ Application > Configure (Tab) > Plug-ins
+- VSCode > Status-bar
+  - Launch > `▷ Attract-Mode Plus`
+- AM+ Application > Configure `Tab` > Plug-ins
   - Live Reload > Enabled > `Yes`
-  - Close all menus (Esc)
+  - Close all menus `Esc`
 - VSCode > Open `.nut` file
   - Save > ***AM+ reloads your layout!***
 
@@ -56,12 +59,13 @@ In addition to providing IntelliSense documentation, DocBlocks can populate comp
 A selection of helpers are included to assist Attract-Mode development workflows.
 
 - Live Reload - Automatically reload AM+ on document save.
+- Launcher - Start AM+ from the status-bar.
+- Logging - Show console logs in the Output tab.
 - Module explorer - Custom sidebar displaying all local module versions.
 - Magic tokens - Completions and highlighting for inline *magic tokens*.
 - Imports - Completions for asset filenames.
 - Previews - Hover over image or video links to see a preview.
-- Logging - Show the last_run.log file in the Output tab.
-- Drop edits - Drag then Shift + Drop files into the document to create import statements.
+- Drop edits - Drag then `Shift + Drop` files into the document to create import statements.
 - Support files - Syntax highlighting for `.nut`, `.cfg`, `.log`, `.msg`, `.am` files.
 
 ## Credits

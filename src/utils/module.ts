@@ -10,10 +10,15 @@ import { getAttrByKind } from "../doc/find";
 
 // -----------------------------------------------------------------------------
 
-const docRegex = new RegExp(/^\/\*\*\n([\w\W]+?)\n \*\//);
-const commentRegex = new RegExp(/^\s*(\/\/|\/\*|#)*[^a-z"']*(.*?)(\*\/)*\s*$/i);
+const docRegex = new RegExp(/^\/\*\*[\r\n]+([\w\W]+?)[\r\n]+ \*\//);
+const commentRegex = new RegExp(
+    /^\s*(\/\/|\/\*|#)*[^\d\-a-z"']*(.*?)(\*\/)*\s*$/i,
+);
 
-export const parseSummary = (value: string, limit: number = 0): string | undefined => {
+export const parseSummary = (
+    value: string,
+    limit: number = 0,
+): string | undefined => {
     if (!value) return;
 
     let start = false;
@@ -44,7 +49,7 @@ export const parseSummary = (value: string, limit: number = 0): string | undefin
 // -----------------------------------------------------------------------------
 
 const versionRegex = new RegExp(
-    /(?<!license, |with )(?:v|version) *(?:=|<\-)? *(\d+(?:\.[\d\.]+)?)\b/gim,
+    /(?<!license, |with )(?:v|version) *(?:=|<\-)? *(\d+[^\s\t\r\n]*)\b/gim,
 );
 
 /** Returns the last found version number */
@@ -54,7 +59,6 @@ export const parseVersion = (value: string): string | undefined => {
     while ((m = versionRegex.exec(value))) match = m;
     if (!match) return;
     let version = match[1];
-    if (version.indexOf(".") === -1) version += ".0";
     return version;
 };
 
@@ -86,7 +90,7 @@ export type ModuleInfo = {
 };
 
 /** Parse a file and return info found within its comments */
-export const getModuleInfo = (filename: string, limit = 500): ModuleInfo => {
+export const getModuleInfo = (filename: string, limit = 600): ModuleInfo => {
     const name = trimModuleName(filename);
     const title = name?.split("-").map(ucfirst).join(" ") ?? "";
     let description = "";
@@ -113,6 +117,8 @@ export const getModuleInfo = (filename: string, limit = 500): ModuleInfo => {
             }
         }
     }
+
+    if (!description) description = `${ucfirst(name)} Module`;
 
     return {
         name,

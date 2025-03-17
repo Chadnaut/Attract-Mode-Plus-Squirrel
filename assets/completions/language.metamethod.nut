@@ -3,7 +3,6 @@
  *
  * @package Snippet
  * @global
- * @version 3.0.7
  */
 
 /**

@@ -65,6 +65,9 @@ export const getProgramModuleNames = (program: AST.Program): string[] => {
 
 // -----------------------------------------------------------------------------
 
+/** Return attributes describing imported items
+ * - Modules, Artwork resources
+ */
 export const getImportAttrs = (program: AST.Program): DocAttr[] => {
     const attrs: DocAttr[] = [];
 
@@ -93,6 +96,7 @@ export const getImportAttrs = (program: AST.Program): DocAttr[] => {
     let artworkLabels = programs
         .flatMap((p) => getProgramArtworks(p))
         .filter(uniqueFilter);
+
     if (artworkLabels.length) {
         artworkLabels.sort();
         attrs.push({

@@ -52,7 +52,7 @@ export const hasNodeToken = (node: AST.Node): boolean => nodeTokenMap.has(node);
 export const getNodeToken = (node: AST.Node): TokenType =>
     nodeTokenMap.get(node);
 
-export const TOKEN_TYPES = ["parameter", "function", "class", "enum"] as const;
+export const TOKEN_TYPES = ["link", "parameter", "function", "class", "enum"] as const;
 
 export type TokenType = (typeof TOKEN_TYPES)[number];
 

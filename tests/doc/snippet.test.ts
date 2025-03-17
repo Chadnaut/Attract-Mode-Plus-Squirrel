@@ -5,11 +5,10 @@ import { CompletionItemKind, CompletionItemLabel } from "vscode";
 import {
     createDocSnippetCompletion,
     createDocSnippetCompletions,
-    getDocBlockSnippets,
+    getProgramSnippets,
     getSnippetCompletions,
 } from "../../src/doc/snippets";
 import { DocBlock } from "../../src/doc/kind";
-import { getCommentBlockAtPosition, getCommentDocBlock } from "../../src/doc/find";
 
 jest.replaceProperty(constants, "FE_MODULES_PATH", "mock");
 
@@ -18,27 +17,24 @@ describe("Doc Snippet", () => {
         expect(getSnippetCompletions(null)).toHaveLength(0);
     });
 
-    it("getDocBlockSnippets", () => {
-        expect(getDocBlockSnippets(undefined).length).toBeGreaterThan(0);
+    it("getProgramSnippets", () => {
+        expect(getProgramSnippets(undefined)).toHaveLength(0);
     });
 
-    it("getDocBlockSnippets, not inject", () => {
-        const program = parse(`/* */`);
-        const n = getCommentBlockAtPosition(program, pos(3));
-        const s = getDocBlockSnippets(n);
+    it("getProgramSnippets, not inject", () => {
+        const program = parse(`/** @keyword requires */`);
+        const s = getProgramSnippets(program);
         expect(s.length).toBeGreaterThan(0);
         const r = s.find((snippet) => (<CompletionItemLabel>snippet.label).label === "requires");
         expect(r.insertText).not.toContain("snap");
     });
 
-    it("getDocBlockSnippets, inject", () => {
-        const program = parse(`/** */ fe.add_artwork("snap");`);
-        const n = getCommentBlockAtPosition(program, pos(3));
-        const b = getCommentDocBlock(n);
-        b.branch = [program];
-        const s = getDocBlockSnippets(n);
+    it("getProgramSnippets, inject", () => {
+        const program = parse(`/** @keyword requires */ fe.add_artwork("snap");`);
+        const s = getProgramSnippets(program);
         expect(s.length).toBeGreaterThan(0);
         const r = s.find((snippet) => (<CompletionItemLabel>snippet.label).label === "requires");
+        expect(r.insertText).toContain("requires");
         expect(r.insertText).toContain("snap");
     });
 
@@ -57,10 +53,16 @@ describe("Doc Snippet", () => {
 
     it("magic", () => {
         const program = parse(`/**
-            * @magic name1 desc
-            * @magic name2 desc
+            * @keyword name1 desc
+            * @kind magic
+            *
+            * @keyword name2 desc
+            * @kind magic
+            *
             * @another
-            * @magic name3 desc
+            *
+            * @keyword name3 desc
+            * @kind magic
             */`);
         const completions = getSnippetCompletions(program);
         expect(completions).toHaveLength(3);
@@ -128,13 +130,15 @@ describe("Doc Snippet", () => {
     it("createDocSnippetCompletions, this", () => {
         const docBlock: DocBlock = {
             branch: [],
-            attributes: [{ kind: "keyword", name: "this" }],
+            attributes: [
+                { kind: "keyword", name: "this" }
+            ],
         };
         const c = createDocSnippetCompletions(docBlock, null);
         expect(c).toHaveLength(1);
         expect(c[0].label["label"]).toBe("this");
         expect(c[0].insertText["value"]).toBe("this");
-        expect(c[0].commitCharacters).toEqual(["."]);
+        expect(c[0].commitCharacters).toEqual(["."]); // special
         expect(c[0].kind).toBe(CompletionItemKind.Keyword);
     });
 
@@ -156,7 +160,10 @@ describe("Doc Snippet", () => {
     it("createDocSnippetCompletions, magic", () => {
         const docBlock: DocBlock = {
             branch: [],
-            attributes: [{ kind: "magic", name: "test" }],
+            attributes: [
+                { kind: "keyword", name: "test" },
+                { kind: "kind", name: "magic" }
+            ],
         };
         const c = createDocSnippetCompletions(docBlock, null);
         expect(c).toHaveLength(1);

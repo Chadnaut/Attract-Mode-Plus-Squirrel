@@ -17,7 +17,7 @@ import { getSnippetCompletions } from "../doc/snippets";
 import { hasNodeDec } from "../utils/definition";
 import { getCommentAtPosition } from "../doc/find";
 
-const wordRegex = new RegExp(/^[A-Za-z_ <]/);
+const wordRegex = new RegExp(/^[A-Za-z_ ]/);
 
 export class SquirrelCompletionItemSnippetProvider
     implements CompletionItemProvider
@@ -42,16 +42,11 @@ export class SquirrelCompletionItemSnippetProvider
             const branch = getBranchAtPos(program, pos);
             const isProperty = branch.at(-2)?.type === "PropertyDefinition";
             if (!isProperty && hasNodeDec(<AST.Identifier>branch.at(-1))) return;
+            const kinds = isProperty ? [CompletionItemKind.Property] : [CompletionItemKind.Snippet, CompletionItemKind.Keyword];
 
-            const completions = [program, ...getProgramImports(program)]
+            return [program, ...getProgramImports(program)]
                 .flatMap((p) => getSnippetCompletions(p))
-                .filter(
-                    (item) =>
-                        isProperty
-                        ? (item.kind === CompletionItemKind.Property)
-                        : (item.kind !== CompletionItemKind.Event && item.kind !== CompletionItemKind.Property)
-                );
-            return completions;
+                .filter((item) => kinds.includes(item.kind));
         });
     }
 }

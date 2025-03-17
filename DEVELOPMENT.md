@@ -1,20 +1,30 @@
 # Development
 
-## Running
+## Quickstart
 
-- `Launch Extension` using `F5` to `Run and Debug`
+- `npm i` install project packages
+- `F5` to launch extension `Run and Debug`
   - Starts the `dev` script, which builds the extension `dist` on-save
   - Opens the `Extension Development Host` which runs the extension
-- Use `Ctrl + r` to reload the host window to show build updates
+- `Ctrl + r` in host window to reload
   - *Caution* - reload does not prompt to save changes!
+- `npm install -g @vscode/vsce` install globally
+  - `npm run package` to build `vsix` for deployment
 
 ## Scripts
 
-- `npm dev` - Build dist on-save
-- `npm build` - Build dist
+- `npm run clean` - Delete the dist path
+- `npm run check` - Check the code is valid typescript
+- `npm run dev` - Build dist on-save
+- `npm run build` - Build dist
+- `npm run build:prod` - Build dist for production (minify)
+- `npm run build:meta` - Build dist with meta-data for analysis
 - `npm run test` - Run tests
 - `npm run test:watch` - Run tests on-save
-- `npm run test:coverage` -  Run tests on-save with coverage report
+- `npm run coverage` - Run coverage
+- `npm run coverage:watch` - Run coverage on-save
+- `npm run prepackage` - Run clean, check, build:prod
+- `npm run package` - Build `vsix` package for deployment
 
 ## Debugging
 

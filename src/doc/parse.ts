@@ -3,12 +3,15 @@ import { AST } from "../ast";
 import { SquirrelType } from "../utils/kind";
 import { DocAttr } from "./kind";
 import { META_KINDS } from "../utils/meta";
-import { NamedDocAttrKinds } from "./snippets";
 
 const expectedRegex = RegExp(/^([^\(]*)\((.*?)\)$/);
+
 const docBlockRegex = RegExp(
-    // /(?:[\t ]*\*)? ?(?:@(?<kind>[^\s]+))? *(?:{(?<type>[^}]*)})? *(?<doc>(?<rest>\.{3})?(?<name>\$?[_A-Za-z][._A-Za-z0-9]*)? *(?:<(?<link>[^>]*)>)?[ \t\-]*(?<dh>\* ?)?(?<desc>[\w\W]*?(?=\n[\t ]*\*?[\t ]*@|$)\n?))/g
-    /(?:[\t ]*\*)? ?(?:@(?<kind>[^\s]+))? *(?:{(?<type>[^}]*)})? *(?<doc>(?<rest>\.{3})?(?<name>\$?[._A-Za-z0-9]*)? *(?:<(?<link>[^>]*)>)?[ \t\-]*(?<dh>\* ?)?(?<desc>[\w\W]*?(?=\n[\t ]*\*?[\t ]*@|$)\n?))/g
+    /(?:[\t ]*\*)? ?(?:@(?<kind>[^\s]+))? *(?:{(?<type>[^}]*)})? *(?<doc>(?<rest>\.{3})?(?<name>\$?[._\-A-Za-z0-9]*)? *(?:<(?<link>[^>]*)>)?[ \t\-]*(?<dh>\* ?)?(?<desc>[\w\W]*?(?=\r?\n[\t ]*\*?[\t ]*@|$)\r?\n?))/g,
+);
+
+const attrNameRegex = RegExp(
+    /^(alias|artwork|augments|author|borrows|callback|constant|constructs|default|event|exports|external|fires|function|getter|interface|keyword|kind|lends|license|listens|magic|member|memberof|memberof\!|mixes|mixin|module|name|namespace|package|param|property|requires|see|setter|this|tutorial|typedef|url|var|variation|version)$/,
 );
 
 /** Create completions from "expected" attribute */
@@ -20,7 +23,10 @@ const parseExpected = (
     if (m) {
         type = m[1] || SquirrelType.ANY;
         expected = m[2].split("|").map((label) => {
-            const item = new CompletionItem({ label }, CompletionItemKind.Constant);
+            const item = new CompletionItem(
+                { label },
+                CompletionItemKind.Constant,
+            );
             item.commitCharacters = ['"'];
             return item;
         });
@@ -34,9 +40,12 @@ export const parseCommentAttrs = (comment: AST.CommentBlock): DocAttr[] => {
         return [];
 
     return parseDocAttrs(comment.value, comment.loc?.start);
-}
+};
 
-export const parseDocAttrs = (value: string, pos: AST.Position = { line: 0, column: 0, index: 0 }): DocAttr[] => {
+export const parseDocAttrs = (
+    value: string,
+    pos: AST.Position = { line: 0, column: 0, index: 0 },
+): DocAttr[] => {
     const attrs: DocAttr[] = [];
 
     let match;
@@ -48,17 +57,19 @@ export const parseDocAttrs = (value: string, pos: AST.Position = { line: 0, colu
         if (!match[0].trim()) continue; // skip empty matches
 
         const groups = match.groups;
-        const originalKind = groups['kind'];
-        const named = NamedDocAttrKinds.includes(originalKind);
+        const originalKind = groups["kind"];
+        const named = attrNameRegex.test(originalKind);
         const kind = originalKind ?? "description";
-        const { type, expected } = parseExpected(groups['type']);
-        const doc = groups['doc'];
+        const { type, expected } = parseExpected(groups["type"]);
+        const doc = groups["doc"];
         // if rest found (...) it will become "name", and name will become "rest"
-        const rest = named ? (groups['rest'] ? groups['name'] : undefined) : undefined;
-        let name = named ? (groups['rest'] ? groups['rest'] : groups['name']) : undefined;
-        const link = named ? groups['link'] : undefined;
-        const desc = groups['desc'];
-        let documentation = (groups['dh'] || "") + (named ? desc : doc).replace(/^(?:[\t ]*\*)? ?/gm, "").trim();
+        const rest = named ? groups["rest"] ? groups["name"] : undefined : undefined;
+        let name = named ? groups["rest"] ? groups["rest"] : groups["name"] : undefined;
+        const link = named ? groups["link"] : undefined;
+        const desc = groups["desc"];
+        let documentation =
+            (groups["dh"] || "") +
+            (named ? desc : doc).replace(/^(?:[\t ]*\*)? ?/gm, "").trim();
 
         // special case for urls
         if (name && documentation.indexOf("://") === 0) {
@@ -70,7 +81,10 @@ export const parseDocAttrs = (value: string, pos: AST.Position = { line: 0, colu
         if (META_KINDS.includes(kind) && name) {
             // Find property name location for nav / deprecation highlight
             // - Requires another regex to find exact location
-            const propRegex = RegExp(`^[\\t\\* ]*@${kind} *(?:{[^}]+})? *${name}`, 'gm');
+            const propRegex = RegExp(
+                `^[\\t\\* ]*@${kind} *(?:{[^}]+})? *${name}`,
+                "gm",
+            );
             const propMatch = propRegex.exec(value);
             const propIndex = propRegex.lastIndex;
 
@@ -82,11 +96,20 @@ export const parseDocAttrs = (value: string, pos: AST.Position = { line: 0, colu
 
             loc = {
                 start: { line, column: column - n, index: index - n },
-                end: { line, column, index }
+                end: { line, column, index },
             };
         }
 
-        attrs.push({ kind, type, expected, rest, name, link, documentation, loc });
+        attrs.push({
+            kind,
+            type,
+            expected,
+            rest,
+            name,
+            link,
+            documentation,
+            loc,
+        });
     }
 
     return attrs;

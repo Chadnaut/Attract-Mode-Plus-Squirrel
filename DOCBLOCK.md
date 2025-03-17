@@ -146,28 +146,50 @@ class Foo {
 DocBlocks can be used to create snippets, which are completions that insert pre-defined text.
 
 - `@keyword name` - Defines the keyword used to trigger the snippet.
+- `@kind name` - The kind of snippet to create
+  - `property` = A class property
+  - `magic` - A magic token
+  - `attr` - A DocBlock attribute
+  - If snippet text exist the kind will be `snippet`
+  - Otherwise the kind will be `keyword`
 - `@snippet text` - When following `@keyword` this value will be used as the insert text.
 
 ```ts
 /**
- * @keyword alpha
- * @snippet Alpha snippet here
+ * @keyword mysnippet Description
+ * @snippet My snippet content
  */
-alpha // `alpha` appears as a completion; when selected...
-Alpha snippet here // ...will be replaced with the snippet text
-```
+mysnippet // `mysnippet` appears as a completion...
+My snippet content // ...and gets replaced when selected
 
-### Magic Tokens
-
-Magic token completions appear when editing strings and `[` is pressed.
-
-- `@magic name description` - A magic token completion item.
-
-```ts
 /**
- * @magic alpha Alpha magic token
+ * @keyword mykey Description
  */
-"Text [alpha]" // `alpha` appears as a magic token completion
+mykey // `mykey` appears as a keyword completion
+
+/**
+ * @keyword mytoken
+ * @kind magic
+ */
+"string [mytoken]" // `mytoken` appears as a MagicToken completion
+
+/**
+ * @keyword myprop Description
+ * @kind property
+ * @snippet
+ * myPropValue() {}
+ */
+class foo {
+    myprop // `myprop` appears as a property completion
+}
+
+/**
+ * @keyword myattr
+ * @kind attr
+ */
+/**
+ * @myattr // `myattr` appears as a DocBlock attribute completion
+ */
 ```
 
 ## Styling

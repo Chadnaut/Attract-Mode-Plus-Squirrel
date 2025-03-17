@@ -68,7 +68,7 @@ export const getDocProgramCompletions = (
     const text = printDocAttrs(attrs)
         .replace(/^( \* @(?:summary|requires))/gm, " *\n$1") // newline before
         .replace(
-            /^( \* @(?:artwork|module).*?\n)( \* @(?!artwork|module))/m,
+            /^( \* @(?:artwork|module).*?\r?\n)( \* @(?!artwork|module))/m,
             "$1 *\n$2",
         ); // newline after last
 

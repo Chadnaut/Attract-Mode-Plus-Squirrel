@@ -44,7 +44,7 @@ export class SquirrelDocumentDropEditProvider
             const uriList = [];
             dataTransfer.forEach((item, mimeType) => {
                 if (mimeType !== "text/uri-list") return;
-                uriList.push(...item.value.split(/[\r\n]+/));
+                uriList.push(...item.value.split(/\r?\n/));
             });
 
             const edits = [];

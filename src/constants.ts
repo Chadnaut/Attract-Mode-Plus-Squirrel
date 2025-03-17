@@ -137,8 +137,10 @@ export default {
     LIVE_RELOAD_DISABLE: "Disable Live Reload",
     LIVE_RELOAD_EXTENSIONS: `AM-Squirrel.attract-Mode.liveReloadExtensions`,
 
+    // launch
+
     // log output
-    LOG_ENABLED: `AM-Squirrel.attract-Mode.integration.logEnabled`,
+    LOG_OUTPUT: `AM-Squirrel.attract-Mode.logOutput`,
     LOG_LANGUAGE_ID: "am-log",
     LOG_OUTPUT_NAME: "Attract-Mode",
     LOG_FILENAME: "last_run.log",
@@ -150,7 +152,14 @@ export default {
 
     // AM settings
     ATTRACT_MODE_PATH: `AM-Squirrel.attract-Mode.path`,
+    ATTRACT_MODE_EXECUTABLE: `AM-Squirrel.attract-Mode.executable`,
+    ATTRACT_MODE_CONFIG: `AM-Squirrel.attract-Mode.config`,
+    ATTRACT_MODE_LAUNCH_ENABLED: `AM-Squirrel.attract-Mode.integration.launchEnabled`,
     ATTRACT_MODE_ARTWORK: `AM-Squirrel.attract-Mode.artwork`,
+    ATTRACT_MODE_START_PATTERN: "$(play) $1",
+    ATTRACT_MODE_START_TOOLTIP: "Launch Attract-Mode",
+    ATTRACT_MODE_STOP_PATTERN: "$(debug-stop) $1",
+    ATTRACT_MODE_STOP_TOOLTIP: "Stop Attract-Mode",
 
     // messages
     FILE_MISSING_MESSAGE: "The file does not exist.",

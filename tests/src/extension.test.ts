@@ -10,6 +10,10 @@ const getConfigValue = (name, def) => {
             return confEnabled;
         case constants.COMPLETIONS_SHOW_AM:
             return confEnabled;
+        case constants.DOCBLOCK_COMPLETIONS_ENABLED:
+            return confEnabled;
+        case constants.LOG_OUTPUT:
+            return confEnabled ? undefined : "logfile-info";
         default:
             return def;
     }
