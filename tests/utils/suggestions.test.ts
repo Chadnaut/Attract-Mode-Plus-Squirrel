@@ -48,6 +48,36 @@ beforeEach(() => {
 
 describe("Suggestions", () => {
 
+    it("getParamSuggestions, invalid", () => {
+        const text = "/** @param {($module)} ...vargv */ function foo(a) {}; foo(10, 10);";
+        const program = parse(text);
+        const items = getParamSuggestions(text, program, pos(64));
+        expect(items).toHaveLength(0);
+    });
+
+    it("getParamSuggestions, rest", () => {
+        const text = "/** @param {($module)} ...vargv */ function foo(...) {}; foo(10, 10);";
+        const program = parse(text);
+        const items = getParamSuggestions(text, program, pos(66));
+        expect(items).toHaveLength(1);
+        expect(items[0].label).toBe("mock-module");
+    });
+
+    it("getParamSuggestions, meta call", () => {
+        const text = "class foo { /** @param {($module)} ...vargv */ function _call(...) {} } local f = foo(); f(10, 10);";
+        const program = parse(text);
+        const items = getParamSuggestions(text, program, pos(96));
+        expect(items).toHaveLength(1);
+        expect(items[0].label).toBe("mock-module");
+    });
+
+    it("getParamSuggestions, meta call excludes class", () => {
+        const text = "class foo { /** @param {($module)} ...vargv */ function _call(...) {} } local f = foo(); f(10, 10);";
+        const program = parse(text);
+        const items = getParamSuggestions(text, program, pos(8));
+        expect(items).toHaveLength(0);
+    });
+
     it("getParamSuggestions, $module", () => {
         const text = "/** @param {($module)} a */ function foo(a) {}; foo(10);";
         const program = parse(text);

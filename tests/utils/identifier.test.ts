@@ -136,26 +136,6 @@ describe("Identifier", () => {
         expect(addBranchId(n).at(-1)).toBe(id);
     });
 
-    // fit("AssignmentExpression, ignores newmember on memberexpression", () => {
-    //     const program = parse(`::foo <- null`);
-    //     const b = getBranchAtPos(program, pos(4));
-    //     const n = getBranchNodeByType(b, "AssignmentExpression");
-    //     const id = getBranchNodeByType(b, "Identifier");
-    //     // expect(addBranchId(n).at(-1)).toBe(id);
-    //     expect(addBranchId(n).at(-1)).toBeUndefined();
-    //     // const n = qt.AssignmentExpression(
-    //     //     "<-",
-    //         // qt.MemberExpression(qt.Root(), id),
-    //     //     qt.NullLiteral()
-    //     // );
-    //     // expect(addBranchId(n).at(-1)).toBeUndefined(); // (id);
-    // });
-
-    // it("AssignmentExpression, invalid", () => {
-    //     const n = qt.AssignmentExpression("=", id, val);
-    //     expect(addBranchId(n).at(-1)).not.toBe(id);
-    // });
-
     it("None", () => {
         const program = parse("");
         expect(addBranchId([program])).toHaveLength(0);

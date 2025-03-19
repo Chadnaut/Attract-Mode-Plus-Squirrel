@@ -100,11 +100,14 @@ Node declarations - mot to be confused with node definitions!
 
 const nodeDecMap = new WeakMap<AST.Identifier, AST.Node[]>();
 
+/** Gets an id's declaration value */
 export const getNodeDec = (id: AST.Identifier): AST.Node[] =>
     nodeDecMap.has(id) ? nodeDecMap.get(id) : [];
 
+/** True if given id is a declaration, such as `local x = 123` */
 export const hasNodeDec = (id: AST.Identifier): boolean => nodeDecMap.has(id);
 
+/** Sets an id's declaration value */
 export const setNodeDec = (id: AST.Identifier, definition: AST.Node[]) => {
     if (id) nodeDecMap.set(id, definition);
 };
@@ -113,11 +116,14 @@ export const setNodeDec = (id: AST.Identifier, definition: AST.Node[]) => {
 
 const nodeDefMap = new WeakMap<AST.Node, AST.Node[]>();
 
+/** Gets an id's definition */
 export const getNodeDefMap = (id: AST.Node): AST.Node[] =>
     nodeDefMap.has(id) ? nodeDefMap.get(id) : undefined;
 
+/** True if given id has had its definition resolved */
 export const hasNodeDefMap = (id: AST.Node): boolean => nodeDefMap.has(id);
 
+/** Sets an id's definition */
 export const setNodeDefMap = (id: AST.Node, definition: AST.Node[]) => {
     if (id) nodeDefMap.set(id, definition);
 };

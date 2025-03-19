@@ -9,6 +9,7 @@ import {
     setNodeParamInfo,
     setNodeCallParamInfo,
     isRestNode,
+    limitParamIndex,
 } from "./params";
 import { AST } from "../ast";
 import {
@@ -25,7 +26,7 @@ import { getNodeReturn } from "./return";
 import { DocAttr } from "../doc/kind";
 import { getNodeCallData } from "./call";
 import { getNodeToken } from "./token";
-import { getNodeMeta } from "./meta";
+import { getBranchMetaCall, getNodeMeta } from "./meta";
 import { formatDocumentation, formatVersion } from "../doc/markdown";
 import { attrToNode } from "./create";
 
@@ -39,33 +40,43 @@ export const getSignatureHelp = (
     const callData = getNodeCallData(documentText, program, pos);
     if (!callData) return;
 
-    const { branch, paramIndex } = callData;
+    let { branch, paramIndex } = callData;
     const node = branch.at(-1);
     const signatureHelp = new SignatureHelp();
-    signatureHelp.activeParameter = paramIndex;
 
     getNodeOverloads(branch).forEach((overloadBranch, i) => {
-        const n = overloadBranch.at(-1);
-        const docBlock = getNodeDoc(overloadBranch);
-        const signature = getNodeSignature(overloadBranch);
-        const parameters = getNodeCallParamInfo(overloadBranch);
+        let infoBranch = overloadBranch;
 
-        const md = new MarkdownString();
-        md.supportHtml = true;
-        md.isTrusted = true;
+        // SPECIAL - use meta _call signature help info
+        const branchCall = getBranchMetaCall(overloadBranch);
+        if (branchCall.length) infoBranch = branchCall;
+        const call = getDocAttr(getNodeDoc(branchCall), "description");
+
+        const n = overloadBranch.at(-1);
+        const docBlock = getNodeDoc(overloadBranch);//infoBranch);
+        const signature = getNodeSignature(overloadBranch);
+        const parameters = getNodeCallParamInfo(infoBranch);
+        paramIndex = limitParamIndex(paramIndex, parameters);
+
         const documentation = getDocAttr(docBlock, "description");
         const version = getDocAttr(docBlock, "version");
-        if (documentation) md.appendMarkdown(formatDocumentation(documentation));
-        if (version) md.appendMarkdown(formatVersion(version));
 
-        const signatureInfo = new SignatureInformation(signature, md);
+        const contents = new MarkdownString();
+        contents.supportHtml = true;
+        contents.isTrusted = true;
+        if (documentation) contents.appendMarkdown(formatDocumentation(documentation));
+        if (documentation && call) contents.appendMarkdown("\n\n");
+        if (call) contents.appendMarkdown(formatDocumentation(call));
+        if (version) contents.appendMarkdown(formatVersion(version));
 
+        const signatureInfo = new SignatureInformation(signature, contents);
         signatureInfo.parameters.push(...parameters);
         signatureHelp.signatures.push(signatureInfo);
 
         if (n === node) signatureHelp.activeSignature = i;
     });
 
+    signatureHelp.activeParameter = paramIndex;
     if (activeSignature !== undefined) {
         signatureHelp.activeSignature = activeSignature;
     }
@@ -166,22 +177,33 @@ export const getNodeDisplayType = (
     return nodeType;
 };
 
-/** Create "function foo(arg: any): void" signature label used in completions */
+/** Create "(method) foo.bar(arg: any): integer" signature label used in completions */
 const buildNodeSignature = (branch: AST.Node[]) => {
+
+    const idBranch = branch;
+    let prefix: string;
+
+    // SPECIAL - use meta _call signature for completions
+    const branchCall = getBranchMetaCall(branch);
+    if (branchCall.length) {
+        branch = branchCall;
+        prefix = "function";
+    }
+
     const node = branch.at(-1);
     switch (node.type) {
         case "Base":
             return "any";
         default: {
             let signature = "";
-            signature += getSignaturePrefix(branch) + " "; // (function)
-            signature += getSignatureName(branch); // foo.bar
+            signature += (prefix ?? getSignaturePrefix(branch)) + " "; // (method)
+            signature += getSignatureName(idBranch); // foo.bar
 
             signature = signature.trim();
             if (!signature) return "any"; // exit early if no name or prefix
 
-            signature += getSignatureParameters(branch, signature.length); // (x: string)
-            signature += getSignatureSuffix(branch);
+            signature += getSignatureParameters(branch, signature.length); // (arg: any)
+            signature += getSignatureSuffix(branch); // : integer
             return signature;
         }
     }
@@ -316,7 +338,8 @@ export const getSignatureParameters = (
             if (i) signature += ", ";
             const start = signature.length;
 
-            const nodeName = isRestNode(paramBranch)
+            const isRest = isRestNode(paramBranch);
+            const nodeName = isRest
                 ? "..."
                 : getBranchId(paramBranch).name;
             const sigName = getNodeName(paramBranch, true);
@@ -340,6 +363,7 @@ export const getSignatureParameters = (
                 info.documentation = attr.documentation;
                 info.attribute = attr;
             }
+            info.rest = isRest;
 
             setNodeParamInfo(param, info);
             return info;

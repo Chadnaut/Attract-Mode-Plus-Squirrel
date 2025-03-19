@@ -8,6 +8,7 @@ import {
     getBranchAtPos,
 } from "./find";
 import { posBefore } from "./location";
+import { getBranchMetaCall } from "./meta";
 import { getNodeParams } from "./params";
 import { isClassDef } from "./super";
 
@@ -52,28 +53,29 @@ export const getNodeCallData = (
     const call = <AST.CallExpression>callBranch.at(-1);
     callBranch.push(call.callee);
     let branch = getNodeDef(callBranch);
-    let node = branch.at(-1);
-    const nodeValue = getNodeVal(branch);
+    let nodeValue = getNodeVal(branch);
+
+    // SPECIAL - use meta _call param data
+    const branchCall = getBranchMetaCall(callBranch);
+    if (branchCall.length) nodeValue = branchCall;
+
     const params = getNodeParams(nodeValue);
     const paramLength = params.length;
     if (!paramLength) return;
 
     // if calling a class, defer to the constructor method within
-    if (isClassDef(branch)) {
-        branch = getBranchWithConstructor(nodeValue);
-        node = branch.at(-1);
-    }
+    if (isClassDef(branch)) branch = getBranchWithConstructor(nodeValue);
 
     // if target node is NOT a parameter, attempt to find the next one
-    let posNode = posBranch.at(-1);
-    const isBetweenNodes = posNode.type === "CallExpression";
+    let node = posBranch.at(-1);
+    const isBetweenNodes = node.type === "CallExpression";
     if (isBetweenNodes) {
         posBranch = getNodeAfterPos(program, pos);
-        posNode = posBranch.at(-1);
+        node = posBranch.at(-1);
     }
 
     // if no next node found...
-    if (!posNode) {
+    if (!node) {
         // if still inside the call, the pos must be AFTER the final arg
         if (posBefore(pos, call.loc.end)) {
             const paramIndex = Math.max(0, call.arguments.length - 1);
@@ -89,9 +91,9 @@ export const getNodeCallData = (
     for (let i = 0, n = call.arguments.length; i < n; i++) {
         const arg = call.arguments[i];
         if (posBranch.includes(arg)) {
-            // if on (or before) the first arg return it
+            // if on a node
             if (i === 0 || !isBetweenNodes) {
-                const paramIndex = Math.min(params.length - 1, i);
+                const paramIndex = i;
                 return { branch, paramIndex, paramLength };
             }
             // if between nodes, check the space between for commas

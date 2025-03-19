@@ -1,8 +1,8 @@
 import { SymbolKind } from "vscode";
 import { AST, SQTree as qt } from "../ast";
 import { DocAttr, DocBlock } from "../doc/kind";
-import { getBranchClassDef, getBranchId } from "./find";
-import { addBranchId } from "./identifier";
+import { getBranchClassDef, getBranchId, isNodeClass } from "./find";
+import { getNodeName } from "./identifier";
 import { SquirrelType, SquirrelMetaType } from "./kind";
 import { getNodeSignature, updateNodeSignature } from "./signature";
 import { updateNodeSymbol } from "./symbol";
@@ -165,4 +165,26 @@ export const createMetaNode = (
     }
 
     return prop;
+};
+
+// -----------------------------------------------------------------------------
+
+/** Return class branch with meta "_call" node, or empty if none */
+export const getBranchMetaCall = (branch: AST.Node[]): AST.Node[] => {
+    // Prevent substituting the class itself
+    const nodeDef = getNodeDef(branch);
+    if (isNodeClass(nodeDef.at(-1))) return [];
+
+    const nodeVal = getNodeVal(nodeDef);
+    const node = nodeVal.at(-1);
+    if (isNodeClass(node)) {
+        const body = (<AST.Class>node).body.body;
+        const call = body.find(
+            (node) =>
+                node.type === "MethodDefinition" &&
+                getNodeName([...body, node]) === "_call",
+        );
+        if (call) return [...nodeVal, call];
+    }
+    return [];
 };

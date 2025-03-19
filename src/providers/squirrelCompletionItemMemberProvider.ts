@@ -40,9 +40,11 @@ export class SquirrelCompletionItemMemberProvider
                 const pos = docPosToPos(document, position);
                 if (getCommentAtPosition(program, pos)) return;
 
-                // let branch = getBranchAtPos(program, pos);
-                let branch = getNodeBeforePos(program, pos);
-                if (!branch.length) branch = getBranchAtPos(program, pos);
+                const branchBefore = getNodeBeforePos(program, pos);
+                const branchPos = getBranchAtPos(program, pos);
+                let branch = branchBefore;
+
+                if (!branch.length) branch = branchPos;
                 if (!branch.length) return;
 
                 // quote is for computed member["completions"]
@@ -50,8 +52,10 @@ export class SquirrelCompletionItemMemberProvider
                 const quote = context.triggerCharacter === '"';
                 if (quote && pos.index !== branch.at(-1).loc.start.index + 1) return;
 
-                // exit if trigger character WITHIN string
-                if (branch.at(-1).type === "StringLiteral") return;
+                // exit if trigger character WITHIN literal
+                if (branchPos.at(-1).type === "StringLiteral") return;
+                if (branchPos.at(-1).type === "FloatLiteral") return;
+                if (branchPos.at(-1).type === "IntegerLiteral") return;
 
                 // find completions from id parent
                 if (branch.at(-1).type === "Identifier") {

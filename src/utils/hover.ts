@@ -1,4 +1,4 @@
-import { createDocMarkdown } from "../doc/markdown";
+import { appendDocToMarkdown, createDocMarkdown } from "../doc/markdown";
 import { Hover, MarkdownString } from "vscode";
 import { getNodeDef } from "./definition";
 import { getBranchAtPos } from "./find";
@@ -11,6 +11,7 @@ import { getImageMarkdownString } from "./media";
 import { DocAttr } from "../doc/kind";
 import { getNodeSignature } from "./signature";
 import { getNodeParamInfo } from "./params";
+import { getBranchMetaCall } from "./meta";
 
 /** Return hover info for node at position */
 export const getHoverInfo = (branch: AST.Node[]): Hover | undefined => {
@@ -26,16 +27,23 @@ export const getHoverInfo = (branch: AST.Node[]): Hover | undefined => {
             return;
     }
 
-    const def = getNodeDef(branch);
-    const docBlock = getNodeDoc(def);
-    const signature = getNodeSignature(def.length ? def : branch);
+    const nodeDef = getNodeDef(branch);
+    const signature = getNodeSignature(nodeDef.length ? nodeDef : branch);
+    let infoBranch = nodeDef;
 
     const contents = new MarkdownString();
     contents.supportHtml = true;
     contents.appendCodeblock(signature, constants.LANGUAGE_ID);
-    if (docBlock?.markdown) contents.appendMarkdown(docBlock.markdown.value);
 
-    const paramInfo = getNodeParamInfo(def); // (branch)
+    const nodeDoc = getNodeDoc(nodeDef);
+    if (nodeDoc?.markdown) contents.appendMarkdown(nodeDoc.markdown.value);
+
+    // SPECIAL - use meta _call hover info
+    const branchCall = getBranchMetaCall(branch);
+    appendDocToMarkdown(getNodeDoc(branchCall), contents);
+    if (branchCall.length) infoBranch = branchCall;
+
+    const paramInfo = getNodeParamInfo(infoBranch);
     if (paramInfo) {
         const attr = paramInfo.attribute;
         const attrs = attr

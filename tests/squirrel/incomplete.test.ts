@@ -263,46 +263,4 @@ describe("Incomplete", () => {
         expect(response.body[0]["body"]).toBeNull();
     });
 
-    /*
-        // normal (good)
-        callexp
-        - callee
-          - id 'foo'
-        - args
-          - me
-            - id x
-            - id y
-
-        // missing prop (good)
-        callexp
-        - callee
-          - id 'foo'
-        - args
-          - me
-            - id x
-            - id ''
-
-        // missing obj (bad)
-        callexp
-        - callee
-          - me
-            - id foo <-- missing id, pops callee
-            - id x
-        - args
-          - undef
-
-        // missing obj and prop (bad)
-        callexp
-         - callee
-           - me
-             - id foo <-- missing id, pops callee
-             - id ''
-         - args
-           - undef
-    */
-    // fit("MemberExpression", () => {
-    //     const response = parse("foo(.x)");
-    //     dump(response);
-    // });
-
 });

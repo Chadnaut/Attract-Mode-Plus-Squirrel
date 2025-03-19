@@ -1,7 +1,7 @@
-import { getAttrByKind, getNodeDocBlock } from '../../src/doc/find';
+import { getAttrByKind } from '../../src/doc/find';
 import { describe, expect, it } from "@jest/globals";
 import { parseExtra as parse, pos, dump } from "../utils";
-import { createDocMarkdown, formatVersion } from "../../src/doc/markdown";
+import { createDocMarkdown, formatVersion, getMarkdownValue } from "../../src/doc/markdown";
 import { AST, SQTree as qt } from '../../src/ast';
 import { getDocAttr, getNodeDoc } from "../../src/doc/find";
 import { MarkdownString } from "vscode";
@@ -9,6 +9,11 @@ import { getBranchAtPos } from "../../src/utils/find";
 import { createDoc } from '../../src/doc/create';
 
 describe("Doc Markdown", () => {
+
+    it("getMarkdownValue", () => {
+        expect(getMarkdownValue("value")).toBe("value");
+        expect(getMarkdownValue(new MarkdownString("value"))).toBe("value");
+    });
 
     it("formatVersion", () => {
         const name = "ver";

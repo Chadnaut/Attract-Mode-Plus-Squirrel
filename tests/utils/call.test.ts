@@ -17,6 +17,13 @@ describe("Call", () => {
         expect(getCallExpressionName([])).toBeUndefined();
     });
 
+    it("getNodeCallData, call meta", () => {
+        const text = "class foo { function _call(a,b,c) {} } local f = foo(); f(10,20,30)";
+        const program = parse(text);
+        const data = getNodeCallData(text, program, pos(65));
+        expect(data.paramIndex).toBe(2);
+    });
+
     it("getNodeCallData, FunctionDeclaration", () => {
         const text = "function foo(a,b,c) {}; foo(10,20,30);";
         const program = parse(text);

@@ -32,11 +32,8 @@ const parsers = {
                 try {
                     const parser = new SquirrelParser();
                     const ast = parser.parse(text);
-                    // console.dir(ast, { depth: null });
-                    // attachComments(ast, options);
                     resolve(ast);
                 } catch (err) {
-                    // console.error("Parser Error", err);
                     reject(err);
                 }
             });

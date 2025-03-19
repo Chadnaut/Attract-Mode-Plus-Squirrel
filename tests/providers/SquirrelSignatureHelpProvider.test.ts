@@ -35,13 +35,35 @@ describe("SquirrelSignatureHelpProvider", () => {
         expect(await s.provideSignatureHelp(d, p, t, null)).toBeUndefined();
     });
 
-    it("Valid", async () => {
+    it("No Params", async () => {
+        const s = new SquirrelSignatureHelpProvider()
+        const d = new MockTextDocument("function foo() {}; foo(1, 2, 3)");
+        const p = new Position(0, 30);
+        addProgram(d.uri.path, parse(d.getText()));
+
+        expect(await s.provideSignatureHelp(d, p, t, null)).toBeUndefined();
+    });
+
+    it("Valid, First Param", async () => {
         const s = new SquirrelSignatureHelpProvider()
         const d = new MockTextDocument("function foo(x) {}; foo()");
         const p = new Position(0, 24);
         addProgram(d.uri.path, parse(d.getText()));
 
-        expect(await s.provideSignatureHelp(d, p, t, null)).toBeInstanceOf(SignatureHelp);
+        const help = await s.provideSignatureHelp(d, p, t, null);
+        expect(help).toBeInstanceOf(SignatureHelp);
+        expect(help.activeParameter).toBe(0);
+    });
+
+    it("Valid, Rest Param", async () => {
+        const s = new SquirrelSignatureHelpProvider()
+        const d = new MockTextDocument("function foo(x, ...) {}; foo(1, 2, 3)");
+        const p = new Position(0, 36);
+        addProgram(d.uri.path, parse(d.getText()));
+
+        const help = await s.provideSignatureHelp(d, p, t, null);
+        expect(help).toBeInstanceOf(SignatureHelp);
+        expect(help.activeParameter).toBe(1);
     });
 
 });

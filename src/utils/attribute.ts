@@ -2,6 +2,7 @@ import { CompletionItem, CompletionItemKind, SnippetString } from "vscode";
 import { AST } from "../ast";
 import { getConfigValue } from "./config";
 import constants from "../constants";
+import { isNodeClass } from "./find";
 
 /** Returns true if given node is an attribute object */
 export const nodeIsAttribute = (branch: AST.Node[]): boolean => {
@@ -14,7 +15,7 @@ export const nodeIsAttribute = (branch: AST.Node[]): boolean => {
 export const getAttributeCompletions = (branch: AST.Node[]): CompletionItem[] => {
     if (!nodeIsAttribute(branch)) return [];
 
-    if (["ClassDeclaration", "ClassExpression"].includes(branch.at(-2)?.type)) {
+    if (isNodeClass(branch.at(-2))) {
         return getClassAttributeCompletions();
     }
 

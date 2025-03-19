@@ -76,6 +76,49 @@ describe("Completion", () => {
         expect(items[1].label["label"]).toBe("foo");
     });
 
+    it("getCompletions, meta call, with doc, excludes class", () => {
+        const program = parse("class foo { /** mock */ function _call(alpha) {} }; f");
+        const items = getCompletions(getBranchAtPos(program, pos(53)));
+        expect(items).toHaveLength(1);
+        expect(items[0].detail).toContain("foo");
+        expect(items[0].detail).not.toContain("alpha");
+        expect(items[0].documentation).toBeUndefined();
+    });
+
+    it("getCompletions, meta call, with doc", () => {
+        const program = parse("class foo { /** mock */ function _call(alpha) {} }; /** bar */ local test = foo(); t");
+        const items = getCompletions(getBranchAtPos(program, pos(84)));
+        expect(items).toHaveLength(2);
+        expect(items[0].detail).toContain("foo");
+        expect(items[0].detail).not.toContain("alpha");
+        expect(items[0].documentation).toBeUndefined();
+        expect(items[1].detail).toContain("test");
+        expect(items[1].detail).toContain("alpha");
+        expect(items[1].documentation["value"]).toContain("mock");
+        expect(items[1].documentation["value"]).toContain("bar");
+    });
+
+    it("getCompletions, meta call, excludes class", () => {
+        const program = parse("class foo { function _call(alpha) {} } f");
+        const items = getCompletions(getBranchAtPos(program, pos(40)));
+        expect(items).toHaveLength(1);
+        expect(items[0].detail).toContain("foo");
+        expect(items[0].detail).not.toContain("alpha");
+        expect(items[0].documentation).toBeUndefined();
+    });
+
+    it("getCompletions, meta call", () => {
+        const program = parse("class foo { function _call(alpha) {} } local test = foo(); t");
+        const items = getCompletions(getBranchAtPos(program, pos(60)));
+        expect(items).toHaveLength(2);
+        expect(items[0].detail).toContain("foo");
+        expect(items[0].detail).not.toContain("alpha");
+        expect(items[0].documentation).toBeUndefined();
+        expect(items[1].detail).toContain("test");
+        expect(items[1].detail).toContain("alpha");
+        expect(items[1].documentation).toBeUndefined();
+    });
+
     it("getCompletions, params", () => {
         const program = parse("/** @param {integer} alpha Here */ function foo(alpha) { a }");
         const items = getCompletions(getBranchAtPos(program, pos(58)));
@@ -83,7 +126,7 @@ describe("Completion", () => {
         expect(items[0].label["label"]).toBe("foo");
         expect(items[1].label["label"]).toBe("alpha");
         expect(items[1].detail).toBe("(parameter) alpha: integer");
-        expect(items[1].documentation).toBe("Here");
+        expect(items[1].documentation["value"]).toBe("Here");
     });
 
     it("getCompletions, params rest", () => {
@@ -93,7 +136,7 @@ describe("Completion", () => {
         expect(items[0].label["label"]).toBe("foo");
         expect(items[1].label["label"]).toBe("vargv");
         expect(items[1].detail).toBe("(parameter) ...rest: integer");
-        expect(items[1].documentation).toBe("Here");
+        expect(items[1].documentation["value"]).toBe("Here");
     });
 
     it("getCompletions, member", () => {

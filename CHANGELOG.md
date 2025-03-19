@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.9.15] 2025-03-19
+
+### Added
+
+- Intellisense for _call metamethod
+
+### Fixed
+
+- Rest parameter signature info
+- Primitive type completions
+- Output log link parser
+
 ## [0.9.14] - 2025-03-17
 
 ### Added

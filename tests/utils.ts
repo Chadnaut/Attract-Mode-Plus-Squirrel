@@ -11,7 +11,7 @@ import { getPrettierOptions } from "../src/utils/config";
 
 const baseOptions = getPrettierOptions();
 
-/** Shortcut for console.dir */
+/** Shortcut for console dir with unlimited depth */
 export const dump = (obj: any) => console.dir(obj, { depth: null });
 
 let _errors: string[] = [];

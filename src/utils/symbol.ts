@@ -186,18 +186,7 @@ const getNodeSymbolsRecursive = (
     if (maxDepth >= 0 && depth > maxDepth) return symbols;
 
     // Add children symbols
-    // const children = node.extra.body.flatMap((child) =>
     const children = getNodeChildren(branch)
-        // .flatMap((child) => {
-        //     switch (child.type) {
-        //         case "VariableDeclaration":
-        //             return (<AST.VariableDeclaration>child).declarations;
-        //         case "ExpressionStatement":
-        //             return (<AST.ExpressionStatement>child).expression;
-        //         default:
-        //             return child;
-        //     }
-        // })
         .flatMap((child) => {
             return getNodeSymbolsRecursive(child, maxDepth, depth + 1);
         });

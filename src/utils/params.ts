@@ -17,9 +17,11 @@ import { getNodeToken } from "./token";
 import { getModuleCompletions } from "./module";
 import { DocumentSymbolExtra } from "./symbol";
 import { getNodeName } from "./identifier";
+import { getBranchMetaCall } from "./meta";
 
 export class ParameterInformationExtra extends ParameterInformation {
     attribute?: DocAttr;
+    rest?: boolean;
 }
 
 const restNodeMap = new WeakSet<AST.Node>();
@@ -128,6 +130,14 @@ export const setNodeCallParamInfo = (
     nodeCallParamInfoMap.set(node, info);
 }
 
+export const limitParamIndex = (
+    index: number,
+    parameters: ParameterInformationExtra[]
+): number =>
+    (index >= parameters.length && parameters.at(-1)?.rest)
+        ? parameters.length - 1
+        : index
+
 /** Get parameter suggestions */
 export const getParamSuggestions = (
     documentText: string,
@@ -136,10 +146,16 @@ export const getParamSuggestions = (
 ): CompletionItem[] => {
     const callData = getNodeCallData(documentText, program, pos);
     if (!callData) return [];
-    const { branch, paramIndex } = callData;
+    let { branch, paramIndex } = callData;
+    let infoBranch = branch;
 
-    const parameters = getNodeCallParamInfo(branch);
-    const expected = parameters[paramIndex].attribute?.expected;
+    // SPECIAL - use meta _call param suggestions
+    const branchCall = getBranchMetaCall(branch);
+    if (branchCall.length) infoBranch = branchCall;
+
+    const parameters = getNodeCallParamInfo(infoBranch);
+    paramIndex = limitParamIndex(paramIndex, parameters);
+    const expected = parameters[paramIndex]?.attribute?.expected;
     if (!expected) return [];
 
     return expected.flatMap((item) => {

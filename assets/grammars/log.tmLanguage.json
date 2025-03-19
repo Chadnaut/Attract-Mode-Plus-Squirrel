@@ -26,50 +26,58 @@
             "patterns": [
                 {
                     "match": "\\b\\d{4}-\\d{2}-\\d{2}(T|\\b)",
-                    "name": "comment.log"
+                    "name": "comment.date.log"
                 },
                 {
                     "match": "(?<=(^|\\s))\\d{2}[^\\w\\s]\\d{2}[^\\w\\s]\\d{4}\\b",
-                    "name": "comment.log"
+                    "name": "comment.date.log"
                 },
                 {
                     "match": "\\d{1,2}:\\d{2}(:\\d{2}([.,]\\d{1,})?)?(Z| ?[+-]\\d{1,2}:\\d{2})?\\b",
-                    "name": "comment.log"
+                    "name": "comment.time.log"
                 },
                 {
-                    "match": "\\b(\\d+)(x)(\\d+)\\b",
+                    "match": "\\b(\\d{2,})x(\\d{2,})\\b",
                     "captures": {
                         "1": {
-                            "name": "constant.language.log"
+                            "name": "constant.language.resolution.width.log"
                         },
-                        "3": {
-                            "name": "constant.language.log"
+                        "2": {
+                            "name": "constant.language.resolution.height.log"
                         }
                     }
                 },
                 {
                     "match": "\\b([0-9a-fA-F]{40}|[0-9a-fA-F]{10}|[0-9a-fA-F]{7})\\b",
-                    "name": "constant.language.log"
+                    "name": "constant.language.hex1.log"
                 },
                 {
                     "match": "\\b[0-9a-fA-F]{8}[-]?([0-9a-fA-F]{4}[-]?){3}[0-9a-fA-F]{12}\\b",
-                    "name": "constant.language.log"
+                    "name": "constant.language.uid.log"
                 },
                 {
                     "match": "\\b([0-9a-fA-F]{2,}[:-])+[0-9a-fA-F]{2,}+\\b",
-                    "name": "constant.language.log"
+                    "name": "constant.language.hex2.log"
                 },
                 {
-                    "match": "\\b(v?[0-9]+|true|false|null)\\b",
-                    "name": "constant.language.log"
+                    "match": "\\bv?[0-9]+\\b",
+                    "name": "constant.language.version.log"
+                },
+                {
+                    "match": "\\b(true|false)\\b",
+                    "name": "constant.language.boolean.log"
+                },
+                {
+                    "match": "\\bnull\\b",
+                    "name": "constant.language.null.log"
                 },
                 {
                     "match": "\\b(0x[a-fA-F0-9]+)\\b",
-                    "name": "constant.language.log"
+                    "name": "constant.language.hex.log"
                 },
                 {
                     "match": "(?<![\\w/\\\\])([\\w-]+\\.)+([\\w-])+(?![\\w/\\\\])",
-                    "name": "constant.language.log"
+                    "name": "constant.language.member.log"
                 },
                 {
                     "match": "(?<![\\w])'[^']*'",
@@ -80,6 +88,9 @@
                     "name": "storage.type.log"
                 },
                 {
+                    "include": "#qstring-local"
+                },
+                {
                     "include": "#qstring-verbatim"
                 },
                 {
@@ -87,6 +98,24 @@
                 }
             ]
         },
+        "qstring-local": {
+			"name": "string.quoted.double.nut",
+			"begin": "(?<=\\[[^]]+\\] )\"",
+			"beginCaptures": {
+				"0": {
+					"name": "punctuation.definition.string.begin.nut"
+				}
+			},
+			"end": "(\")\n|(\n)",
+			"endCaptures": {
+				"1": {
+					"name": "punctuation.definition.string.end.nut"
+				},
+				"2": {
+					"name": "invalid.illegal.newline.nut"
+				}
+			}
+		},
 		"qstring-verbatim": {
 			"name": "string.quoted.verbatim.nut",
 			"begin": "@\"",
@@ -115,7 +144,7 @@
 					"name": "punctuation.definition.string.begin.nut"
 				}
 			},
-			"end": "(\")|((?:[^\\\\\\n])$)",
+			"end": "(\")|((?:[^\\\\\\n]|\n)$)",
 			"endCaptures": {
 				"1": {
 					"name": "punctuation.definition.string.end.nut"

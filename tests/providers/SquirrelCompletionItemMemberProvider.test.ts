@@ -78,6 +78,36 @@ describe("SquirrelCompletionItemMemberProvider", () => {
         expect(await s.provideCompletionItems(d, p, t, r)).toBeUndefined();
     });
 
+    it("Integer", async () => {
+        const s = new SquirrelCompletionItemMemberProvider()
+        const d = new MockTextDocument(`123456`);
+        const p = new Position(0, 3);
+        const r = { triggerKind: CompletionTriggerKind.TriggerCharacter, triggerCharacter: '.' };
+        addProgram(d.uri.path, parse(d.getText()));
+
+        expect(await s.provideCompletionItems(d, p, t, r)).toBeUndefined();
+    });
+
+    it("Float", async () => {
+        const s = new SquirrelCompletionItemMemberProvider()
+        const d = new MockTextDocument(`1.23456`);
+        const p = new Position(0, 3);
+        const r = { triggerKind: CompletionTriggerKind.TriggerCharacter, triggerCharacter: '.' };
+        addProgram(d.uri.path, parse(d.getText()));
+
+        expect(await s.provideCompletionItems(d, p, t, r)).toBeUndefined();
+    });
+
+    it("String, After", async () => {
+        const s = new SquirrelCompletionItemMemberProvider()
+        const d = new MockTextDocument(`"string".`);
+        const p = new Position(0, 9);
+        const r = { triggerKind: CompletionTriggerKind.TriggerCharacter, triggerCharacter: '.' };
+        addProgram(d.uri.path, parse(d.getText()));
+
+        expect(await s.provideCompletionItems(d, p, t, r)).toEqual([]);
+    });
+
     it("Id", async () => {
         const s = new SquirrelCompletionItemMemberProvider()
         const d = new MockTextDocument(`identifier`);

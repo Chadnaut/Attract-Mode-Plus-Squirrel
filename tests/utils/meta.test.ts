@@ -28,15 +28,6 @@ describe("Meta", () => {
         expect(items[0].label["description"]).toBe("Main");
     });
 
-    // fit("Module override", () => {
-    //     const program = parse("/** @package\n@module Main */ /** @module Over\n@property {integer} bar here */ class foo {}; foo()");
-    //     const items = getMemberCompletions(getBranchAtPos(program, qt.Position(3, 48, 0)));
-    //     expect(items.length).toEqual(1);
-    //     expect(items[0].detail).toBe("(property) foo.bar: integer");
-    //     expect(items[0].label["description"]).toBe("Over");
-    //     expect(items[0].insertText).toBe("bar");
-    // });
-
     it("ClassDef", () => {
         const program = parse("/** @property {integer} bar here */ class foo {}; foo()");
         const items = getMemberCompletions(getBranchAtPos(program, pos(52)));
@@ -163,7 +154,7 @@ describe("Meta", () => {
         expect(getMetaNode(n, "x")).toBeUndefined();
     });
 
-    it("getMetaNode, meta", () => {
+    it("getMetaNode, meta get", () => {
         const program = parse("class foo { /** @property {*} x */ function _get() {} };");
         const n = getBranchAtPos(program, pos(7)).slice(0, -1);
         const m = getMetaNode(n, "x");

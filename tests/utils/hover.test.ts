@@ -13,6 +13,22 @@ describe("Hover", () => {
         expect(hover.contents['value']).toContain('foo');
     });
 
+    it("getHoverInfo, meta call", () => {
+        const program = parse('class foo { /** mock */ function _call(alpha) {} }; /** bar */ local f = foo(); f');
+        const hover = getHoverInfo(getBranchAtPos(program, pos(81)));
+        expect(hover.contents['value']).toContain('alpha');
+        expect(hover.contents['value']).toContain('mock');
+        expect(hover.contents['value']).toContain('bar');
+    });
+
+    it("getHoverInfo, meta call excludes class", () => {
+        const program = parse('class foo { /** mock */ function _call(alpha) {} }; /** bar */ local f = foo(); f');
+        const hover = getHoverInfo(getBranchAtPos(program, pos(8)));
+        expect(hover.contents['value']).not.toContain('alpha');
+        expect(hover.contents['value']).not.toContain('mock');
+        expect(hover.contents['value']).not.toContain('bar');
+    });
+
     it("getHoverInfo, undefined", () => {
         expect(getHoverInfo([])).toBeUndefined();
     });

@@ -64,6 +64,7 @@ export const getBranchWithInitKey = (branch: AST.Node[]): AST.Node[] => {
 
 /**
  * Return branch with init value, empty array if none
+ * - NOTE: fails if branch already has init value...
  * - VariableDeclarator -> init
  * - PropertyDefinition -> value
  * - Property -> value
@@ -105,6 +106,10 @@ export const getBranchCallable = (branch: AST.Node[]): AST.Node[] => {
             return getBranchCallable(getBranchWithInitValue(branch));
     }
 };
+
+const classTypes = ["ClassDeclaration", "ClassExpression"];
+export const isNodeClass = (node: AST.Node): boolean =>
+    classTypes.includes(node?.type);
 
 /**
  * Return branch trimmed to Function ancestor, or empty array

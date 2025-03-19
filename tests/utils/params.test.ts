@@ -1,10 +1,22 @@
-import { getNodeCallParamInfo, getNodeParamInfo, getNodeParams, getParamSuggestions, getParamSymbols, isRestNode, setRestNode } from '../../src/utils/params';
+import { getNodeCallParamInfo, getNodeParamInfo, getNodeParams, getParamSuggestions, getParamSymbols, isRestNode, limitParamIndex, ParameterInformationExtra, setRestNode } from '../../src/utils/params';
 import { describe, expect, it } from "@jest/globals";
 import { dump, parseExtra as parse, parseForce, pos } from "../utils";
 import { SQTree as qt } from "../../src/ast";
 import { getBranchAtPos } from '../../src/utils/find';
 
 describe("Params", () => {
+
+    it("limitParamIndex, no params", () => {
+        expect(limitParamIndex(10, [])).toBe(10);
+    });
+
+    it("limitParamIndex, valid", () => {
+        expect(limitParamIndex(10, [<ParameterInformationExtra>{}])).toBe(10);
+    });
+
+    it("limitParamIndex, rest", () => {
+        expect(limitParamIndex(10, [<ParameterInformationExtra>{}, <ParameterInformationExtra>{ rest: true }])).toBe(1);
+    });
 
     it("getParamSymbols", () => {
         const program = parse('function foo(a) {}');

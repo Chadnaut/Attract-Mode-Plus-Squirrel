@@ -183,9 +183,6 @@ describe("File", () => {
 
     });
 
-    // fit("getFirstValidFilename", () => {
-    // });
-
     it("writeFile, sync", () => {
         writeFileSync = true;
         expect(writeFile(__filename, "123")).toBe(true);

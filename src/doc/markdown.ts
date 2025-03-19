@@ -1,5 +1,5 @@
 import { MarkdownString } from "vscode";
-import { DocAttr } from "./kind";
+import { DocAttr, DocBlock } from "./kind";
 import { META_KINDS } from "../utils/meta";
 
 // -----------------------------------------------------------------------------
@@ -132,3 +132,14 @@ export const createDocMarkdown = (
 
     return md;
 };
+
+/** Append DocBlock markdown (if any) to target markdown, adds newlines if content exists */
+export const appendDocToMarkdown = (doc: DocBlock, md: MarkdownString) => {
+    if (!doc?.markdown) return;
+    if (md.value) md.appendMarkdown("\n\n");
+    md.appendMarkdown(doc.markdown.value);
+}
+
+/** Return MarkdownString value */
+export const getMarkdownValue = (obj: string | MarkdownString): string =>
+    (typeof obj === "string") ? obj : obj.value;

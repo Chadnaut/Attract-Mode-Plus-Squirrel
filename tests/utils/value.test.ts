@@ -71,13 +71,6 @@ describe("NodeValue", () => {
         expect(val).toBeUndefined();
     });
 
-    // fit("AssignmentExpression newslot", () => {
-    //     const program = parse("x <- ( y <- z );")
-    //     const n = getBranchAtPos(program, pos(1)).at(-2);
-    //     const val = getNodeVal(n);
-    //     expect(val?.type).toBe("AssignmentExpression");
-    // });
-
     it("Base", () => {
         const program = parse("class foo { xxx = 123 } class bar extends foo { function moo() { return base } } bar().moo().xxx ");
         const n = getBranchAtPos(program, pos(94));

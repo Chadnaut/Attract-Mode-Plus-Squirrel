@@ -90,6 +90,8 @@ These attributes can only be placed in a:
 - `_get` method DocBlock.
 - `_set` method DocBlock.
 
+The `_call` meta-method - which make a Class instance callable - will append a Class instance's DocBlock with its own, to provide parameter and completion IntelliSense.
+
 ```ts
 /**
  * @property {integer} prop This is my property

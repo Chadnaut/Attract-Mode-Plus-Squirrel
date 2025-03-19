@@ -15,21 +15,21 @@ const getNodeDefAtPos = (program, pos) => {
 
 describe("Signature", () => {
 
+    it("getNodeSignature, meta call, class dec", () => {
+        const program = parse('class foo { function _call(a) {} constructor(b) {} } local f = foo()');
+        const n = getNodeDefAtPos(program, pos(60));
+        expect(getNodeSignature(n)).toBe("function f(a: any): null");
+    });
+
+    it("getNodeSignature, meta call, class exp", () => {
+        const program = parse('local foo = class { function _call(a) {} constructor(b) {} } local f = foo()');
+        const n = getNodeDefAtPos(program, pos(68));
+        expect(getNodeSignature(n)).toBe("function f(a: any): null");
+    });
+
     it("getNodeSignature, undefined", () => {
         expect(getNodeSignature([])).toBeUndefined();
     });
-
-    // it("getNodeSignature, without id", () => {
-    //     const program = parse("function foo(a) {};");
-    //     const n = getBranchAtPos(program, pos(11)).at(-2);
-
-    //     const f = <AST.FunctionDeclaration>n
-    //     f.extra.id.extra.definition = null; // bad id
-    //     f.extra.id = null;
-    //     f.id = null;
-
-    //     expect(getNodeSignature(f)).toBe("function(a: any): null");
-    // });
 
     it("getNodeSignature, param without info", () => {
         const program = parse("function foo(a) {};");
@@ -537,6 +537,24 @@ describe("Signature", () => {
     });
 
     // -------------------------------------------------------------------------
+
+    it("getSignatureHelp, meta call", () => {
+        const text = 'class foo { function _call(a) {} constructor(b) {} } local f = foo(); f(1)';
+        const program = parse(text);
+        const help = getSignatureHelp(text, program, pos(73));
+        expect(help.signatures).toHaveLength(1);
+        expect(help.signatures[0].parameters).toHaveLength(1);
+    });
+
+    it("getSignatureHelp, meta call, with doc", () => {
+        const text = 'class foo { /** mock */ function _call(a) {} constructor(b) {} } /** bar */ local f = foo(); f(1)';
+        const program = parse(text);
+        const help = getSignatureHelp(text, program, pos(96));
+        expect(help.signatures).toHaveLength(1);
+        expect(help.signatures[0].parameters).toHaveLength(1);
+        expect(help.signatures[0].documentation["value"]).toContain("mock");
+        expect(help.signatures[0].documentation["value"]).toContain("bar");
+    });
 
     it("getSignatureHelp, FunctionDeclaration", () => {
         const text = "function foo(a) {}; foo(10);";

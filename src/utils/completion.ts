@@ -17,6 +17,7 @@ import {
     CompletionItemKind,
     CompletionItemLabel,
     CompletionItemTag,
+    MarkdownString,
     Position,
     Range,
     SymbolTag,
@@ -37,6 +38,8 @@ import { stringToNode } from "./create";
 import { isValidName } from "./identifier";
 import { getParamSymbols } from "./params";
 import constants from "../constants";
+import { appendDocToMarkdown, getMarkdownValue } from "../doc/markdown";
+import { getBranchMetaCall } from "./meta";
 import * as path from "path";
 
 export const uniqueCompletions = (
@@ -196,13 +199,23 @@ const symbolsToCompletion = (
 
     // Add '::' prefix if thats how the init node was written
     const root = isMember ? false : nodeHasRootPrefix(node);
-    // const localName = removeRootPrefix(name);
     const labelName = root ? addRootPrefix(name) : name;
     const insertText = root
         ? removeRootPrefix(symbol.insertText)
         : symbol.insertText;
 
-    const documentation = symbol.documentation ?? getNodeDoc(symbol.branch)?.markdown;
+    let contents = new MarkdownString();
+
+    if (symbol.documentation) {
+        contents.appendMarkdown(getMarkdownValue(symbol.documentation));
+    } else {
+        appendDocToMarkdown(getNodeDoc(symbol.branch), contents);
+    }
+
+    // SPECIAL - use meta _call documentation
+    const callDoc = getNodeDoc(getBranchMetaCall(symbol.branch));
+    appendDocToMarkdown(callDoc, contents);
+
     const signature = getNodeSignature(symbol.branch);
     const label = <CompletionItemLabel>{
         label: labelName,
@@ -224,7 +237,7 @@ const symbolsToCompletion = (
 
     item.sortText = removeRootPrefix(labelName);
     item.filterText = removeRootPrefix(labelName);
-    if (documentation) item.documentation = documentation;
+    if (contents.value) item.documentation = contents;
 
     return item;
 };

@@ -1,6 +1,6 @@
 import { TextDocument, DocumentLink, Uri, Range } from "vscode";
 
-const logRegex = new RegExp(/(?<=[^\w])(?<path>(?:[a-z]:)?[\\/][^ \\/](?:.*?\.[^.\s\t\r\n\];]+|[^.]*?)(?=\.?(?:[\s\t\r\n\];]|$)))(?: \((?<layout>[^)]+)\))?(?: line[ =]*[\[(](?<line>\d+)[\])])?(?: column[ =]*[\[(](?<column>\d+)[\])])?/gmi);
+const logRegex = new RegExp(/(?<=[^\w\\/])(?<path>(?:[a-z]:)?[\\/][^ \\/](?:.*?\.[^.\s\t\r\n\];]+|[^.]*?)(?=\.?(?:[\s\t\r\n\];]|$)))(?: \((?<layout>[^)]+)\))?(?: line[ =]*[\[(](?<line>\d+)[\])])?(?: column[ =]*[\[(](?<column>\d+)[\])])?/gmi);
 
 /** Find links in last_run.log files */
 export const getLogLinks = (document: TextDocument): DocumentLink[] => {

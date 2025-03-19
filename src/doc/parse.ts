@@ -7,7 +7,7 @@ import { META_KINDS } from "../utils/meta";
 const expectedRegex = RegExp(/^([^\(]*)\((.*?)\)$/);
 
 const docBlockRegex = RegExp(
-    /(?:[\t ]*\*)? ?(?:@(?<kind>[^\s]+))? *(?:{(?<type>[^}]*)})? *(?<doc>(?<rest>\.{3})?(?<name>\$?[._\-A-Za-z0-9]*)? *(?:<(?<link>[^>]*)>)?[ \t\-]*(?<dh>\* ?)?(?<desc>[\w\W]*?(?=\r?\n[\t ]*\*?[\t ]*@|$)\r?\n?))/g,
+    /(?:[\t ]*\*)? ?(?:@(?<kind>[^\s]+))? *(?:{(?<type>[^}]*)})? *(?<doc>(?<rest>\.{3})?(?<name>\$?[._\-A-Za-z0-9!]*)? *(?:<(?<link>[^>]*)>)?[ \t\-]*(?<dh>\* ?)?(?<desc>[\w\W]*?(?=\r?\n[\t ]*\*?[\t ]*@|$)\r?\n?))/g,
 );
 
 const attrNameRegex = RegExp(
