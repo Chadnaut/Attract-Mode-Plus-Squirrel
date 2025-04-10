@@ -112,9 +112,8 @@ function add_surface2(x, y, width, height) {}
  * @ignore
  * @method
  * @param {fe.Image} element The Image, Artwork or Surface to clone.
- * @returns {feImage}
  */
-function add_clone1(element) {}
+function add_clone1(element) { return element }
 
 /**
  * Creates a new Text element.

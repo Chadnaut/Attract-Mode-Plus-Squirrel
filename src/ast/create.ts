@@ -46,6 +46,19 @@ export class SQTree {
             ? this.SourceLocation(from?.start ?? to.start, to?.end ?? from.end)
             : undefined;
 
+    /**
+     * Return zero-length location at end of given location
+     * - Used for member `object.` when prop is empty id after period
+     */
+    static LocZeroEnd = (loc: AST.SourceLocation, inc: number = 1): AST.SourceLocation => {
+        const end = this.Position(
+            loc.end.line,
+            loc.end.column + inc,
+            loc.end.index + inc
+        );
+        return this.SourceLocation(end, end);
+    }
+
     static LocDefault = (
         loc: AST.SourceLocation,
         from: AST.Node,

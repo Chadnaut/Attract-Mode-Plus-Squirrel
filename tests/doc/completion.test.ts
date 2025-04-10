@@ -46,6 +46,16 @@ describe("Doc Completion", () => {
         );
     });
 
+    it("getDocCompletions, return param", () => {
+        const program = parse("function foo(a) { return a }");
+        const n = getBranchAtPos(program, pos(11));
+        const completions = getDocCompletions(n);
+        const value = completions[0].insertText["value"];
+        expect(value).toBe(
+            "\n * ${1:Description placeholder}\n * @param {*\\} a\n",
+        );
+    });
+
     it("getDocCompletions, method", () => {
         const program = parse("class foo { function bar() { return 123; } }");
         const n = getBranchAtPos(program, pos(22));

@@ -105,12 +105,12 @@ export class SquirrelModuleExplorer extends Disposable {
 
         const treeDataProvider = new AttractModuleTreeDataProvider();
         this.disposables = [
-            window.createTreeView("attractModuleExplorer", {
+            window.createTreeView("attractPlusSquirrel.attractBar", {
                 treeDataProvider,
                 canSelectMany: true,
                 dragAndDropController: treeDataProvider,
             }),
-            commands.registerCommand("attractModuleExplorer.refresh", () =>
+            commands.registerCommand("attractPlusSquirrel.refreshExplorer", () =>
                 treeDataProvider.refresh(),
             ),
         ];

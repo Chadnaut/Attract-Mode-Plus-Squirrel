@@ -5,6 +5,7 @@ import constants from "../../src/constants";
 import { AST } from "../../src/ast";
 import * as path from "path";
 import { addProgramImportName, addProgramModuleName, addProgram } from "../../src/utils/program";
+import { refreshArtworkLabels } from "../../src/utils/media";
 
 jest.replaceProperty(constants, "FE_MODULES_PATH", "modules");
 jest.replaceProperty(constants, "FE_LAYOUTS_PATH", "tests");
@@ -12,12 +13,12 @@ jest.mock('../../src/utils/config.ts', () => ({
     ...jest.requireActual('../../src/utils/config.ts'),
     getConfigValue: (name) => {
         switch (name) {
+            case constants.ATTRACT_MODE_ARTWORK:
+                return "snap,wheel";
             case constants.ATTRACT_MODE_PATH:
                 return "";
-            case constants.PACKAGE_AUTHOR:
-                return "mock_author";
-            case constants.PACKAGE_URL:
-                return "mock_url";
+            case constants.PACKAGE_TEMPLATE:
+                return "${title}\n\n@summary A short description.\n@version 0.0.1 ${date:yyyy-MM-dd}\n@author Username\n@url https://github.com/user/repo\n\n@requires\n\nAdditional instructions ${mock}.";
             default:
                 return path.join(__dirname, "../samples")
         }
@@ -33,6 +34,7 @@ describe("Doc Program Completion", () => {
     });
 
     it("getDocProgramCompletions, modules", () => {
+        refreshArtworkLabels();
         const program = <AST.Program>{ sourceName: "mockProgram" };
 
         const mockModule = <AST.Program>{ sourceName: "mockModule" };
@@ -57,15 +59,16 @@ describe("Doc Program Completion", () => {
         const value = getDocCompletionsAtPos(program, pos(3))[1].insertText["value"];
         expect(value).toContain("@summary A short description.");
         expect(value).toContain("@version 0.0.1");
-        expect(value).toContain("@author mock_author");
-        expect(value).toContain("@url mock_url");
+        expect(value).toContain("@author Username");
+        expect(value).toContain("@url https://github.com/user/repo");
+        expect(value).toContain("\\${mock\\}"); // escape chars added by snippetString
     });
 
     it("getDocCompletionsAtPos, artwork", () => {
-        const program = parse(`fe.add_artwork("art1"); fe.add_artwork("art2")`);
+        const program = parse(`/** @param {string($artwork)} a */ function add(a) {}; add("wheel"); add("snap"); add("invalid")`);
         const value = getDocCompletionsAtPos(program, pos(3))[1].insertText["value"];
         expect(value).toContain("@requires");
-        expect(value).toContain("@artwork art1, art2");
+        expect(value).toContain("@artwork snap, wheel");
     });
 
 });

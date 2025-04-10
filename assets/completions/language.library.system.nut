@@ -25,9 +25,19 @@ function clock() {}
  *
  * @param {integer} timestamp The timestamp to use. Defaults to `time()`.
  * @param {string} format Use `'l'` for local or `'u'` for UTC. Defaults to `'l'`.
- * @returns {table}
  */
-function date(timestamp = null, format = 'l') {}
+function date(timestamp = null, format = 'l') {
+    return {
+        day = 0,
+        hour = 0,
+        min = 0,
+        month = 0,
+        sec = 0,
+        wday = 0,
+        yday = 0,
+        year = 0
+    };
+}
 
 /**
  * Returns the value of a system environment variable.

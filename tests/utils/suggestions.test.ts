@@ -27,6 +27,9 @@ jest.mock('../../src/utils/import.ts', () => ({
     getNutCompletions: (name) => ([
         new CompletionItem("mock-nut")
     ]),
+    getFileCompletions: (name) => ([
+        new CompletionItem("mock-file")
+    ]),
 }));
 
 jest.mock('../../src/utils/module.ts', () => ({
@@ -92,6 +95,14 @@ describe("Suggestions", () => {
         const items = getParamSuggestions(text, program, pos(50));
         expect(items).toHaveLength(1);
         expect(items[0].label).toBe("mock-nut");
+    });
+
+    it("getParamSuggestions, $file", () => {
+        const text = "/** @param {($file)} a */ function foo(a) {}; foo(10);";
+        const program = parse(text);
+        const items = getParamSuggestions(text, program, pos(51));
+        expect(items).toHaveLength(1);
+        expect(items[0].label).toBe("mock-file");
     });
 
     it("getParamSuggestions, $image", () => {

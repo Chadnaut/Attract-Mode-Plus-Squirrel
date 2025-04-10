@@ -1,7 +1,6 @@
 import {
     CompletionItem,
     CompletionItemKind,
-    DiagnosticSeverity,
     MarkdownString,
     Uri,
 } from "vscode";
@@ -19,15 +18,13 @@ import {
     videoExtensions,
     shaderExtensions,
 } from "./kind";
-import { getNodeImportFilename, getRelativeNutPath } from "./import";
+import { getRelativeNutPath, getNodeExpectedArgument } from "./import";
 import constants from "../constants";
 import { uniqueFilter } from "./array";
 import { AST } from "../ast";
-import { getBranchProgram } from "./find";
 import { getConfigValue } from "./config";
-import { addProgramErrors } from "./diagnostics";
-import { filterBranchCallMethods, getCallExpressionName } from "./call";
-import { resolveBinaryExpression } from "./binary";
+import { getNodeArgExpectedLabels } from "./params";
+import { getProgramCalls } from "./map";
 
 const { readMediaAttributes } = require("leather");
 
@@ -35,84 +32,32 @@ const { readMediaAttributes } = require("leather");
 
 const programArtworkMap = new WeakMap<AST.Program, string[]>();
 
-export const addProgramArtwork = (program: AST.Program, name: string) => {
-    if (!name) return;
-    if (!programArtworkMap.has(program)) programArtworkMap.set(program, []);
-    const map = programArtworkMap.get(program);
-    if (!map.includes(name)) map.push(name);
+/** Return a list of unique artwork resource labels for the program */
+export const getProgramArtworks = (program: AST.Program): string[] => {
+    if (!program) return [];
+    if (!programArtworkMap.has(program)) {
+        programArtworkMap.set(
+            program,
+            getProgramCalls(program)
+                .map(getArtworkCallLabel)
+                .filter((label) => label)
+                .filter(uniqueFilter),
+        );
+    }
+    return programArtworkMap.get(program);
 };
-
-export const getProgramArtworks = (program: AST.Program): string[] =>
-    programArtworkMap.has(program) ? programArtworkMap.get(program) : [];
 
 /** Return the value of and artwork call argument */
 export const getArtworkCallLabel = (branch: AST.Node[]): string => {
-    const node = branch.at(-1);
-    if (node?.type !== "CallExpression") return;
-    const args = (<AST.CallExpression>node).arguments;
-    if (!args.length) return;
-
-    if (getCallExpressionName(branch) !== constants.FE_ADD_ARTWORK) return;
-    return resolveBinaryExpression(
-        branch.concat(args.slice(0, 1)),
-        getBranchProgram(branch).sourceName,
-    );
-};
-
-/** Process calls to store artwork labels */
-export const addArtworkCalls = (branches: AST.Node[][]) => {
-    branches.forEach((branch) => {
-        addProgramArtwork(
-            getBranchProgram(branch),
-            getArtworkCallLabel(branch),
-        );
-    });
-};
-
-/** Adds program errors for media that does not exist */
-export const addMediaCalls = (branches: AST.Node[][]) => {
-    const showMissing =
-        !!getConfigValue(constants.ATTRACT_MODE_PATH) &&
-        getConfigValue(constants.SHOW_MISSING_ENABLED, true);
-    if (!showMissing) return;
-
-    const message = constants.FILE_MISSING_MESSAGE;
-    const mediaCalls = filterBranchCallMethods(branches, [
-        constants.FE_ADD_IMAGE,
-        constants.FE_ADD_MUSIC,
-        constants.FE_ADD_SOUND,
-    ]);
-    const shaderCalls = filterBranchCallMethods(branches, [
-        constants.FE_ADD_SHADER,
-    ]);
-
-    // media calls have a single filename as their first param
-    mediaCalls.forEach((branch) => {
-        const filename = getNodeImportFilename(branch, 0);
-        if (filename === "") {
-            const args = (<AST.CallExpression>branch.at(-1)).arguments;
-            addProgramErrors(
-                getBranchProgram(branch),
-                [{ message, loc: args[0].loc }],
-                DiagnosticSeverity.Warning,
-            );
+    const args = (<AST.CallExpression>branch.at(-1))?.arguments ?? [];
+    for (const arg of args) {
+        const argBranch = [...branch, arg];
+        const labels = getNodeArgExpectedLabels(argBranch);
+        if (labels.includes(constants.EXP_ARTWORK)) {
+            const value = getNodeExpectedArgument(argBranch);
+            if (value) return value;
         }
-    });
-
-    // shader methods have up to 2 filenames
-    shaderCalls.forEach((branch) => {
-        for (let index = 1; index <= 2; index++) {
-            const filename = getNodeImportFilename(branch, index);
-            if (filename === "") {
-                const args = (<AST.CallExpression>branch.at(-1)).arguments;
-                addProgramErrors(
-                    getBranchProgram(branch),
-                    [{ message, loc: args[index].loc }],
-                    DiagnosticSeverity.Warning,
-                );
-            }
-        }
-    });
+    }
 };
 
 // -----------------------------------------------------------------------------
@@ -269,16 +214,21 @@ let artworkCompletions: CompletionItem[] = [];
  */
 export const refreshArtworkLabels = () => {
     artworkCompletions = scanArtworkLabels()
-        .concat(
-            getConfigValue(constants.ATTRACT_MODE_ARTWORK, "")
-                .replace(/[ ,;|]+/g, ";")
-                .split(";"),
-        )
+        .concat(getConfigArtworkLabels())
         .map((label) => label.trim())
         .filter((label) => label)
         .filter(uniqueFilter)
-        .map((label) => new CompletionItem(label, CompletionItemKind.Keyword));
+        .map(
+            (label) =>
+                new CompletionItem(label, CompletionItemKind.Keyword),
+        );
 };
+
+/** Return artwork label list from config */
+const getConfigArtworkLabels = (): string[] =>
+    getConfigValue(constants.ATTRACT_MODE_ARTWORK, "")
+        .replace(/[ ,;|]+/g, ";")
+        .split(";");
 
 const artworkRegex = new RegExp(/^artwork\s+(?<label>[^\s]+)/gm);
 
@@ -313,3 +263,6 @@ export const scanArtworkLabels = () => {
 };
 
 export const getArtworkCompletions = (): CompletionItem[] => artworkCompletions;
+
+export const getArtworkCompletionLabels = (): string[] =>
+    artworkCompletions.map((completion) => <string>completion.label);

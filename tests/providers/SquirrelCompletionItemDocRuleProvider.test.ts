@@ -83,6 +83,17 @@ describe("SquirrelCompletionItemDocRuleProvider", () => {
         expect(await s.provideCompletionItems(d, p, t, r)).toBeUndefined();
     });
 
+    it("No TriggerCharacter", async () => {
+        const s = new SquirrelCompletionItemDocRuleProvider()
+        const d = new MockTextDocument("// -");
+        const p = new Position(0, 4);
+        const r = { triggerKind: CompletionTriggerKind.Invoke, triggerCharacter: undefined };
+        addProgram(d.uri.path, parse(d.getText()));
+        s.mode = "print";
+
+        expect(await s.provideCompletionItems(d, p, t, r)).toBeUndefined();
+    });
+
     it("Full", async () => {
         const s = new SquirrelCompletionItemDocRuleProvider()
         const d = new MockTextDocument("// -------");

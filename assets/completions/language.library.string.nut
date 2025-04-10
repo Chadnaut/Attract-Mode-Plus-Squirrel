@@ -72,7 +72,6 @@ class regexp {
      * Returns the search result's `begin` and `end` indexes for each capture group, or `null` when no match is found.
      * @param {string} value The string to capture.
      * @param {integer} start The index to start searching from. Defaults to `0`.
-     * @returns {table}
      * @example
      * ```
      * regexp("(a) *(b) *(c)").capture("a b c");
@@ -84,7 +83,9 @@ class regexp {
      * // ]
      * ```
      */
-    function capture(value, start = 0) {}
+    function capture(value, start = 0) {
+        return [{ begin = 0, end = 0 }];
+    }
 
     /**
      * Returns true if the regular expression matches the entire given string.
@@ -97,12 +98,13 @@ class regexp {
      * Returns the search result's `begin` and `end` indexes, or `null` when no match is found.
      * @param {string} value The string to search.
      * @param {integer} start The index to start searching from. Defaults to `0`.
-     * @returns {table}
      * @example
      * ```
      * regexp("b").search("a b c");
      * // { begin: 2, end: 3 }
      * ```
      */
-    function search(value, start = 0) {}
+    function search(value, start = 0) {
+        return { begin = 0, end = 0 };
+    }
 }

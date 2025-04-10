@@ -2,12 +2,12 @@ import { MarkdownString, SignatureHelp, SignatureInformation } from "vscode";
 import { getNodeDef, getNodeVal } from "./definition";
 import {
     getNodeIsParameter,
-    getNodeCallParamInfo,
+    getNodeArgsParamInfo,
     getNodeParamInfo,
     getNodeParams,
     ParameterInformationExtra,
     setNodeParamInfo,
-    setNodeCallParamInfo,
+    setNodeArgsParamInfo,
     isRestNode,
     limitParamIndex,
 } from "./params";
@@ -55,7 +55,7 @@ export const getSignatureHelp = (
         const n = overloadBranch.at(-1);
         const docBlock = getNodeDoc(overloadBranch);//infoBranch);
         const signature = getNodeSignature(overloadBranch);
-        const parameters = getNodeCallParamInfo(infoBranch);
+        const parameters = getNodeArgsParamInfo(infoBranch);
         paramIndex = limitParamIndex(paramIndex, parameters);
 
         const documentation = getDocAttr(docBlock, "description");
@@ -331,7 +331,6 @@ export const getSignatureParameters = (
 
         const docBlock = getNodeDoc(branch);
         const params = getNodeParams(nodeValue);
-
         signature += "(";
         parameters = params.map((paramBranch, i) => {
             const param = paramBranch.at(-1);
@@ -359,6 +358,7 @@ export const getSignatureParameters = (
                 offset + start,
                 offset + signature.length,
             ]);
+
             if (attr) {
                 info.documentation = attr.documentation;
                 info.attribute = attr;
@@ -371,6 +371,6 @@ export const getSignatureParameters = (
         signature += ")";
     }
 
-    setNodeCallParamInfo(node, parameters);
+    setNodeArgsParamInfo(node, parameters);
     return signature;
 };

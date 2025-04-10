@@ -14,13 +14,20 @@ export const printDocAttr = (attr: DocAttr): string => {
 
     switch (attr.kind) {
         case "description":
-            return ` * ${attr.documentation.split("\r?\n").join("\n * ")}\n`;
+            return ` * ${attr.documentation.split(/\r?\n/).join("\n * ")}\n`;
         default:
             output = ` * @${attr.kind}`;
             if (attr.type) output += ` {${attr.type}}`;
             if (attr.name) output += ` ${attr.name}`;
-            if (attr.link) output += (attr.kind === "author") ? `<${attr.link}>` : ` ${attr.link}`;
-            if (attr.documentation) output += ` ${attr.documentation.split("\r?\n").join("\n * ")}`;
+            if (attr.link) {
+                if (attr.kind === "author") {
+                    if (!attr.name) output += " ";
+                    output += `<${attr.link}>`
+                } else {
+                    output += ` ${attr.link}`;
+                }
+            }
+            if (attr.documentation) output += ` ${attr.documentation.split(/\r?\n/).join("\n * ")}`;
             output += "\n";
             return output;
     }

@@ -17,7 +17,7 @@ import { CompilerError } from "../squirrel/squirrel/sqcompiler.h";
 
 // -----------------------------------------------------------------------------
 
-type DiagnosticError = CompilerError & {
+export type DiagnosticError = CompilerError & {
     severity: DiagnosticSeverity;
 };
 
@@ -26,13 +26,11 @@ const programErrorMap = new WeakMap<AST.Program, DiagnosticError[]>();
 /** Store compilation errors for the given program */
 export const addProgramErrors = (
     program: AST.Program,
-    errors: CompilerError[],
-    severity: DiagnosticSeverity = DiagnosticSeverity.Error,
+    errors: DiagnosticError[],
 ) => {
+    if (!program) return;
     if (!programErrorMap.has(program)) programErrorMap.set(program, []);
-    programErrorMap
-        .get(program)
-        .push(...errors.map((e) => <DiagnosticError>{ ...e, severity }));
+    programErrorMap.get(program).push(...errors);
 };
 
 /** Return compilation errors for the given program */

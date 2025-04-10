@@ -18,14 +18,14 @@ describe("Identifier", () => {
     it("Identifier", () => {
         const program = parse(`id`)
         const b = getBranchAtPos(program, pos(1));
-        const id = getBranchEndingAtType(b, "Identifier");
+        const id = getBranchEndingAtType(b, ["Identifier"]);
         expect(addBranchId(id).at(-1)).toBe(id.at(-1));
     });
 
     it("VariableDeclarator", () => {
         const program = parse(`local id = "123"`);
         const b = getBranchAtPos(program, pos(7));
-        const n = getBranchEndingAtType(b, "VariableDeclarator");
+        const n = getBranchEndingAtType(b, ["VariableDeclarator"]);
         const id = getBranchNodeByType(b, "Identifier");
         expect(addBranchId(n).at(-1)).toBe(id);
     });
@@ -33,7 +33,7 @@ describe("Identifier", () => {
     it("FunctionDeclaration", () => {
         const program = parse(`function foo() {}`);
         const b = getBranchAtPos(program, pos(10));
-        const n = getBranchEndingAtType(b, "FunctionDeclaration");
+        const n = getBranchEndingAtType(b, ["FunctionDeclaration"]);
         const id = getBranchNodeByType(b, "Identifier");
         expect(addBranchId(n).at(-1)).toBe(id);
     });
@@ -41,7 +41,7 @@ describe("Identifier", () => {
     it("FunctionDeclaration, invalid", () => {
         const program = parse(`function foo() {}`);
         const b = getBranchAtPos(program, pos(10));
-        const n = getBranchEndingAtType(b, "FunctionDeclaration");
+        const n = getBranchEndingAtType(b, ["FunctionDeclaration"]);
         delete program.body[0]["id"]; // sabotage
         expect(addBranchId(n).at(-1)).toBe(undefined);
     });
@@ -51,7 +51,7 @@ describe("Identifier", () => {
         const b = getBranchAtPos(program, pos(8));
         const id = getBranchNodeByType(b, "Identifier");
         const b2 = getBranchAtPos(program, pos(16));
-        const n = getBranchEndingAtType(b2, "FunctionExpression");
+        const n = getBranchEndingAtType(b2, ["FunctionExpression"]);
         expect(addBranchId(n).at(-1)).toBe(id);
     });
 
@@ -60,14 +60,14 @@ describe("Identifier", () => {
         const b = getBranchAtPos(program, pos(13));
         const id = getBranchNodeByType(b, "Identifier");
         const b2 = getBranchAtPos(program, pos(22));
-        const n = getBranchEndingAtType(b2, "FunctionExpression");
+        const n = getBranchEndingAtType(b2, ["FunctionExpression"]);
         expect(addBranchId(n).at(-1)).toBe(id);
     });
 
     it("Property", () => {
         const program = parse(`local x = { prop = "123" }`);
         const b = getBranchAtPos(program, pos(14));
-        const n = getBranchEndingAtType(b, "Property");
+        const n = getBranchEndingAtType(b, ["Property"]);
         const id = getBranchNodeByType(b, "Identifier");
         expect(addBranchId(n).at(-1)).toBe(id);
     });
@@ -75,7 +75,7 @@ describe("Identifier", () => {
     it("EnumDeclaration", () => {
         const program = parse(`enum myen {}`);
         const b = getBranchAtPos(program, pos(7));
-        const n = getBranchEndingAtType(b, "EnumDeclaration");
+        const n = getBranchEndingAtType(b, ["EnumDeclaration"]);
         const id = getBranchNodeByType(b, "Identifier");
         expect(addBranchId(n).at(-1)).toBe(id);
     });
@@ -83,7 +83,7 @@ describe("Identifier", () => {
     it("EnumMember", () => {
         const program = parse(`enum myen { name }`);
         const b = getBranchAtPos(program, pos(14));
-        const n = getBranchEndingAtType(b, "EnumMember");
+        const n = getBranchEndingAtType(b, ["EnumMember"]);
         const id = getBranchNodeByType(b, "Identifier");
         expect(addBranchId(n).at(-1)).toBe(id);
     });
@@ -91,7 +91,7 @@ describe("Identifier", () => {
     it("ClassDeclaration", () => {
         const program = parse(`class foo {}`);
         const b = getBranchAtPos(program, pos(14));
-        const n = getBranchEndingAtType(b, "ClassDeclaration");
+        const n = getBranchEndingAtType(b, ["ClassDeclaration"]);
         const id = getBranchNodeByType(b, "Identifier");
         expect(addBranchId(n).at(-1)).toBe(id);
     });
@@ -101,21 +101,21 @@ describe("Identifier", () => {
         const b = getBranchAtPos(program, pos(7));
         const id = getBranchNodeByType(b, "Identifier");
         const b2 = getBranchAtPos(program, pos(15));
-        const n = getBranchEndingAtType(b2, "ClassExpression");
+        const n = getBranchEndingAtType(b2, ["ClassExpression"]);
         expect(addBranchId(n).at(-1)).toBe(id);
     });
 
     it("ClassExpression, orphan", () => {
         const program = parse(`return class {}`);
         const b = getBranchAtPos(program, pos(9));
-        const n = getBranchEndingAtType(b, "ClassExpression");
+        const n = getBranchEndingAtType(b, ["ClassExpression"]);
         expect(addBranchId(n).at(-1)).toBeUndefined();
     });
 
     it("PropertyDefinition", () => {
         const program = parse(`class foo { prop = 123; }`);
         const b = getBranchAtPos(program, pos(14));
-        const n = getBranchEndingAtType(b, "PropertyDefinition");
+        const n = getBranchEndingAtType(b, ["PropertyDefinition"]);
         const id = getBranchNodeByType(b, "Identifier");
         expect(addBranchId(n).at(-1)).toBe(id);
     });
@@ -123,7 +123,7 @@ describe("Identifier", () => {
     it("MethodDefinition", () => {
         const program = parse(`class foo { function bar() {}; }`);
         const b = getBranchAtPos(program, pos(22));
-        const n = getBranchEndingAtType(b, "MethodDefinition");
+        const n = getBranchEndingAtType(b, ["MethodDefinition"]);
         const id = getBranchNodeByType(b, "Identifier");
         expect(addBranchId(n).at(-1)).toBe(id);
     });
@@ -131,7 +131,7 @@ describe("Identifier", () => {
     it("AssignmentExpression", () => {
         const program = parse(`foo <- 123`);
         const b = getBranchAtPos(program, pos(2));
-        const n = getBranchEndingAtType(b, "AssignmentExpression");
+        const n = getBranchEndingAtType(b, ["AssignmentExpression"]);
         const id = getBranchNodeByType(b, "Identifier");
         expect(addBranchId(n).at(-1)).toBe(id);
     });
@@ -144,7 +144,7 @@ describe("Identifier", () => {
     it("AssignmentPattern", () => {
         const program = parse("function foo(param = 123) { }");
         const b = getBranchAtPos(program, pos(15));
-        const n = getBranchEndingAtType(b, "AssignmentPattern");
+        const n = getBranchEndingAtType(b, ["AssignmentPattern"]);
         const id = getBranchNodeByType(b, "Identifier");
         expect(addBranchId(n).at(-1)).toBe(id);
     });

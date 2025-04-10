@@ -1,3 +1,6 @@
 // contains a single warning item
 
-fe.load_module("mock-does-not-exist");
+/** @param {string($module)} a */
+function add(a) {}
+
+add("mock-does-not-exist");

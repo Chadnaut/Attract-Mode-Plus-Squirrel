@@ -124,6 +124,13 @@ describe("Token", () => {
         expect(getNodeToken(n)).toBe("parameter");
     });
 
+    it("Param, return", () => {
+        const program = parse("function foo(param) { return param }");
+        const n = getNodeAtPos(program, pos(31));
+        expect(n.type).toBe("Identifier");
+        expect(getNodeToken(n)).toBe("parameter");
+    });
+
     it("Param, is not transitive", () => {
         const program = parse("function foo(param) { local bar = param }");
         const n = getNodeAtPos(program, pos(29));

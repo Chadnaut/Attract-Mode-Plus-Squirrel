@@ -1,7 +1,7 @@
 import { describe, expect, it } from "@jest/globals";
 import { dump, MockTextDocument, parseExtra as parse, pos } from "../utils";
 import { getBranchAtPos } from "../../src/utils/find";
-import { addProgramColorCall, colorToRGB, getNodeColorInformation, getProgramColorInformation } from "../../src/utils/color";
+import { colorToRGB, getNodeColorInformation, getProgramColorInformation } from "../../src/utils/color";
 import { Color } from "vscode";
 
 describe("Color", () => {
@@ -14,7 +14,6 @@ describe("Color", () => {
     it("addProgramColorCall, invalid", () => {
         const t = new MockTextDocument("");
         const program = parse(t.getText())
-        expect(addProgramColorCall(program, [])).toBeUndefined();
         expect(getProgramColorInformation(t, program)).toHaveLength(0);
     });
 

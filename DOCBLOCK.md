@@ -58,13 +58,14 @@ The `@param {type}` attribute accepts extra arguments to provide additional comp
 
 - `{string(value1|value2|value3)}` - Adds suggestions `"value1", "value2", "value3"` for the given parameter.
 - `{string($name)}` - Adds pre-computed suggestions, where `$name` is one of:
-  - `$module` - module files.
+  - `$module` - module files, loads file into global scope.
+  - `$file` - files in app folder, loads file into global scope.
+  - `$nut` - `.nut` files in current layout/plugin folder, loads file into global scope.
   - `$artwork` - artwork resource labels.
-  - `$nut` - nut files.
-  - `$image` - image files.
-  - `$video` - video files.
-  - `$audio` - audio files.
-  - `$shader` - shader files.
+  - `$image` - image files in current layout/plugin folder.
+  - `$video` - video files in current layout/plugin folder.
+  - `$audio` - audio files in current layout/plugin folder.
+  - `$shader` - shader files in current layout/plugin folder.
 - `{string(=name)}` - Adds suggestions from a local array variable called `name`:
   - `local name = ["value1", "value2", "value3"]`
 - `{array(string)}` - Defines an array's element type.

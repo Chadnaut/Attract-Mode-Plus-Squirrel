@@ -71,6 +71,13 @@ describe("Doc Markdown", () => {
         expect(d.markdown.value).toContain("Here");
     });
 
+    it("createDocMarkdown inheritdoc missing", () => {
+        const program = parse("local x = 1; /** @inheritdoc */ local y = x;")
+        const n = getBranchAtPos(program, pos(39));
+        const d = getNodeDoc(n);
+        expect(d.markdown).toBeUndefined();
+    });
+
     it("createDocMarkdown inheritdoc excludes ignore", () => {
         const program = parse("/** @ignore */ local x = 1; /** @inheritdoc */ local y = x;")
         const n = getBranchAtPos(program, pos(54));

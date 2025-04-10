@@ -1,6 +1,11 @@
 import { AST } from "../ast";
 import { getNodeDef } from "../utils/definition";
-import { getBranchBlock, getBranchId, getBranchWithInitValue } from "../utils/find";
+import {
+    getBranchBlock,
+    getBranchId,
+    getBranchNotEndingAtType,
+    getBranchWithInitValue,
+} from "../utils/find";
 import { addBranchId } from "../utils/identifier";
 import { nodeToSquirrelType } from "../utils/kind";
 import { getNodeChildren } from "../utils/map";
@@ -40,23 +45,34 @@ export const updateDocAttr = (docBlock: DocBlock, branch: AST.Node[]) => {
             case "inheritdoc!":
             case "inheritdoc": {
                 // copy entire docblock
-                const nodeDef = getNodeDef(branch);
-                let doc: DocBlock;
-                if (isClassDef(nodeDef)) {
-                    doc = getNodeDoc(addBranchId(getSuperDef(nodeDef)));
-                } else {
-                    doc = getNodeDoc(addBranchId(getNodeDef(getBranchWithInitValue(nodeDef))));
-                }
+                const branchDef = getNodeDef(branch);
+                const nodeDef = isClassDef(branchDef)
+                    ? getSuperDef(branchDef)
+                    : getNodeDef(getBranchWithInitValue(branchDef));
+                const doc = getNodeDoc(addBranchId(nodeDef));
+                if (!doc) break;
+
                 // do not copy @ignore
-                if (doc) attrs.push(...((attr.kind === "inheritdoc!")
-                    ? doc.attributes
-                    : doc.attributes.filter((attr) => attr.kind !== "ignore")));
+                const copyAttrs =
+                    attr.kind === "inheritdoc!"
+                        ? doc.attributes
+                        : doc.attributes.filter(
+                              (attr) => attr.kind !== "ignore",
+                          );
+                attrs.push(...copyAttrs);
                 break;
             }
             case "variation": {
                 // inherit variation description (must be a sibling)
-                const siblings = getNodeChildren(getBranchBlock(branch));
-                const sibling = siblings.find((child) => getBranchId(child)?.name === attr.name);
+                const b = getBranchNotEndingAtType(branch, [
+                    "Identifier",
+                    "FunctionDeclaration",
+                    "FunctionExpression",
+                ]);
+                const siblings = getNodeChildren(getBranchBlock(b));
+                const sibling = siblings.find(
+                    (child) => getBranchId(child)?.name === attr.name,
+                );
                 const doc = getNodeDoc(sibling ?? []);
                 // copy description over if none
                 if (!getAttrByKind(attrs, "description")) {

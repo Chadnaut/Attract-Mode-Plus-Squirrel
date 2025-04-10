@@ -1,48 +1,43 @@
 import { Color, ColorInformation, Range, TextDocument } from "vscode";
 import { AST } from "../ast";
-import { getCallExpressionName } from "./call";
+import { getCallName } from "./call";
 import { branchSpanLoc, locToDocRange } from "./location";
-import { getBranchProgram } from "./find";
+import { getProgramCalls } from "./map";
 
 const programColorMap = new WeakMap<AST.Program, AST.Node[][]>();
 
-export const addColorCalls = (branches: AST.Node[][]) => {
-    branches.forEach((branch) => {
-        addProgramColorCall(getBranchProgram(branch), branch);
-    });
-};
+const isNodeColorCall = (branch: AST.Node[]): boolean =>
+    getCallName(branch)?.split(".").at(-1)?.endsWith("_rgb");
 
-export const addProgramColorCall = (
-    program: AST.Program,
-    branch: AST.Node[],
-) => {
-    if (!programColorMap.has(program)) programColorMap.set(program, []);
-    programColorMap.get(program).push(branch);
+export const getProgramColorCalls = (program: AST.Program): AST.Node[][] => {
+    if (!program) return [];
+    if (!programColorMap.has(program)) {
+        const branches = getProgramCalls(program).filter(isNodeColorCall);
+        programColorMap.set(program, branches);
+    }
+    return programColorMap.get(program);
 };
 
 export const getProgramColorInformation = (
     document: TextDocument,
     program: AST.Program,
 ): ColorInformation[] =>
-    programColorMap.has(program)
-        ? programColorMap
-              .get(program)
-              .map((branch) => getNodeColorInformation(document, branch))
-              .filter((c) => c)
-        : [];
+    getProgramColorCalls(program)
+        .map((branch) => getNodeColorInformation(document, branch))
+        .filter((c) => c);
 
 // -----------------------------------------------------------------------------
 
 const COLOUR_FORMAT = "0, 0, 0";
-const colRegex = new RegExp(/^[\d\.]+([,\s\t\r\n]+)[\d\.]+([,\s\t\r\n]+)[\d\.]+/);
+const colRegex = new RegExp(
+    /^[\d\.]+([,\s\t\r\n]+)[\d\.]+([,\s\t\r\n]+)[\d\.]+/,
+);
 
-export const colorToRGB = (
-    color: Color,
-    format?: string,
-): string => {
+export const colorToRGB = (color: Color, format?: string): string => {
     // end bracket hack for getNodeColorInformation below
     const addEndBracket = format?.at(-1) === ")";
-    if (!colRegex.test(format)) format = COLOUR_FORMAT + (addEndBracket ? ")" : "");
+    if (!colRegex.test(format))
+        format = COLOUR_FORMAT + (addEndBracket ? ")" : "");
 
     const r = channelToRGB(color.red);
     const g = channelToRGB(color.green);
@@ -59,13 +54,12 @@ export const channelToRGB = (channel: number): number =>
 
 // -----------------------------------------------------------------------------
 
-/** Return branch if it's a valid color call */
+/** Return ColorInformation for branch if it's a valid color call */
 export const getNodeColorInformation = (
     document: TextDocument,
     branch: AST.Node[],
 ): ColorInformation | undefined => {
-    const method = getCallExpressionName(branch)?.split(".").at(-1);
-    if (!method?.endsWith("_rgb")) return;
+    if (!isNodeColorCall(branch)) return;
 
     const node = <AST.CallExpression>branch.at(-1);
     const args = (<AST.CallExpression>node).arguments.map(

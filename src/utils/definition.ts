@@ -1,4 +1,4 @@
-import { getNodeChildren } from './map';
+import { getNodeChildren } from "./map";
 import { getNodeReturn } from "./return";
 import { AST } from "../ast";
 import {
@@ -14,9 +14,9 @@ import {
 import { getProgramImports } from "./program";
 import { addBranchId } from "./identifier";
 import { getNodeExtendedClasses } from "./super";
-import { getNodeParams, isRestNode } from "./params";
+import { getNodeIsParameter, getNodeParams, isRestNode } from "./params";
 import { getNodeTypeDef } from "./type";
-import { getNodeAugmentVal } from './augment';
+import { getNodeAugmentVal } from "./augment";
 
 // -----------------------------------------------------------------------------
 /*
@@ -225,7 +225,11 @@ export const resolveIdDef = (
     const blockBranch = getBranchBlock(idBranch);
     let i = blockBranch.length;
     while (i-- > 0) {
-        const child = resolveNodeChild(blockBranch.slice(0, i+1), idBranch, stack);
+        const child = resolveNodeChild(
+            blockBranch.slice(0, i + 1),
+            idBranch,
+            stack,
+        );
         if (child.length && !disallow.includes(child.at(-1))) {
             return child;
         }
@@ -261,31 +265,38 @@ export const resolveNodeChild = (
     const id = idBranch.at(-1);
     if (!node || !id) return [];
 
-    // return array element at index, or last element if out-of-range
-    if (node.type === "ArrayExpression") {
+    // return array element at index if id is integer
+    // - while an id *may* be an integer it could also be a type-method, so it's ignored
+    if (node.type === "ArrayExpression" && id.type === "IntegerLiteral") {
         const arr = (<AST.ArrayExpression>node).elements ?? [];
-        let index = (id.type === "IntegerLiteral") ? (<AST.IntegerLiteral>id).value : arr.length-1;
-        index = Math.min(Math.max(0, index), arr.length-1);
+        const index = Math.min(
+            Math.max(0, (<AST.IntegerLiteral>id).value),
+            arr.length - 1,
+        );
         return [...branch, arr[index]];
     }
 
     const name = getBranchId(idBranch)?.name;
     if (!name) return [];
+    const isRestName = name === "vargv";
 
     for (const classBranch of getNodeExtendedClasses(branch)) {
         // get all children with matching id
         // - may return multiple if variations are found (same name, different params)
-        const matches = getNodeChildren(classBranch)
-            .reduce((results: AST.Node[][], childBranch: AST.Node[]): AST.Node[][] => {
+        const matches = getNodeChildren(classBranch).reduce(
+            (results: AST.Node[][], childBranch: AST.Node[]): AST.Node[][] => {
                 const childId = getBranchId(childBranch);
                 if (
                     hasNodeDec(childId) &&
-                    (childId.name === name || (isRestNode(childBranch) && name === "vargv"))
+                    (childId.name === name ||
+                        (isRestName && isRestNode(childBranch)))
                 ) {
                     results.push(childBranch);
                 }
                 return results;
-            }, <AST.Node[][]>[]);
+            },
+            <AST.Node[][]>[],
+        );
 
         // for regular scripts there will usually be a single match
         if (matches.length === 1) {
@@ -295,25 +306,21 @@ export const resolveNodeChild = (
         // variations are intended for language completions
         // - attempt to find correct match by checking the call expression arg count
         if (matches.length > 1) {
-
             const matchBranch = idBranch.slice(0, -1);
             let i = matchBranch.length - 1;
             while (i > 0 && matchBranch.at(i).type === "MemberExpression") i--;
+
             const p = <AST.CallExpression>matchBranch.at(i);
-
-            const callArgsLen = (p.type === "CallExpression") ? p.arguments.length : 0;
-
-            if (callArgsLen) {
+            const len = p.type === "CallExpression" ? p.arguments.length : 0;
+            if (len) {
                 for (const match of matches) {
-                    if (
-                        getNodeParams(getNodeVal(match)).length >= callArgsLen
-                    ) {
+                    if (getNodeParams(getNodeVal(match)).length >= len) {
                         return match;
                     }
                 }
             }
 
-            // no good match
+            // no perfect match for number of args, just return the first match
             return matches[0];
         }
     }
@@ -334,35 +341,56 @@ const resolveNodeVal = (
 
     switch (node.type) {
         case "AssignmentPattern":
-            return resolveNodeVal([...branch, (<AST.AssignmentPattern>node).right], stack);
+            return resolveNodeVal(
+                [...branch, (<AST.AssignmentPattern>node).right],
+                stack,
+            );
         case "EnumMember":
-            return resolveNodeVal([...branch, (<AST.EnumMember>node).init], stack);
+            return resolveNodeVal(
+                [...branch, (<AST.EnumMember>node).init],
+                stack,
+            );
         case "CallExpression": {
             // getNodeReturn may return @return nodes
-            const callBranch = [...branch, (<AST.CallExpression>node).callee];
-            return resolveNodeVal(getNodeReturn(resolveNodeVal(callBranch)), stack);
+            const call = <AST.CallExpression>node;
+            const callBranch = [...branch, call.callee];
+            const returnVal = getNodeReturn(resolveNodeVal(callBranch));
+
+            // If returns value is a parameter, return the given argument
+            const nodeDef = resolveNodeDef(returnVal, []);
+            if (getNodeIsParameter(nodeDef)) {
+                const func = <AST.FunctionDeclaration>nodeDef.at(-2);
+                const index = func.params.indexOf(nodeDef.at(-1));
+                const arg = call.arguments.at(index);
+                if (arg) {
+                    return resolveNodeVal(
+                        [...getBranchBlock(branch), arg],
+                        stack,
+                    );
+                }
+            }
+
+            return resolveNodeVal(returnVal, stack);
         }
         default: {
             // if node has an init value then resolve it, ie: VariableDeclarator.init
             const v = getBranchWithInitValue(branch);
             if (v.length) return resolveNodeVal(v, stack);
             const nodeDef = resolveNodeDef(branch, stack);
-            const nodeVal = isSameBranch(nodeDef, branch) ? branch : resolveNodeVal(nodeDef, stack);
+            const nodeVal = isSameBranch(nodeDef, branch)
+                ? branch
+                : resolveNodeVal(nodeDef, stack);
             setNodeValMap(node, nodeVal);
             return nodeVal;
         }
     }
 };
 
-
 /**
  * Find nodes source definition
  * - Returns undefined if member cannot be resolved
  */
-const resolveNodeDef = (
-    branch: AST.Node[],
-    stack: AST.Node[],
-): AST.Node[] => {
+const resolveNodeDef = (branch: AST.Node[], stack: AST.Node[]): AST.Node[] => {
     const node = branch.at(-1);
     if (!node) return [];
     if (node.type === "Identifier") {
@@ -376,16 +404,20 @@ const resolveNodeDef = (
             const { object, property } = <AST.MemberExpression>node;
             const objBranch = [...branch, object];
             const propBranch = [...branch, property];
-            const obj = resolveNodeVal(objBranch, stack);
-            let objProp = resolveNodeChild(obj, propBranch, stack);
-            if (!objProp.length) {
-                // @type or @lends nodes
-                objProp = resolveNodeChild(getNodeTypeDef(obj), propBranch, stack);
+            let objProp = [];
+
+            if (!objProp.length) { // the object value
+                const objVal = resolveNodeVal(objBranch, stack);
+                objProp = resolveNodeChild(objVal, propBranch, stack);
             }
-            if (!objProp.length) {
-                // @augments node
-                const augObj = getNodeAugmentVal(objBranch);
-                objProp = resolveNodeChild(augObj, propBranch, stack);
+            if (!objProp.length) { // the @type or @lends nodes
+                const objDef = resolveNodeDef(objBranch, stack);
+                const objType = getNodeTypeDef(objDef);
+                objProp = resolveNodeChild(objType, propBranch, stack);
+            }
+            if (!objProp.length) { // the @augments node
+                const objAug = getNodeAugmentVal(objBranch);
+                objProp = resolveNodeChild(objAug, propBranch, stack);
             }
             setNodeDefMap(node, objProp);
             return objProp;
@@ -405,7 +437,9 @@ const resolveNodeDef = (
         }
         case "Identifier": {
             const idDef = resolveIdDef(branch, stack);
-            const def = isSameBranch(idDef, branch) ? branch : resolveNodeDef(idDef, stack);
+            const def = isSameBranch(idDef, branch)
+                ? branch
+                : resolveNodeDef(idDef, stack);
             setNodeDefMap(node, def);
             return def;
         }

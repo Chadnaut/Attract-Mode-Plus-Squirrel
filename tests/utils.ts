@@ -1,4 +1,4 @@
-import { TextDocument, Position, Range, EndOfLine, Uri, TextLine } from "vscode";
+import { TextDocument, Position, Range, EndOfLine, Uri, TextLine, DiagnosticSeverity } from "vscode";
 import * as prettier from "prettier/standalone";
 import { ParserOptions, SquirrelParser } from "../src/squirrel/parser";
 import { SQTree as qt } from "../src/ast";
@@ -8,6 +8,7 @@ import { getSemanticTokens } from "../src/utils/token";
 import { addProgramErrors } from "../src/utils/diagnostics";
 import { iswalnum } from "../src/squirrel/include/std";
 import { getPrettierOptions } from "../src/utils/config";
+import { getProgramArgErrors } from "../src/utils/params";
 
 const baseOptions = getPrettierOptions();
 
@@ -27,13 +28,15 @@ const _parse = (text: string, options: ParserOptions): AST.Program | null => {
 const _parseExtra = (text: string, options: ParserOptions): AST.Program | null => {
     const parser = new SquirrelParser(options);
     const program = parser.parse(text);
-    const errors = parser.errors();
-    _errors = errors.map(({ message }) => message);
+    _errors = parser.errors().map(({ message }) => message);
 
+    const errors = parser
+        .errors()
+        .map((err) => ({ ...err, severity: DiagnosticSeverity.Error }));
     addProgramErrors(program, errors);
     createNodeMaps(program);
     getSemanticTokens(program);
-
+    addProgramErrors(program, getProgramArgErrors(program));
     return program;
 }
 

@@ -58,6 +58,25 @@ describe("Incomplete", () => {
         ));
     });
 
+    it("MemberExpression, missing property ignores comment", () => {
+        const response = parse("obj. /**/");
+        expect(errors().length).toBeGreaterThan(0);
+        expect(response).toEqual(qt.Program(
+            [qt.ExpressionStatement(
+                qt.MemberExpression(
+                    qt.Identifier('obj', lineLoc(0, 3)),
+                    qt.Identifier('', lineLoc(4, 4)),
+                    false, false,
+                    lineLoc(0, 4)
+                )
+            )],
+            [
+                qt.CommentBlock("", false, lineLoc(5, 9))
+            ],
+            lineLoc(0, 9)
+        ));
+    });
+
     it("MemberExpression, block, missing property", () => {
         const response = parse("{obj.}");
         expect(errors().length).toBeGreaterThan(0);

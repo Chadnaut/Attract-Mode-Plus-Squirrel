@@ -7,13 +7,14 @@ import { getImportModuleName } from "../utils/import";
 import { META_KINDS, attachMeta } from "../utils/meta";
 import { hasNodeSymbol, getNodeSymbol } from "../utils/symbol";
 import { setNodeToken } from "../utils/token";
-import { getDocAttr, getDocTargetBranch, getNodeDoc, getNodeDocBlock, hasNodeDocBlock, setCommentDocBlock, setNodeDocBlock } from "./find";
+import { getCommentDocBlock, getDocAttr, getDocTargetBranch, getNodeDoc, getNodeDocBlock, hasNodeDocBlock, setCommentDocBlock, setNodeDocBlock } from "./find";
 import { DocBlock, DocAttr } from "./kind";
 import { createDocMarkdown } from "./markdown";
 import { createDocSnippetCompletions, addSnippetCompletion } from "./snippets";
 import { NodeType } from "../ast/ast";
 import { parseCommentAttrs } from "./parse";
 import { updateDocAttr } from "./attribute";
+import { setImportsAllowed } from "../utils/program";
 
 // -----------------------------------------------------------------------------
 
@@ -43,8 +44,7 @@ export const createDoc = (comment?: AST.CommentBlock): DocBlock => {
  */
 export const attachDoc = (
     branch: AST.Node[],
-    docBlock: DocBlock,
-    init: boolean = true,
+    docBlock: DocBlock
 ) => {
     const node = branch.at(-1);
     if (!ALLOWED_DOC_NODE_TYPES.includes(node?.type)) return;
@@ -54,7 +54,6 @@ export const attachDoc = (
     }
     docBlock.branch = branch;
     setNodeDocBlock(node, docBlock);
-    if (init) initDoc(docBlock);
 };
 
 // -----------------------------------------------------------------------------
@@ -67,7 +66,7 @@ export const initDoc = (docBlock: DocBlock) => {
     if (!branch || !branch.length) return;
 
     const node = branch.at(-1);
-    updateDocAttr(docBlock, branch);
+    updateDocAttr(docBlock, branch); // uses imports (getNodeDef)
 
     const metaAttrs: DocAttr[][] = [];
     docBlock.branch = branch;
@@ -119,7 +118,7 @@ export const initDoc = (docBlock: DocBlock) => {
         }
     });
 
-    if (metaAttrs.length) attachMeta(branch, metaAttrs);
+    if (metaAttrs.length) attachMeta(branch, metaAttrs); // uses imports (getNodeDef)
     docBlock.markdown = createDocMarkdown(docBlock.attributes);
 };
 
@@ -129,8 +128,9 @@ export const initDoc = (docBlock: DocBlock) => {
  * Attach all docBlocks to their relevant nodes
  * - Must be done AFTER createNodeMaps as it uses traversal to find nodes
  */
-export const updateNodeDoc = (program: AST.Program): AST.Program => {
+export const attachProgramDocs = (program: AST.Program): AST.Program => {
     if (program?.type !== "Program") return program;
+    setImportsAllowed(false); // sanity check
 
     const comments = program.comments.filter(
         (n) => n.type === "CommentBlock" && n.docBlock,
@@ -157,19 +157,16 @@ export const updateNodeDoc = (program: AST.Program): AST.Program => {
         }
 
         if (isProgramDoc) {
-            attachDoc([program], docBlock, false);
+            attachDoc([program], docBlock);
         } else {
             // Attach docBlock to next node
             // - Earlier docBlocks resolving to the same node will be overridden!
             const branch = getDocTargetBranch(
                 getNodeAfterPos(program, comment.loc.end),
             );
-            attachDoc(addBranchId(branch), docBlock, false);
+            attachDoc(addBranchId(branch), docBlock);
         }
     });
-
-    // Init docBlocks in second loop (in case blocks get overridden)
-    docBlocks.forEach((docBlock) => initDoc(docBlock));
 
     // Create a package-level docBlock if none exists
     if (!hasNodeDocBlock(program)) {
@@ -182,8 +179,17 @@ export const updateNodeDoc = (program: AST.Program): AST.Program => {
         }
     }
 
+    setImportsAllowed(true); // sanity check
     return program;
 };
+
+/** Init all program docBlocks */
+export const initProgramDocs = (program: AST.Program) =>
+    program.comments
+        .filter((n) => n.type === "CommentBlock" && n.docBlock)
+        .forEach((comment) => {
+            initDoc(getCommentDocBlock(<AST.CommentBlock>comment))
+        });
 
 // -----------------------------------------------------------------------------
 
@@ -196,6 +202,7 @@ export const setDocNodeType = (branch: AST.Node[], type: string) => {
     if (!doc) {
         doc = createDoc();
         attachDoc(branch, doc);
+        initDoc(doc);
     }
     let attr = getDocAttr(doc, "type");
     if (!attr) {

@@ -46,7 +46,7 @@ export const getNodeCallData = (
     if (!posBranch.length) return;
 
     // find the CallExpression
-    const callBranch = getBranchEndingAtType(posBranch, "CallExpression");
+    const callBranch = getBranchEndingAtType(posBranch, ["CallExpression"]);
     if (!callBranch.length) return;
 
     // get the params, exit if none
@@ -111,34 +111,20 @@ export const getNodeCallData = (
  * Return name of call as string
  * - ie: "fe.add_artwork"
  */
-export const getCallExpressionName = (branch: AST.Node[]): string => {
+export const getCallName = (branch: AST.Node[]): string => {
     const node = branch.at(-1);
     if (node?.type !== "CallExpression") return;
 
     const { callee } = <AST.CallExpression>node;
-
-    let method;
     switch (callee?.type) {
         case "MemberExpression":
             const { object, property } = <AST.MemberExpression>callee;
             const name =
                 getBranchId([...branch, callee, object])?.name ?? "";
             const prop = getBranchId([...branch, callee, property])?.name;
-            method = `${name}.${prop}`;
-            break;
+            if (!prop) return;
+            return `${name}.${prop}`;
         case "Identifier":
-            method = (<AST.Identifier>callee).name;
-            break;
+            return (<AST.Identifier>callee).name;
     }
-
-    return method;
 };
-
-/** Return branches with given call method names */
-export const filterBranchCallMethods = (
-    branches: AST.Node[][],
-    methods: string[],
-): AST.Node[][] =>
-    branches.filter((branch) =>
-        methods.includes(getCallExpressionName(branch)),
-    );

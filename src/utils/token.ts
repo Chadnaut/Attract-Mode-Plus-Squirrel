@@ -56,7 +56,7 @@ export const TOKEN_TYPES = ["link", "parameter", "function", "class", "enum"] as
 
 export type TokenType = (typeof TOKEN_TYPES)[number];
 
-export const tokenLegend = new SemanticTokensLegend(TOKEN_TYPES.slice(0));
+export const tokenLegend = new SemanticTokensLegend([...TOKEN_TYPES]);
 
 export const updateNodeTokenFromType = (
     node: AST.Node,
@@ -120,7 +120,7 @@ export const applyToken = (
     if (range.isEmpty) return;
 
     tokenizedNodes.add(node);
-    // node.extra.tokenized = true;
+
     setNodeToken(node, tokenType);
     builder.push(range, tokenType);
 };

@@ -1,21 +1,69 @@
 import { describe, expect, it } from "@jest/globals";
 import { AST, SQTree as qt } from "../../src/ast";
 import { dump, parseExtra as parse, pos } from "../utils";
-import { getNodeAfterPos, getNodeAtPos, getBranchCallable, getBranchFunctionDef, getBranchClassDef, getNodeBeforePos, nodeHasInit, isNodeBlock, getBranchBlock, getBranchAtPos, getBranchWithInitKey, getBranchWithInitValue, getNodeOverloads, getNodeArrayElementType, getNodeIsDecId } from "../../src/utils/find";
+import { getNodeAfterPos, getNodeAtPos, getBranchCallable, getBranchFunctionDef, getBranchClassDef, getNodeBeforePos, nodeHasInit, isNodeBlock, getBranchBlock, getBranchAtPos, getBranchWithInitKey, getBranchWithInitValue, getNodeOverloads, getNodeArrayElementType, getMemberCompletionBranch } from "../../src/utils/find";
 import { addBranchId } from "../../src/utils/identifier";
 
 describe("Find", () => {
 
-    it("getNodeIsDecId", () => {
-        expect(getNodeIsDecId([])).toBe(false);
-        expect(getNodeIsDecId([qt.Identifier(null)])).toBe(false);
-        expect(getNodeIsDecId([qt.Identifier(null), null, qt.Identifier(null)])).toBe(false);
+    it("getMemberCompletionBranch, empty", () => {
+        expect(getMemberCompletionBranch([])).toBeUndefined();
+    });
 
-        expect(getNodeIsDecId([qt.VariableDeclaration()])).toBe(true);
-        expect(getNodeIsDecId([qt.FunctionDeclaration(null, null, null)])).toBe(true);
-        expect(getNodeIsDecId([qt.ClassDeclaration(null, null), null, qt.Identifier(null)])).toBe(true);
-        expect(getNodeIsDecId([qt.PropertyDefinition(null), null, qt.Identifier(null)])).toBe(true);
-        expect(getNodeIsDecId([qt.Property(null, null, null), null, qt.Identifier(null)])).toBe(true);
+    it("getMemberCompletionBranch, invalid prop", () => {
+        // not id
+        expect(getMemberCompletionBranch([qt.VariableDeclaration()])).toBeUndefined();
+        // not child of member
+        expect(getMemberCompletionBranch([qt.Identifier(null)])).toBeUndefined();
+        expect(getMemberCompletionBranch([qt.VariableDeclarator(null), qt.Identifier(null)])).toBeUndefined();
+
+        // id is not prop
+        expect(getMemberCompletionBranch([qt.MemberExpression(null, null), qt.Identifier(null)])).toBeUndefined();
+
+        // invalid member obj
+        const id = qt.Identifier(null);
+        expect(getMemberCompletionBranch([qt.MemberExpression(null, id), id])).toBeUndefined();
+    });
+
+    it("getMemberCompletionBranch, invalid member ancestor", () => {
+        const id = qt.Identifier(null);
+        const me = qt.MemberExpression(null, id);
+
+        // occurs during
+        // class foo { x. }
+        // local t = { x. }
+        const a1 = qt.VariableDeclarator(me as unknown as AST.Identifier, null);
+        expect(getMemberCompletionBranch([a1, me, id])).toBeUndefined();
+
+        // occurs during
+        // class x.
+        const a2 = qt.VariableDeclarator(id, null);
+        expect(getMemberCompletionBranch([a2, me, id])).toBeUndefined();
+    });
+
+    it("getMemberCompletionBranch, invalid vardec", () => {
+        const id = qt.Identifier(null);
+        const vd = qt.VariableDeclaration();
+        const me = qt.MemberExpression(vd, id);
+        expect(getMemberCompletionBranch([me, id])).toBeUndefined();
+    });
+
+    it("getMemberCompletionBranch, valid member", () => {
+        const pa = qt.Identifier("pa");
+        const id = qt.Identifier("id");
+        const me = qt.MemberExpression(pa, id);
+        expect(getMemberCompletionBranch([me, id])).toEqual([pa]);
+    });
+
+    it("getMemberCompletionBranch, valid", () => {
+        const obj = qt.Identifier("obj");
+        const id1 = qt.Identifier("id1");
+        const mex1 = qt.MemberExpression(obj, id1);
+
+        const id2 = qt.Identifier("id");
+        const mex2 = qt.MemberExpression(mex1, id2);
+
+        expect(getMemberCompletionBranch([mex2, id2])).toEqual([mex1, id1]);
     });
 
     // -------------------------------------------------------------------------

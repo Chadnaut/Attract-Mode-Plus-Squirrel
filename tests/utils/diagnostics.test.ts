@@ -1,7 +1,7 @@
 import { describe, expect, it } from "@jest/globals";
 import { dump, parseForceExtra as parse, parseForceExtra, pos } from "../utils";
 import { getNodeAtPos } from "../../src/utils/find";
-import { getDiagnostics, getNodeHasError, getProgramErrors, SquirrelDiagnostics } from "../../src/utils/diagnostics";
+import { addProgramErrors, getDiagnostics, getNodeHasError, getProgramErrors, SquirrelDiagnostics } from "../../src/utils/diagnostics";
 import { commands, Diagnostic, DiagnosticCollection, languages, TextDocument, TextEditor, Uri, window, workspace } from "vscode";
 import { addProgramFile, deletePrograms } from "../../src/utils/program";
 import * as path from "path";
@@ -59,6 +59,10 @@ describe("Diagnostics", () => {
 
     it("getDiagnostics, invalid", () => {
         expect(getDiagnostics(undefined)).toEqual([]);
+    });
+
+    it("addProgramErrors, invalid", () => {
+        expect(() => addProgramErrors(null, null)).not.toThrow();
     });
 
     it("getNodeHasError", () => {
@@ -190,36 +194,36 @@ describe("Diagnostics", () => {
                 case constants.SHOW_MISSING_ENABLED: return true;
             }
         }
-        const program = parse(`fe.load_module("mock")`)
+        const program = parse(`/** @param {string($module)} a */ function add(a) {}; add("mock")`)
         expect(getProgramErrors(program)).toHaveLength(0);
     });
 
     it("getProgramErrors catches missing module", () => {
-        const program = parse(`fe.load_module("mock")`)
+        const program = parse(`/** @param {string($module)} a */ function add(a) {}; add("mock")`)
         expect(getProgramErrors(program)).toHaveLength(1);
     });
 
     it("getProgramErrors catches missing module nut", () => {
-        const program = parse(`fe.load_module("mock.nut")`)
+        const program = parse(`/** @param {string($module)} a */ function add(a) {}; add("mock.nut")`)
         expect(getProgramErrors(program)).toHaveLength(1);
     });
 
     it("getProgramErrors catches missing dofile", () => {
-        const program = parse(`dofile("mock.nut")`)
+        const program = parse(`/** @param {string($file)} a */ function add(a) {}; add("mock.nut")`)
         expect(getProgramErrors(program)).toHaveLength(1);
     });
 
     it("getProgramErrors catches missing do_nut", () => {
-        const program = parse(`fe.do_nut("mock.nut")`)
+        const program = parse(`/** @param {string($nut)} a */ function add(a) {}; add("mock.nut")`)
         expect(getProgramErrors(program)).toHaveLength(1);
     });
 
     it("getProgramErrors ignores omitted do_nut", () => {
-        const program = parse(`fe.do_nut()`)
+        const program = parse(`/** @param {string($nut)} a */ function add(a) {}; add()`)
         expect(getProgramErrors(program)).toHaveLength(0);
     });
 
-    it("getProgramErrors ignores omitted do_nut", () => {
+    it("getProgramErrors invalid code", () => {
         const program = parseForceExtra(`local a; a <- 1;`)
         expect(getProgramErrors(program)).toHaveLength(1);
     });

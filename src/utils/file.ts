@@ -1,18 +1,27 @@
 import * as path from "path";
 import * as fs from "fs";
 
+const pathMap = new Map<string, string>();
+
 /**
  * Create key for data storage from path
  * - resolve symlink
  * - remove specials
  * - case and slash formatting
  */
-export const pathNormalize = (name: string): string =>
-    forwardSlash(
-        path.normalize(fs.existsSync(name) ? fs.realpathSync(name) : name),
-    )
-        .toUpperCase()
-        .replace(/^[\\/]*(.*?)[\\/]*$/, "$1");
+export const pathNormalize = (name: string): string => {
+    if (!pathMap.has(name)) {
+        const exists = fs.existsSync(name);
+        const realPath = exists ? fs.realpathSync(name) : name;
+        const value = forwardSlash(path.normalize(realPath))
+            .toUpperCase()
+            .replace(/^[\\/]*(.*?)[\\/]*$/, "$1");
+
+        if (!exists) return value;
+        pathMap.set(name, value);
+    }
+    return pathMap.get(name);
+};
 
 /** Replace all back-slashes with forward-slashes */
 export const forwardSlash = (path: string): string => path.replace(/\\/g, "/");
@@ -33,14 +42,16 @@ export const filenameHasExtension = (
  * Parse delimited string for extensions and return array
  */
 export const parseExtensionList = (value: string): string[] =>
-    value ? value
-        .replace(/[ ,;|]+/g, ";")
-        .split(";")
-        .map((ext) => {
-            ext = ext.toLowerCase().replace(/^\./, "").trim();
-            if (ext) return `.${ext}`;
-        })
-        .filter((ext) => ext) : [];
+    value
+        ? value
+              .replace(/[ ,;|]+/g, ";")
+              .split(";")
+              .map((ext) => {
+                  ext = ext.toLowerCase().replace(/^\./, "").trim();
+                  if (ext) return `.${ext}`;
+              })
+              .filter((ext) => ext)
+        : [];
 
 // -----------------------------------------------------------------------------
 

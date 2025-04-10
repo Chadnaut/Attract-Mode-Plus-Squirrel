@@ -1,7 +1,7 @@
 import { describe, expect, it } from "@jest/globals";
 import { dump, parseExtra as parse, pos } from "../utils";
 import { getNodeDisplayType, getNodeSignature, getSignatureHelp, getSignatureSuffix, updateNodeSignature } from '../../src/utils/signature';
-import { getNodeAtPos, getBranchAtPos } from "../../src/utils/find";
+import { getBranchAtPos } from "../../src/utils/find";
 import { getNodeDef } from "../../src/utils/definition";
 import { AST, SQTree as qt } from "../../src/ast";
 import { getNodeReturn } from "../../src/utils/return";
@@ -744,4 +744,21 @@ describe("Signature", () => {
         expect(getSignatureSuffix(n)).toBe(": string");
     });
 
+    it("getNodeSignature, real class", () => {
+        const program = parse("class foo { prop = 123 }; local f = foo(); f.prop");
+        const n = getNodeDefAtPos(program, pos(47));
+        expect(getNodeSignature(n)).toBe('(property) foo.prop: integer');
+    });
+
+    it("getNodeSignature, type class init", () => {
+        const program = parse("class foo { prop = 123 }; /** @type {foo} */ local f = null; f.prop");
+        const n = getNodeDefAtPos(program, pos(65));
+        expect(getNodeSignature(n)).toBe('(property) foo.prop: integer');
+    });
+
+    it("getNodeSignature, type class", () => {
+        const program = parse("class foo { prop = 123 }; /** @type {foo} */ local f; f.prop");
+        const n = getNodeDefAtPos(program, pos(58));
+        expect(getNodeSignature(n)).toBe('(property) foo.prop: integer');
+    });
 });

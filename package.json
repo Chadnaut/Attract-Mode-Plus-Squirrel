@@ -2,7 +2,7 @@
     "name": "am-squirrel",
     "displayName": "AM+ Squirrel",
     "description": "Squirrel for Attract-Mode Plus.",
-    "version": "0.9.15",
+    "version": "0.9.17",
     "license": "MIT",
     "publisher": "Chadnaut",
     "author": {
@@ -155,7 +155,7 @@
             "title": "AM+ Squirrel",
             "properties": {
                 "AM-Squirrel.languageSupport": {
-                    "order": 1.0,
+                    "order": 1,
                     "type": "object",
                     "markdownDescription": "Controls the language features. Some options require [suggestions](#editor.suggest.showClasses), [snippets](#editor.suggest.showSnippets), [inlayHints](#editor.inlayHints.enabled), or [hover](#editor.hover.enabled) to be enabled.",
                     "additionalProperties": false,
@@ -210,7 +210,7 @@
                     }
                 },
                 "AM-Squirrel.completions": {
-                    "order": 2.0,
+                    "order": 2,
                     "type": "object",
                     "markdownDescription": "Controls the completions that appear while typing.",
                     "additionalProperties": false,
@@ -240,7 +240,7 @@
                     }
                 },
                 "AM-Squirrel.codeFormatting.style": {
-                    "order": 3.0,
+                    "order": 3,
                     "type": "object",
                     "markdownDescription": "Controls the `Format Document` styling.",
                     "additionalProperties": false,
@@ -298,9 +298,9 @@
                         "condenseParens": false,
                         "reduceParens": true,
                         "attrSpacing": false,
-                        "attrSingleLine": false,
-                        "attrSameLine": false,
-                        "semi": true,
+                        "attrSingleLine": true,
+                        "attrSameLine": true,
+                        "semi": false,
                         "useTabs": false
                     }
                 },
@@ -356,7 +356,7 @@
                     "markdownDescription": "Fit horizontal rule completion within this line limit."
                 },
                 "AM-Squirrel.attract-Mode.integration": {
-                    "order": 4.0,
+                    "order": 4,
                     "type": "object",
                     "markdownDescription": "Controls the integration with Attract-Mode.",
                     "additionalProperties": false,
@@ -440,20 +440,15 @@
                     "default": ".nut;.frag;.vert;.cfg;.am;.msg",
                     "markdownDescription": "Extensions that trigger AM+ live reload when saved."
                 },
-                "AM-Squirrel.package.author": {
-                    "order": 5.0,
+                "AM-Squirrel.package.template": {
+                    "order": 5,
                     "type": "string",
-                    "default": "username",
-                    "markdownDescription": "Author for DocBlock package completions."
-                },
-                "AM-Squirrel.package.url": {
-                    "order": 5.1,
-                    "type": "string",
-                    "default": "https://github.com/user/repo",
-                    "markdownDescription": "URL for DocBlock package completions."
+                    "default": "${title}\n\n@summary A short description.\n@version 0.0.1 ${date:yyyy-MM-dd}\n@author Username\n@url https://github.com/user/repo\n\n@requires\n\nAdditional instructions.",
+                    "editPresentation": "multilineText",
+                    "markdownDescription": "Template for DocBlock package completions. Placeholders `${title}`, `${date:yyyy-MM-dd}`, and `@requires` get updated on selection."
                 },
                 "AM-Squirrel.checkConflicts": {
-                    "order": 6.0,
+                    "order": 6,
                     "type": "boolean",
                     "default": true,
                     "markdownDescription": "Check for conflicting extensions on startup."
@@ -472,28 +467,32 @@
         "views": {
             "attractBar": [
                 {
-                    "id": "attractModuleExplorer",
+                    "id": "attractPlusSquirrel.attractBar",
                     "name": "Modules"
                 }
             ]
         },
         "commands": [
             {
-                "command": "attractModuleExplorer.refresh",
+                "command": "attractPlusSquirrel.refreshExplorer",
                 "title": "Attract-Mode: Refresh Modules",
                 "icon": "$(refresh)"
             },
             {
-                "command": "attractMode.launch",
+                "command": "attractPlusSquirrel.launchApp",
                 "title": "Attract-Mode: Launch",
                 "icon": "$(play)"
+            },
+            {
+                "command": "attractPlusSquirrel.formatUserConfig",
+                "title": "Format UserConfig"
             }
         ],
         "menus": {
             "view/title": [
                 {
-                    "command": "attractModuleExplorer.refresh",
-                    "when": "view == attractModuleExplorer",
+                    "command": "attractPlusSquirrel.refreshExplorer",
+                    "when": "view == attractPlusSquirrel.attractBar",
                     "group": "navigation"
                 }
             ]
@@ -502,7 +501,9 @@
             {
                 "language": "am-log",
                 "scopes": {
-                    "link": ["constant.language.log"]
+                    "link": [
+                        "constant.language.log"
+                    ]
                 }
             }
         ]
@@ -525,6 +526,7 @@
         "@types/vscode": "=1.70.0"
     },
     "dependencies": {
+        "date-format": "^4.0.14",
         "jest-docblock": "^29.7.0",
         "leather": "^3.0.3",
         "prettier": "^3.5.3",

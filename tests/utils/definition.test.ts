@@ -15,6 +15,23 @@ const getDef = (code: string, index: number) => {
 }
 
 describe("Definition", () => {
+
+    it("getDef, array item", () => {
+        const program = parse('local x = [{y=true}]; x[0].y;');
+        const b = getBranchAtPos(program, pos(28));
+        const d = getNodeDef(b);
+        expect(d.at(-1).type).toBe("Property");
+        expect(d.at(-1)["key"]["name"]).toBe("y");
+    });
+
+    it("getDef, array lends", () => {
+        const program = parse('/** @lends */ class ArrayExpression { function len1() {} }; local x = []; x.len1();');
+        const b = getBranchAtPos(program, pos(78));
+        const d = getNodeDef(b);
+        expect(d.at(-1).type).toBe("MethodDefinition");
+        expect(d.at(-1)["key"]["name"]).toBe("len1");
+    });
+
     it("getNodeDefMap, invalid", () => {
         expect(getNodeDefMap(undefined)).toBeUndefined();
     });
@@ -523,6 +540,30 @@ describe("Definition", () => {
         const def = getNodeDef(n).at(-1);
         expect(def?.type).toBe("Identifier");
         expect(def?.range).toEqual([14, 16]);
+    });
+
+    it("Param, return", () => {
+        const program = parse("function foo (p1) { return p1 }");
+        const n = getBranchAtPos(program, pos(28));
+        const def = getNodeDef(n).at(-1);
+        expect(def?.type).toBe("Identifier");
+        expect(def?.range).toEqual([14, 16]);
+    });
+
+    it("Param, if then return", () => {
+        const program = parse("function foo (p1) { if (true) { return p1.x }; return p1 }");
+        const n = getBranchAtPos(program, pos(55));
+        const def = getNodeDef(n).at(-1);
+        expect(def?.type).toBe("Identifier");
+        expect(def?.range).toEqual([14, 16]);
+    });
+
+    it("Param, methodDef if then return", () => {
+        const program = parse("class bar { function foo (p1) { if (true) { return p1.x }; return p1 } }");
+        const n = getBranchAtPos(program, pos(67));
+        const def = getNodeDef(n).at(-1);
+        expect(def?.type).toBe("Identifier");
+        expect(def?.range).toEqual([26, 28]);
     });
 
     it("Param, override", () => {

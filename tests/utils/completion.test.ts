@@ -18,6 +18,27 @@ afterEach(() => {
 });
 
 describe("Completion", () => {
+
+    it("getNodeSignature, class lend members", () => {
+        const program = parse("/** @lends */ class IntegerLiteral { function mock() {} }; class foo { prop = 123; }; local f = foo(); f.prop");
+        const b = getBranchAtPos(program, pos(109));
+        const memItems = getMemberCompletions(b);
+        expect(memItems).toHaveLength(0);
+        const typeItems = getTypeMemberCompletions(b);
+        expect(typeItems).toHaveLength(1);
+        expect(typeItems[0].label["label"]).toBe("mock");
+    });
+
+    it("getNodeSignature, type class lend members", () => {
+        const program = parse("/** @lends */ class IntegerLiteral { function mock() {} }; class foo { prop = 123; }; /** @type {foo} */ local f; f.prop");
+        const b = getBranchAtPos(program, pos(120));
+        const memItems = getMemberCompletions(b);
+        expect(memItems).toHaveLength(0);
+        const typeItems = getTypeMemberCompletions(b);
+        expect(typeItems).toHaveLength(1);
+        expect(typeItems[0].label["label"]).toBe("mock");
+    });
+
     it("getCompletions, none", () => {
         const program = parse("v");
         const items = getCompletions(getBranchAtPos(program, pos(1)));
@@ -316,8 +337,8 @@ describe("Completion", () => {
     it("getMemberCompletions, array key", () => {
         const program = parse(`local arr = [{ x = 1 }, { y = 1 }]; arr["0"].`);
         const items = getMemberCompletions(getBranchAtPos(program, pos(44)));
-        expect(items).toHaveLength(1);
-        expect(items[0].insertText).toBe('y');
+        expect(items).toHaveLength(0); // only integers get lookup up for arrays
+        // expect(items[0].insertText).toBe('y');
     });
 
     it("getMemberCompletions, type self", () => {

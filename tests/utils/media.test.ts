@@ -1,3 +1,4 @@
+import { forwardSlash } from './../../src/utils/file';
 import { describe, expect, it } from "@jest/globals";
 import { parseExtra as parse, pos } from '../utils';
 import { formatBytes, getArtworkCallLabel, getArtworkCompletions, getAudioCompletions, getImageCompletions, getImageMarkdownString, getProgramArtworks, getShaderCompletions, getVideoCompletions, isSupportedAudio, isSupportedImage, isSupportedShader, refreshArtworkLabels, scanArtworkLabels } from "../../src/utils/media";
@@ -19,36 +20,84 @@ beforeEach(() => {
 
 describe("Media", () => {
 
-    it("addMediaCalls, image missing", () => {
+    it("getProgramArgErrors, image missing", () => {
         getConfigValueFunc = (v) => {
             switch (v) {
                 case constants.SHOW_MISSING_ENABLED: return true;
                 case constants.ATTRACT_MODE_PATH: return "mock/path";
             }
         }
-        const program = parse(`fe.add_image("missing.png")`);
+        // const program = parse(`fe.add_image("missing.png")`);
+        const program = parse(`/** @param {string($image)} img */ function add(img) {}; add("missing.png")`);
         expect(getProgramErrors(program).length).toEqual(1);
     });
 
-    it("addMediaCalls, shader missing", () => {
+    it("getProgramArgErrors, image exists", () => {
         getConfigValueFunc = (v) => {
             switch (v) {
                 case constants.SHOW_MISSING_ENABLED: return true;
                 case constants.ATTRACT_MODE_PATH: return "mock/path";
             }
         }
-        const program = parse(`fe.add_shader(null, "missing.png", "missing.png")`);
+        const imagePath = forwardSlash(path.join(__dirname, '../samples/layout/simple_nut.png'));
+        const program = parse(`/** @param {string($image)} img */ function add(img) {}; add("${imagePath}")`);
+        expect(getProgramErrors(program).length).toEqual(0);
+    });
+
+    it("getProgramArgErrors, image multiple", () => {
+        getConfigValueFunc = (v) => {
+            switch (v) {
+                case constants.SHOW_MISSING_ENABLED: return true;
+                case constants.ATTRACT_MODE_PATH: return "mock/path";
+            }
+        }
+        const imagePath = forwardSlash(path.join(__dirname, '../samples/layout/simple_nut.png'));
+        const program = parse(`/** @param {string($image)} img\n * @param {string($image)} img2 */ function add(img, img2) {}; add("${imagePath}", "missing.png")`);
+        expect(getProgramErrors(program).length).toEqual(1);
+    });
+
+    it("getProgramArgErrors, none expected", () => {
+        getConfigValueFunc = (v) => {
+            switch (v) {
+                case constants.SHOW_MISSING_ENABLED: return true;
+                case constants.ATTRACT_MODE_PATH: return "mock/path";
+            }
+        }
+        const program = parse(`function add(s1, s2) {}; add("missing.png", "m2.png")`);
+        expect(getProgramErrors(program).length).toEqual(0);
+    });
+
+    it("getProgramArgErrors, shaders missing", () => {
+        getConfigValueFunc = (v) => {
+            switch (v) {
+                case constants.SHOW_MISSING_ENABLED: return true;
+                case constants.ATTRACT_MODE_PATH: return "mock/path";
+            }
+        }
+        const program = parse(`/** @param {string($shader)} s1\n * @param {string($shader)} s2 */\n function add(t, s1, s2) {}; add(0, "missing.png", "m2.png")`);
         expect(getProgramErrors(program).length).toEqual(2);
     });
 
     it("getProgramArtworks, invalid", () => {
         const program = parse("");
         expect(getProgramArtworks(program)).toEqual([]);
+        expect(getProgramArtworks(null)).toEqual([]);
     });
 
     it("getProgramArtworks", () => {
-        const program = parse(`fe.add_artwork("snap");`);
-        expect(getProgramArtworks(program)).toHaveLength(1);
+        getConfigValueFunc = (v) => {
+            switch (v) {
+                case constants.SCAN_ARTWORK_ENABLED:
+                    return false;
+                case constants.ATTRACT_MODE_ARTWORK:
+                    return "snap";
+            }
+        };
+        refreshArtworkLabels();
+        const program = parse(`/** @param {string($artwork)} a */ function add(a){}; add("snap"); add("snap"); add("invalid");`);
+        const labels = getProgramArtworks(program);
+        expect(labels).toHaveLength(1);
+        expect(labels[0]).toEqual("snap");
     });
 
     it("getArtworkCallLabel, undefined", () => {
@@ -186,11 +235,20 @@ describe("Media", () => {
                 case constants.SCAN_ARTWORK_ENABLED:
                     return false;
                 case constants.ATTRACT_MODE_ARTWORK:
+                    return "";
+            }
+        };
+        refreshArtworkLabels();
+        expect(getArtworkCompletions()).toEqual([]);
+
+        getConfigValueFunc = (v) => {
+            switch (v) {
+                case constants.SCAN_ARTWORK_ENABLED:
+                    return false;
+                case constants.ATTRACT_MODE_ARTWORK:
                     return "one,two";
             }
         };
-
-        expect(getArtworkCompletions()).toEqual([]);
         refreshArtworkLabels();
         expect(getArtworkCompletions().length).toEqual(2);
     });

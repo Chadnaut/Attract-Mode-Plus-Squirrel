@@ -3,8 +3,28 @@ import { parseForceExtra as parse, dump, pos } from "../utils";
 import { getNodeReturn } from "../../src/utils/return";
 import { getBranchAtPos } from "../../src/utils/find";
 import { AST, SQTree as qt } from "../../src/ast";
+import { getNodeInstanceType } from "../../src/utils/type";
 
 describe("ReturnArgument", () => {
+
+    it("ReturnArgument FuncDec Parameter", () => {
+        const program = parse("function foo(a) { return a; }; local bar = foo(123);");
+        const n = getBranchAtPos(program, pos(38));
+        expect(getNodeInstanceType(n).at(-1)["name"]).toEqual("IntegerLiteral")
+    });
+
+    it("ReturnArgument FuncExp Parameter", () => {
+        const program = parse("local foo = function(a) { return a; }; local bar = foo(123);");
+        const n = getBranchAtPos(program, pos(46));
+        expect(getNodeInstanceType(n).at(-1)["name"]).toEqual("IntegerLiteral")
+    });
+
+    it("ReturnArgument Var Parameter", () => {
+        const program = parse("function foo(a) { return a; }; local x = 123; local bar = foo(x);");
+        const n = getBranchAtPos(program, pos(53));
+        expect(getNodeInstanceType(n).at(-1)["name"]).toEqual("IntegerLiteral")
+    });
+
     it("ReturnArgument", () => {
         const program = parse("function foo() { return 123; }");
         const n = getBranchAtPos(program, pos(0));

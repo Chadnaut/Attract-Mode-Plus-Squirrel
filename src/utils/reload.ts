@@ -147,7 +147,7 @@ export class SquirrelLiveReload extends Disposable {
 
         if (srcContents !== dstContents) {
             // abort if package name mismatch
-            const pac = /@package ([^\n]+)/;
+            const pac = /@(?:package|summary) ([^\n]+)/;
             const srcPac = srcContents.match(pac)?.[1].trim();
             const dstPac = dstContents.match(pac)?.[1].trim();
             // abort if author mismatch

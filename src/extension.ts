@@ -23,6 +23,7 @@ import { SquirrelDocumentLogSemanticTokensProvider } from "./providers/squirrelD
 import { SquirrelDocumentSemanticTokensProvider } from "./providers/squirrelDocumentSemanticTokensProvider";
 import { SquirrelDocumentSymbolProvider } from "./providers/squirrelDocumentSymbolProvider";
 import { SquirrelHoverDefinitionProvider } from "./providers/squirrelHoverDefinitionProvider";
+import { SquirrelHoverDefinitionConfigProvider } from "./providers/squirrelHoverDefinitionConfigProvider";
 import { SquirrelHoverImageProvider } from "./providers/squirrelHoverImageProvider";
 import { SquirrelInlayHintsProvider } from "./providers/squirrelInlayHintsProvider";
 import { SquirrelModuleExplorer } from "./providers/squirrelModuleExplorer";
@@ -119,6 +120,7 @@ export const activate = (context: ExtensionContext) => {
     const inlayHintsProvider = new SquirrelInlayHintsProvider();
     const signatureHelpProvider = new SquirrelSignatureHelpProvider();
     const hoverDefinitionProvider = new SquirrelHoverDefinitionProvider();
+    const hoverConfigDefinitionProvider = new SquirrelHoverDefinitionConfigProvider();
     const documentDropEditProvider = new SquirrelDocumentDropEditProvider();
     const hoverImageProvider = new SquirrelHoverImageProvider();
     const completionItemSnippetProvider = new SquirrelCompletionItemSnippetProvider();
@@ -161,6 +163,7 @@ export const activate = (context: ExtensionContext) => {
         }),
         onConfigChange(constants.HOVER_DEFINITIONS_ENABLED, (enabled) => {
             hoverDefinitionProvider.enabled = enabled;
+            hoverConfigDefinitionProvider.enabled = enabled;
         }),
         onConfigChange(constants.HOVER_IMAGES_SHOW, (enabled) => {
             hoverImageProvider.enabled = enabled;
@@ -367,6 +370,9 @@ export const activate = (context: ExtensionContext) => {
             documentDropEditProvider,
         ),
 
+        // Hover for UserConfig attributes
+        languages.registerHoverProvider(selector, hoverConfigDefinitionProvider),
+
         // Hover for signature + docblock information
         languages.registerHoverProvider(selector, hoverDefinitionProvider),
 
@@ -390,5 +396,8 @@ export const activate = (context: ExtensionContext) => {
 
         // Show a sidebar containing AM modules
         moduleExplorer,
+
+        // Provides attribute order command
+        hoverConfigDefinitionProvider,
     );
 };

@@ -4,6 +4,8 @@ import { ChildProcessWithoutNullStreams, spawn } from "child_process";
 import constants from "../constants";
 import * as path from "path";
 import * as fs from "fs";
+import { SquirrelOutputChannel } from "./output";
+import format from "date-format";
 
 export const escapeArg = (arg: string): string => arg.replace('"', '""');
 
@@ -50,15 +52,15 @@ export class SquirrelLauncher extends Disposable {
         return this._config;
     }
 
-    constructor(private outputChannelProvider) {
+    constructor(private outputChannelProvider: SquirrelOutputChannel) {
         super(undefined);
 
         this.button = window.createStatusBarItem(StatusBarAlignment.Left);
-        this.button.command = "attractMode.launch";
+        this.button.command = "attractPlusSquirrel.launchApp";
         this.refreshLabel();
 
         const command = commands.registerCommand(
-            "attractMode.launch",
+            "attractPlusSquirrel.launchApp",
             this.launchAM.bind(this),
         );
 
@@ -116,9 +118,17 @@ export class SquirrelLauncher extends Disposable {
         this.button.tooltip = tooltip;
     }
 
+    /** Return ISO local time string */
+    private getTimestamp(): string {
+        return format("yyyy-MM-dd hh:mm:ss.SSS")
+    }
+
     /** Launch AM, or kill it if already running */
     public launchAM() {
         if (this.process) {
+            this.outputChannelProvider.appendLine(
+                `${this.getTimestamp()} [info] Stopped`,
+            );
             this.process.kill();
             return;
         }
@@ -135,14 +145,21 @@ export class SquirrelLauncher extends Disposable {
             this.outputChannelProvider.restartWatcher();
         }
 
-        const loglevel = this.logOutput.match("-(info|debug)$")?.[1] || "silent";
+        const loglevel =
+            this.logOutput.match("-(info|debug)$")?.[1] || "silent";
         args.push("--loglevel", loglevel);
+
+        this.outputChannelProvider.appendLine(
+            `${this.getTimestamp()} [info] Started ${args.join(" ")}`,
+        );
 
         const options = { cwd: this.path };
         this.process = spawn(this.filename, args, options);
 
         this.process.stderr.on("data", (data) => {
-            this.outputChannelProvider.append(data.toString());
+            this.outputChannelProvider.appendLine(
+                `${this.getTimestamp()} [error] ${data.toString()}`,
+            );
         });
 
         this.process.stdout.on("data", (data) => {
@@ -150,17 +167,17 @@ export class SquirrelLauncher extends Disposable {
         });
 
         this.process.on("error", (code, signal) => {
-            this.outputChannelProvider.append(
-                `\nError: (${code}) ${signal ?? ""}\n\n`,
+            this.outputChannelProvider.appendLine(
+                `${this.getTimestamp()} [warning] (${code}) ${signal ?? ""}`,
             );
             this.process = null;
             this.refreshLabel();
         });
 
         this.process.on("close", (code, signal) => {
-            // this.outputChannelProvider.append(
-            //     `\nClosed: (${code}) ${signal ?? ""}\n\n`,
-            // );
+            this.outputChannelProvider.appendLine(
+                `${this.getTimestamp()} [info] Closed (${code}) ${signal ?? ""}`,
+            );
             this.process = null;
             this.refreshLabel();
         });

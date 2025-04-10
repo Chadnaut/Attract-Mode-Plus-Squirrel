@@ -16,6 +16,10 @@ import { colorToRGB, getProgramColorInformation } from "../utils/color";
 export class SquirrelDocumentColorProvider implements DocumentColorProvider {
     public enabled: boolean = true;
 
+    /**
+     * Provide placements and colours for swatches to appear
+     * - NOTE: VSCode calls this after a delay, causing the swatches to appear late
+     */
     provideDocumentColors(
         document: TextDocument,
         token: CancellationToken,
@@ -30,6 +34,11 @@ export class SquirrelDocumentColorProvider implements DocumentColorProvider {
         );
     }
 
+    /**
+     * Replaces selected picker colour text back into the code
+     * - NOTE: May suffer form the above delay
+     * - If the document changes quicker than the provider request, the text may appear in the wrong position!
+     */
     provideColorPresentations(
         color: Color,
         context: { readonly document: TextDocument; readonly range: Range },

@@ -16,7 +16,7 @@ import {
 } from "../utils/completion";
 import { docPosToPos } from "../utils/location";
 import { AST } from "../ast";
-import { getBranchAtPos, getNodeBeforePos, getNodeIsDecId } from "../utils/find";
+import { getBranchAtPos, getNodeBeforePos, getMemberCompletionBranch } from "../utils/find";
 import { requestProgram } from "../utils/program";
 import { getCommentAtPosition } from "../doc/find";
 
@@ -40,42 +40,37 @@ export class SquirrelCompletionItemMemberProvider
                 const pos = docPosToPos(document, position);
                 if (getCommentAtPosition(program, pos)) return;
 
-                const branchBefore = getNodeBeforePos(program, pos);
                 const branchPos = getBranchAtPos(program, pos);
-                let branch = branchBefore;
 
+                // exit if trigger character WITHIN literal
+                const node = branchPos.at(-1);
+                switch (node?.type) {
+                    case "StringLiteral":
+                    case "FloatLiteral":
+                    case "IntegerLiteral":
+                        return;
+                }
+
+                const branchBefore = getNodeBeforePos(program, pos);
+
+                let branch = branchBefore;
                 if (!branch.length) branch = branchPos;
                 if (!branch.length) return;
 
                 // quote is for computed member["completions"]
-                // - exit if quote triggered, but is NOT opening quote
+                // - exit if quote triggered, but is NOT the opening quote
                 const quote = context.triggerCharacter === '"';
                 if (quote && pos.index !== branch.at(-1).loc.start.index + 1) return;
 
-                // exit if trigger character WITHIN literal
-                if (branchPos.at(-1).type === "StringLiteral") return;
-                if (branchPos.at(-1).type === "FloatLiteral") return;
-                if (branchPos.at(-1).type === "IntegerLiteral") return;
-
-                // find completions from id parent
-                if (branch.at(-1).type === "Identifier") {
-                    branch = branch.slice(0, -1);
-                }
-
-                // find completions from member object
-                if (branch.at(-1).type === "MemberExpression") {
-                    branch = [...branch, (<AST.MemberExpression>branch.at(-1)).object];
-                }
-
-                // exit if node is declaration id
-                if (getNodeIsDecId(branch)) return;
+                const b = getMemberCompletionBranch(branch);
+                if (!b) return;
 
                 // WARNING - Invalid member expression (missing obj) will mis-fire completion
 
-                let memberCompletions = getMemberCompletions(branch);
+                let memberCompletions = getMemberCompletions(b);
                 if (quote) return formatQuoteCompletions(memberCompletions);
 
-                const typeCompletions = getTypeMemberCompletions(branch);
+                const typeCompletions = getTypeMemberCompletions(b);
                 const completions = uniqueCompletions(memberCompletions.concat(typeCompletions));
 
                 return formatMemberCompletions(completions, position);

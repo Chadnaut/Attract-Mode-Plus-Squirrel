@@ -193,10 +193,16 @@ function type(object) {}
  *
  * Levels greater than the main function will return `null`.
  * @param {integer} level The stack level to return.
- * @returns {table}
  * @version Squirrel_3.0.7 http://www.squirrel-lang.org/doc/squirrel3.html#d0e2365
  */
-function getstackinfos(level) {}
+function getstackinfos(level) {
+    return {
+        func = "",
+        line = 0,
+        locals = {},
+        src = ""
+    };
+}
 
 /**
  * Creates a new Thread object.
@@ -859,10 +865,18 @@ class FunctionDeclaration {
 
     /**
      * Returns information about the function, such as name, parameters and source.
-     * @returns {table}
      * @version Squirrel_3.0.7 http://www.squirrel-lang.org/doc/squirrel3.html#d0e3310
      */
-    function getinfos() {}
+    function getinfos() {
+        return {
+            defparams = [],
+            name = "",
+            native = false,
+            parameters = [""],
+            src = "",
+            varargs = 0
+        };
+    }
 }
 
 /**
@@ -1161,10 +1175,16 @@ class Thread {
      *
      * Levels greater than the main function will return `null`.
      * @param {integer} level The stack level to return.
-     * @returns {table}
      * @version Squirrel_3.0.7 http://www.squirrel-lang.org/doc/squirrel3.html#d0e3656
      */
-    function getstackinfos(level) {}
+    function getstackinfos(level) {
+        return {
+            func = "",
+            line = 0,
+            locals = {},
+            src = ""
+        };
+    }
 }
 
 // -------------------------------------------------------------------------------------

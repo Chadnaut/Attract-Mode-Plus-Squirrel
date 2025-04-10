@@ -34,9 +34,27 @@ describe("Type", () => {
         expect(getNodeInstanceType(n).at(-1)["name"]).toEqual("IntegerLiteral");
     });
 
+    it("getNodeInstanceType, Ternary", () => {
+        const program = parse('local node = true ? 123 : 456');
+        const n = getBranchAtPos(program, pos(8));
+        expect(getNodeInstanceType(n).at(-1)["name"]).toEqual("IntegerLiteral");
+    });
+
     it("getNodeInstanceType, PropertyDefinition, type", () => {
         const program = parse('class foo { /** @type {integer} */ bar = null; } foo().bar;');
         const n = getBranchAtPos(program, pos(56));
+        expect(getNodeInstanceType(n).at(-1)["name"]).toEqual("IntegerLiteral");
+    });
+
+    it("getNodeInstanceType, PropertyDefinition, program", () => {
+        const program = parse('');
+        const n = getBranchAtPos(program, pos(0));
+        expect(getNodeInstanceType(n).at(-1)["name"]).toEqual("Program");
+    });
+
+    it("getNodeInstanceType, PropertyDefinition, init", () => {
+        const program = parse('class foo { prop = 123 };');
+        const n = getBranchAtPos(program, pos(20));
         expect(getNodeInstanceType(n).at(-1)["name"]).toEqual("IntegerLiteral");
     });
 
@@ -224,6 +242,13 @@ describe("Type", () => {
         expect(items).toHaveLength(0);
     });
 
+    it("getTypeMemberCompletions, type class", () => {
+        const program = parse("class foo { prop = 123 }; /** @type {foo} */ local f; f");
+        const items = getTypeMemberCompletions(getBranchAtPos(program, pos(55)));
+        expect(items).toHaveLength(1);
+        expect(items[0].insertText).toBe('prop');
+    });
+
     it("getTypeMemberCompletions, type lends", () => {
         const program = parse('/** @lends */ class StringLiteral { function len() {} }; local x = "string"; x');
         const items = getTypeMemberCompletions(getBranchAtPos(program, pos(78)));
@@ -253,6 +278,16 @@ describe("Type", () => {
         expect(getHoverInfo(branch).contents["value"]).toContain("local x: string");
     });
 
+    it("getTypeMemberCompletions, array elements", () => {
+        const program = parse('/** @lends */ class StringLiteral { function len2() {} }; local x = ["val"]; x[0]');
+        const b = getBranchAtPos(program, pos(81));
+        const items1 = getMemberCompletions(b);
+        expect(items1).toHaveLength(0);
+        const items2 = getTypeMemberCompletions(b);
+        expect(items2).toHaveLength(1);
+        expect(items2[0].insertText).toBe('len2');
+    });
+
     it("getTypeMemberCompletions, type array elements", () => {
         const program = parse('/** @lends */ class ArrayExpression { function len1() {} }; /** @lends */ class StringLiteral { function len2() {} }; /** @type {array(string)} */ local x = []; x; x[0]');
         const items1 = getTypeMemberCompletions(getBranchAtPos(program, pos(162)));
@@ -272,6 +307,30 @@ describe("Type", () => {
 
         const items2 = getTypeMemberCompletions(getBranchAtPos(program, pos(104)));
         expect(items2).toHaveLength(0);
+    });
+
+    it("getTypeMemberCompletions, class prop table", () => {
+        const program = parse('class foo { prop = { x = 123 } }; local f = foo(); f.prop');
+        const b = getBranchAtPos(program, pos(55));
+
+        const items1 = getTypeMemberCompletions(b);
+        expect(items1).toHaveLength(0);
+
+        const items2 = getMemberCompletions(b);
+        expect(items2).toHaveLength(1);
+        expect(items2[0].insertText).toBe('x');
+    });
+
+    it("getTypeMemberCompletions, type class prop table", () => {
+        const program = parse('class foo { prop = { x = 123 } }; /** @type {foo} */ local f; f.prop');
+        const b = getBranchAtPos(program, pos(66));
+
+        const items1 = getTypeMemberCompletions(b);
+        expect(items1).toHaveLength(0);
+
+        const items2 = getMemberCompletions(b);
+        expect(items2).toHaveLength(1);
+        expect(items2[0].insertText).toBe('x');
     });
 
     // -------------------------------------------------------------------------

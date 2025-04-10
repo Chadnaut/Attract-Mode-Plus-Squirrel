@@ -15,9 +15,11 @@ describe("Map", () => {
 
     it("filename", () => {
         const filename = forwardSlash(path.join(__dirname, "../samples/format/home.src.nut"));
-        const program = parse(`fe.do_nut("${filename}")`);
+        const program = parse(`/** @param {string($nut)} a */ function add(a) {}; add("${filename}")`);
         createNodeMaps(program);
-        expect(getProgramImportNames(program)).toHaveLength(1);
+        const names = getProgramImportNames(program);
+        expect(names).toHaveLength(1);
+        expect(forwardSlash(names[0])).toEqual(filename);
     });
 
     it("sequence", () => {

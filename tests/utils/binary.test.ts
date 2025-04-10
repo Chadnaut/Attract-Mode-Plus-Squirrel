@@ -16,7 +16,19 @@ jest.mock('../../src/utils/config.ts', () => ({
     }
 }));
 
-describe("Resolve", () => {
+describe("BinaryExpression", () => {
+    it("id", () => {
+        const program = parse('a');
+        const exp = getBranchAtPos(program, pos(1));
+        expect(resolveBinaryExpression(exp, __filename)).toBeUndefined();
+    });
+
+    it("self", () => {
+        const program = parse('"a"');
+        const exp = getBranchAtPos(program, pos(3));
+        expect(resolveBinaryExpression(exp, __filename)).toEqual("a");
+    });
+
     it("single", () => {
         const program = parse('"a" + "b"');
         const exp = getBranchAtPos(program, pos(9)).slice(0, -1);

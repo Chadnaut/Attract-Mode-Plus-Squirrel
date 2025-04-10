@@ -14,7 +14,7 @@ import {
     getCommitCharacters,
 } from "../utils/completion";
 import { printDocAttrs } from "./print";
-import { getImportAttrs, getProgramImports } from "../utils/program";
+import { getRequiredAttrs, getProgramImports } from "../utils/program";
 
 // -----------------------------------------------------------------------------
 
@@ -55,14 +55,14 @@ export const filterSnippets = (
     );
     if (index == -1) return snippets;
 
-    let importText = printDocAttrs(getImportAttrs(program));
+    let importText = printDocAttrs(getRequiredAttrs(program));
     if (!importText) return snippets;
     importText = importText.replace(/^ /gm, "").replace(/\r?\n$/, "");
 
     const prev = snippets[index];
     const item = new CompletionItem(prev.label, prev.kind);
     item.documentation = prev.documentation;
-    item.insertText = "requires\n" + importText;
+    item.insertText = `requires\n${importText}`;
 
     snippets.splice(index, 1, item);
     return snippets;

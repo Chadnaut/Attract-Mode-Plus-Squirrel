@@ -31,12 +31,10 @@ export class SquirrelDocumentFormattingEditProvider
                     resolve([TextEdit.replace(fullRange(document), formatted)]);
                 },
                 (error) => {
-                    window.showWarningMessage(
-                        constants.FORMATTING_ERROR_TITLE +
-                            " " +
-                            (error.message ||
-                                constants.FORMATTING_ERROR_MESSAGE),
-                    );
+                    const err =
+                        error.message || constants.FORMATTING_ERROR_MESSAGE;
+                    const msg = `${constants.FORMATTING_ERROR_TITLE} ${err}`;
+                    window.showWarningMessage(msg);
                     console.error(error);
                     resolve(undefined);
                 },

@@ -34,7 +34,7 @@ export const getNodeInstanceType = (
     if (node.type === "MemberExpression") {
         const m = <AST.MemberExpression>node;
         nodeId = addBranchId(getNodeDef([...branch, m.object]));
-        isArr = !!nodeId.length && (m.property.type === "IntegerLiteral");
+        isArr = !!nodeId.length && m.property.type === "IntegerLiteral";
     }
 
     if (!nodeId.length) nodeId = addBranchId(getNodeDef(branch));
@@ -47,10 +47,14 @@ export const getNodeInstanceType = (
 
     if (!attr) {
         // PropertyDefinition
-        const propBranch = (branch.at(-2)?.type === "PropertyDefinition") ? branch : nodeVal;
+        const propBranch =
+            branch.at(-2)?.type === "PropertyDefinition" ? branch : nodeVal;
         const propDef = <AST.PropertyDefinition>propBranch.at(-2);
         if (propDef?.type === "PropertyDefinition") {
-            attr = getDocAttr(getNodeDoc([...propBranch.slice(0, -1), propDef.key]), "type");
+            attr = getDocAttr(
+                getNodeDoc([...propBranch.slice(0, -1), propDef.key]),
+                "type",
+            );
         }
     }
 
@@ -71,15 +75,21 @@ export const getNodeInstanceType = (
     const token = getNodeToken(node);
     if (token === "enum") return [program, stringToNode("EnumDeclaration")];
 
-    // @class
-    let type: string = nodeVal.at(-1)?.type;
-    if (type === "ClassDeclaration" || type === "ClassExpression") {
-        return [program, stringToNode(token !== "class" ? "Instance" : type)];
+    let nodeValType: string = nodeVal.at(-1)?.type;
+    switch (nodeValType) {
+        case "ClassDeclaration":
+        case "ClassExpression":
+            return [program, stringToNode(token !== "class" ? "Instance" : nodeValType)];
+        case "ConditionalExpression":
+            return getNodeInstanceType(
+                [...nodeVal, (<AST.ConditionalExpression>nodeVal.at(-1)).consequent],
+                stack,
+            );
+        default:
+            return [program, stringToNode(nodeValType)];
+        case undefined:
+            return [];
     }
-
-    if (type) return [program, stringToNode(type)];
-
-    return [];
 };
 
 /**

@@ -1,4 +1,4 @@
-import { addProgram, addProgramDocument, addProgramFile, addProgramImportName, addProgramModuleName, addProgramText, prunePrograms, deletePrograms, getImportAttrs, getProgramImports, getProgram, getProgramExists, getProgramKey, getProgramSize, removeProgram, requestProgram, ProgramProvider } from "../../src/utils/program";
+import { addProgram, addProgramDocument, addProgramFile, addProgramImportName, addProgramModuleName, addProgramText, prunePrograms, deletePrograms, getRequiredAttrs, getProgramImports, getProgram, getProgramExists, getProgramKey, getProgramSize, removeProgram, requestProgram, ProgramProvider, assertImportsAllowed, setImportsAllowed } from "../../src/utils/program";
 import { describe, expect, it } from "@jest/globals";
 import { AST, SQTree as qt } from "../../src/ast";
 import { CancellationToken, commands, Disposable, TabGroups, TabInputText, TextDocument, Uri, window, workspace } from "vscode";
@@ -54,6 +54,26 @@ afterEach(() => {
 });
 
 describe("Program", () => {
+
+    it("addProgramImportName, invalid", () => {
+        expect(() => addProgramImportName(null, null)).not.toThrow();
+    });
+
+    it("addProgramModuleName, invalid", () => {
+        expect(() => addProgramModuleName(null, null)).not.toThrow();
+    });
+
+    // -------------------------------------------------------------------------
+
+    it("asserts", () => {
+        setImportsAllowed(false);
+        expect(() => assertImportsAllowed("mock")).toThrow();
+        setImportsAllowed(true);
+        expect(() => assertImportsAllowed("mock")).not.toThrow();
+    });
+
+    // -------------------------------------------------------------------------
+
     it("creates", () => {
         const p = new ProgramProvider();
         spyOnDidCloseTextDocument.getMockImplementation().call(this);
@@ -61,12 +81,12 @@ describe("Program", () => {
         expect(p).toBeTruthy();
     });
 
-    it("getImportAttrs, none", () => {
+    it("getRequiredAttrs, none", () => {
         const program = parse(`fe.load_module("core")`)
-        expect(getImportAttrs(program)).toEqual([]);
+        expect(getRequiredAttrs(program)).toEqual([]);
     });
 
-    it("getImportAttrs, valid", () => {
+    it("getRequiredAttrs, valid", () => {
         const program = <AST.Program>{ sourceName: "mockProgram" };
 
         const mockModule = <AST.Program>{ sourceName: "mockModule" };
@@ -74,10 +94,10 @@ describe("Program", () => {
         addProgramImportName(program, "modules/mockModule");
         addProgramModuleName(program, "modules/mockModule");
 
-        expect(getImportAttrs(program)).toEqual([ { kind: "module", name: "mockModule", documentation: "" }]);
+        expect(getRequiredAttrs(program)).toEqual([ { kind: "module", name: "mockModule", documentation: "" }]);
     });
 
-    it("getImportAttrs, invalid", () => {
+    it("getRequiredAttrs, invalid", () => {
         const program = <AST.Program>{ sourceName: "mockProgram" };
 
         const mockModule = <AST.Program>{ sourceName: "mockModule" };
@@ -85,7 +105,7 @@ describe("Program", () => {
         addProgramImportName(program, "bad/mockModule");
         addProgramModuleName(program, "bad/mockModule");
 
-        expect(getImportAttrs(program)).toEqual([]);
+        expect(getRequiredAttrs(program)).toEqual([]);
     });
 
     it("Key", () => {

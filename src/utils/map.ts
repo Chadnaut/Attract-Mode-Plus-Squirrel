@@ -7,11 +7,9 @@ import { updateNodeSymbol } from "./symbol";
 import { setNodeToken } from "./token";
 import { getBranchFunctionDef, getBranchId, getBranchProgram } from "./find";
 import { getNewSlotAssignment } from "./root";
-import { addImportCalls } from "./program";
+import { addImportPrograms } from "./program";
 import { computeNode } from "./meta";
-import { addColorCalls } from "./color";
-import { setDocNodeType, updateNodeDoc } from "../doc/create";
-import { addArtworkCalls, addMediaCalls } from "./media";
+import { setDocNodeType, attachProgramDocs, initProgramDocs } from "../doc/create";
 import { addProgramString, clearProgramStrings } from "./string";
 
 
@@ -23,14 +21,12 @@ const programCallMap = new WeakMap<AST.Program, AST.Node[][]>();
 const clearProgramCalls = (program: AST.Program) =>
     programCallMap.set(program, []);
 
-const deleteProgramCalls = (program: AST.Program) =>
-    programCallMap.delete(program);
 
 const addProgramCall = (program: AST.Program, callBranch: AST.Node[]) =>
     programCallMap.get(program).push(callBranch);
 
-const getProgramCalls = (program: AST.Program): AST.Node[][] =>
-    programCallMap.get(program);
+export const getProgramCalls = (program: AST.Program): AST.Node[][] =>
+    programCallMap.has(program) ? programCallMap.get(program) : [];
 
 // -----------------------------------------------------------------------------
 
@@ -399,33 +395,28 @@ export const createNodeMaps = (
 
     // Top level node (Program)
     if (node.type === "Program") {
-        // check imports after extras added
-        // - may use extra features to resolve filename
-        // - update import array on program so subsequent imports can use it
-        const calls = getProgramCalls(program);
-        addImportCalls(calls);
-        addArtworkCalls(calls);
-        addMediaCalls(calls);
-        addColorCalls(calls);
 
-        // add docs to nodes
-        // - also adds meta-nodes to extra body/children (getters / setters)
-        updateNodeDoc(program);
+        // Attach docs to nodes (does not process doc info yet)
+        attachProgramDocs(program);
 
+        // Link imported programs - requires attached docBlock
+        addImportPrograms(program);
+
+        // Init docs to add meta-nodes, deprecations, etc
+        initProgramDocs(program);
+
+        // Add special node types (Generator)
         getNodeTypes(program).forEach(({ branch, type }) => {
             setDocNodeType(branch, type);
         });
+        deleteNodeTypes(program);
 
-        // Patch namespace items onto their owner class
+        // Patch namespace items onto their owner classes
         // - may use getImports if moved nodes need to find referenced owners
         getProgramNamespace(program).forEach((n) => {
             setNodeNamespace(n.slice(0, -1), getNodeVal(n).at(-1));
         });
-
-        // cleanup
-        deleteProgramCalls(program);
         deleteProgramNamespace(program);
-        deleteNodeTypes(program);
     }
 
     return node;

@@ -1,5 +1,11 @@
 import * as path from "path";
-import { fileExists, forwardSlash, readDirWithTypes, readFile } from "./file";
+import {
+    fileExists,
+    forwardSlash,
+    getFirstValidFilename,
+    readDirWithTypes,
+    readFile,
+} from "./file";
 import constants from "../constants";
 import { isSupportedNut } from "./import";
 import { CompletionItem, CompletionItemKind } from "vscode";
@@ -151,7 +157,11 @@ export const trimModuleName = (name: string): string | undefined => {
     return path.basename(name, constants.LANGUAGE_EXTENSION);
 };
 
-/** Return array of module paths, may be file or folder */
+/**
+ * Return array of module paths
+ * - Scans folder to find new modules
+ * - A path may be a file or folder
+ */
 export const getModulePaths = (): string[] => {
     const basePath = getConfigValue(constants.ATTRACT_MODE_PATH, "");
     const modulePath = path.join(basePath, constants.FE_MODULES_PATH);
@@ -168,6 +178,20 @@ export const getModulePaths = (): string[] => {
             if (fileExists(name)) return name;
         })
         .filter((name) => name);
+};
+
+/** Return module path from given name */
+export const getModulePath = (value: string): string | undefined => {
+    const basePath = getConfigValue(constants.ATTRACT_MODE_PATH, "");
+    const mPath = path.join(basePath, constants.FE_MODULES_PATH);
+    return getFirstValidFilename(
+        isSupportedNut(value)
+            ? [path.join(mPath, value)]
+            : [
+                  path.join(mPath, value + constants.LANGUAGE_EXTENSION),
+                  path.join(mPath, value, constants.FE_MODULE_FILENAME),
+              ],
+    );
 };
 
 /**

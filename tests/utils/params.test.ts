@@ -1,10 +1,17 @@
-import { getNodeCallParamInfo, getNodeParamInfo, getNodeParams, getParamSuggestions, getParamSymbols, isRestNode, limitParamIndex, ParameterInformationExtra, setRestNode } from '../../src/utils/params';
+import { getNodeArgExpected, getNodeArgsParamInfo, getNodeParamInfo, getNodeParams, getParamSuggestions, getParamSymbols, isRestNode, limitParamIndex, ParameterInformationExtra, setRestNode } from '../../src/utils/params';
 import { describe, expect, it } from "@jest/globals";
 import { dump, parseExtra as parse, parseForce, pos } from "../utils";
-import { SQTree as qt } from "../../src/ast";
+import { AST, SQTree as qt } from "../../src/ast";
 import { getBranchAtPos } from '../../src/utils/find';
+import { getNodeSignature } from '../../src/utils/signature';
 
 describe("Params", () => {
+
+    it("getNodeArgExpected, invalid", () => {
+        expect(getNodeArgExpected([])).toEqual([]);
+        expect(getNodeArgExpected([null])).toEqual([]);
+        expect(getNodeArgExpected([<AST.Node>{}])).toEqual([]);
+    });
 
     it("limitParamIndex, no params", () => {
         expect(limitParamIndex(10, [])).toBe(10);
@@ -142,8 +149,26 @@ describe("Params", () => {
         expect(isRestNode(params[1])).toBe(true);
     });
 
-    it("getNodeCallParamInfo, invalid", () => {
-        expect(getNodeCallParamInfo([])).toHaveLength(0);
+    // -------------------------------------------------------------------------
+
+    it("getNodeArgsParamInfo, invalid", () => {
+        expect(getNodeArgsParamInfo([])).toHaveLength(0);
+    });
+
+    it("getNodeArgsParamInfo", () => {
+        const program = parse('function foo (a, b){}; foo(a)');
+        const n = getBranchAtPos(program, pos(11));
+        const info = getNodeArgsParamInfo(n);
+
+        const sig = getNodeSignature(getBranchAtPos(program, pos(7)));
+        const a = "a: any";
+        const b = "b: any";
+
+        expect(info).toHaveLength(2);
+        expect(info[0].label[0]).toBe(sig.indexOf(a));
+        expect(info[0].label[1]).toBe(sig.indexOf(a) + a.length);
+        expect(info[1].label[0]).toBe(sig.indexOf(b));
+        expect(info[1].label[1]).toBe(sig.indexOf(b) + b.length);
     });
 
     // -------------------------------------------------------------------------
@@ -152,7 +177,15 @@ describe("Params", () => {
         const program = parse('local foo = @(x, y) 123;');
         const n = getBranchAtPos(program, pos(15));
         const info = getNodeParamInfo(n);
-        expect(info?.label).toHaveLength(2);
+
+        const sig = getNodeSignature(getBranchAtPos(program, pos(7)));
+        const x = "x: any";
+        // local foo: function(x: any, y: any): integer
+        // --------------------^ 20
+        // --------------------------^ 26
+
+        expect(info?.label[0]).toBe(sig.indexOf(x));
+        expect(info?.label[1]).toBe(sig.indexOf(x) + x.length);
     });
 
     it("getNodeParamInfo, inline lambda undefined", () => {

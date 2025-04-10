@@ -1,6 +1,7 @@
 import { describe, expect, it } from "@jest/globals";
 import { escapeArg, SquirrelLauncher } from '../../src/utils/launcher';
 import * as path from "path";
+import { SquirrelOutputChannel } from "../../src/utils/output";
 
 let spawnKills = 0;
 let spawnArgs = [];
@@ -31,14 +32,17 @@ jest.mock('child_process', () => ({
     },
 }));
 
+let appendText = "";
 let appendCount = 0;
 const output = {
-    append: (text) => { appendCount++; },
+    append: (text) => { appendText += text; appendCount++; },
+    appendLine: (text) => { appendText += text; appendCount++; },
     restartWatcher: () => {}
-};
+} as SquirrelOutputChannel;
 
 beforeEach(() => {
     spawnKills = 0;
+    appendText = "";
     appendCount = 0;
     spawnArgs = [];
     onStdErr = (data) => {};
@@ -147,29 +151,75 @@ describe("Launcher", () => {
         expect(spawnArgs.includes("--logfile")).toBe(true);
     });
 
-    it("Launch Appends", () => {
+    it("Launch Text", () => {
         const s = new SquirrelLauncher(output);
         s.enabled = true;
         s.filename = "mock";
         s.launchAM();
-
-        onStdErr("err");
+        expect(appendText).toMatch(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}.\d{3}/);
         expect(appendCount).toBe(1);
-        appendCount = 0;
+    });
 
-        onStdOut("err");
-        expect(appendCount).toBe(1);
-        appendCount = 0;
+    it("Launch StdOut", () => {
+        const s = new SquirrelLauncher(output);
+        s.enabled = true;
+        s.filename = "mock";
+        s.launchAM();
+        onStdOut("data");
+        expect(appendText.toLowerCase()).toContain('data');
+        expect(appendCount).toBe(2);
+    });
 
-        onError(0, "sig");
-        expect(appendCount).toBe(1);
-        appendCount = 0;
+    it("Launch StdErr", () => {
+        const s = new SquirrelLauncher(output);
+        s.enabled = true;
+        s.filename = "mock";
+        s.launchAM();
+        onStdErr("steff");
+        expect(appendText.toLowerCase()).toContain('error');
+        expect(appendText.toLowerCase()).toContain('steff');
+        expect(appendCount).toBe(2);
+    });
 
-        onError(0, null);
-        expect(appendCount).toBe(1);
-        appendCount = 0;
+    it("Launch Error Sig", () => {
+        const s = new SquirrelLauncher(output);
+        s.enabled = true;
+        s.filename = "mock";
+        s.launchAM();
+        onError(1, "sig");
+        expect(appendText.toLowerCase()).toContain('warning');
+        expect(appendText.toLowerCase()).toContain('sig');
+        expect(appendCount).toBe(2);
+    });
 
-        onClose(0, null);
-        expect(appendCount).toBe(0);
+    it("Launch Error Null", () => {
+        const s = new SquirrelLauncher(output);
+        s.enabled = true;
+        s.filename = "mock";
+        s.launchAM();
+        onError(2, null);
+        expect(appendText.toLowerCase()).toContain('warning');
+        expect(appendCount).toBe(2);
+    });
+
+    it("Launch Close Sig", () => {
+        const s = new SquirrelLauncher(output);
+        s.enabled = true;
+        s.filename = "mock";
+        s.launchAM();
+        onClose(3, 'sig');
+        expect(appendText.toLowerCase()).toContain('closed');
+        expect(appendText.toLowerCase()).toContain('sig');
+        expect(appendCount).toBe(2);
+    });
+
+    it("Launch Close Null", () => {
+        const s = new SquirrelLauncher(output);
+        s.enabled = true;
+        s.filename = "mock";
+        s.launchAM();
+        onClose(4, null);
+        expect(appendText.toLowerCase()).toContain('closed');
+        expect(appendCount).toBe(2);
     });
 });

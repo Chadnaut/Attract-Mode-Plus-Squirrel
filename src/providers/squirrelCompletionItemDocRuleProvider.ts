@@ -45,6 +45,8 @@ export class SquirrelCompletionItemDocRuleProvider
 
         // Require a number of characters to be entered first
         const hr = context.triggerCharacter;
+        if (!hr) return;
+
         const prefix = hr.repeat(constants.DOCBLOCK_HR_COUNT);
         const prefixLen = prefix.length;
         const lastPos = positionTranslate(position, -prefixLen);

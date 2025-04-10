@@ -1,21 +1,35 @@
 import { describe, expect, it } from "@jest/globals";
 import { dump, parseExtra as parse, pos } from "../utils";
-import { getBranchAtPos } from "../../src/utils/find";
-import { filterBranchCallMethods, getCallExpressionName, getNodeCallData } from "../../src/utils/call";
+import { getCallName, getNodeCallData } from "../../src/utils/call";
+import { getBranchAtPos, getBranchEndingAtType } from "../../src/utils/find";
+import { SQTree as qt } from "../../src/ast/create";
 
 describe("Call", () => {
 
-    it("filterBranchCallMethods", () => {
-        const text = `fe.add_artwork("img.png"); fe.load_module("mock");`;
-        const program = parse(text);
-        const art = getBranchAtPos(program, pos(10)).slice(0, -2);
-        const mod = getBranchAtPos(program, pos(34)).slice(0, -2);
-        expect(filterBranchCallMethods([art, mod], ["fe.add_artwork"])).toHaveLength(1);
+    it("getCallName, empty", () => {
+        expect(getCallName([])).toBeUndefined();
     });
 
-    it("getCallExpressionName, invalid", () => {
-        expect(getCallExpressionName([])).toBeUndefined();
+    it("getCallName, invalid", () => {
+        expect(getCallName([qt.CallExpression(null)])).toBeUndefined();
+        expect(getCallName([qt.CallExpression(qt.MemberExpression(null, null))])).toBeUndefined();
     });
+
+    it("getCallName, id", () => {
+        const program = parse("call()");
+        const n = getBranchAtPos(program, pos(2));
+        const b = getBranchEndingAtType(n, ["CallExpression"]);
+        expect(getCallName(b)).toEqual("call");
+    });
+
+    it("getCallName, member", () => {
+        const program = parse("my.call()");
+        const n = getBranchAtPos(program, pos(4));
+        const b = getBranchEndingAtType(n, ["CallExpression"]);
+        expect(getCallName(b)).toEqual("my.call");
+    });
+
+    // -------------------------------------------------------------------------
 
     it("getNodeCallData, call meta", () => {
         const text = "class foo { function _call(a,b,c) {} } local f = foo(); f(10,20,30)";

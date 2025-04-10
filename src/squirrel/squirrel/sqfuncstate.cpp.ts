@@ -504,7 +504,9 @@ export class SQFuncState extends SQFuncStateStruct {
                 const object = this.PopNode();
                 const root = object?.type === "Root";
                 const memberRoot = root || !!_arg1;
-                const property = qt.Identifier(_arg2?._unVal, _arg3);
+                const name = _arg2?._unVal;
+                const propLoc = name ? _arg3 : (object?.loc ? qt.LocZeroEnd(object.loc) : _arg3); // hack for empty property
+                const property = qt.Identifier(name, propLoc);
                 const loc = qt.LocSpan(GetFullLoc(object), GetFullLoc(property));
                 if (root) {
                     qt.LocUpdate(property, loc);
@@ -594,7 +596,7 @@ export class SQFuncState extends SQFuncStateStruct {
                 // if code invalid (obj missing) this will pop wrong node
                 const object = this.PopNode();
                 const root = object?.type === "Root";
-                // use arg end to capture square bracket "object[property]""
+                // use arg end to capture square bracket "object[property]"
                 const loc = qt.LocSpan(GetFullLoc(object), _arg1);
                 this.PushNode(qt.MemberExpression(object, property, computed, root, loc));
                 break;

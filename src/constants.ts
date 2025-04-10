@@ -9,19 +9,21 @@ export default {
     YES: "Yes",
     NO: "No",
 
+    UPDATE_ORDER: "Update order",
+
     // language
     LANGUAGE_ID: "squirrel",
     LANGUAGE_EXTENSION: ".nut",
 
-    // methods that import files
-    SQ_DOFILE: "dofile",
-    FE_DO_NUT: "fe.do_nut",
-    FE_LOAD_MODULE: "fe.load_module",
-    FE_ADD_ARTWORK: "fe.add_artwork",
-    FE_ADD_IMAGE: "fe.add_image",
-    FE_ADD_MUSIC: "fe.add_music",
-    FE_ADD_SOUND: "fe.add_sound",
-    FE_ADD_SHADER: "fe.add_shader",
+    // expected parameter flags
+    EXP_MODULE: "$module",
+    EXP_FILE: "$file",
+    EXP_NUT: "$nut",
+    EXP_ARTWORK: "$artwork",
+    EXP_IMAGE: "$image",
+    EXP_VIDEO: "$video",
+    EXP_AUDIO: "$audio",
+    EXP_SHADER: "$shader",
 
     // key paths for AM
     FE_EMULATORS_PATH: "emulators",
@@ -59,7 +61,6 @@ export default {
     // extension asset paths
     ASSETS_PATH: assetsPath,
     COMPLETIONS_PATH: path.join(assetsPath, "completions"),
-    SNIPPETS_PATH: path.join(assetsPath, "snippets/squirrel.code-snippets"),
 
     // extension conflict checker
     CHECK_CONFLICTS_ENABLED: `AM-Squirrel.checkConflicts`,
@@ -147,8 +148,7 @@ export default {
     LOG_INTERVAL: 500,
 
     // package settings
-    PACKAGE_AUTHOR: `AM-Squirrel.package.author`,
-    PACKAGE_URL: `AM-Squirrel.package.url`,
+    PACKAGE_TEMPLATE: `AM-Squirrel.package.template`,
 
     // AM settings
     ATTRACT_MODE_PATH: `AM-Squirrel.attract-Mode.path`,

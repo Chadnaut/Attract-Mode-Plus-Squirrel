@@ -2,6 +2,43 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.9.17] 2025-04-10
+
+### Added
+
+- Button in attribute "order" hover to update values in ascending order
+- Display launch actions in output panel
+
+### Changed
+
+- Completions respect returned function parameter type
+- Declarations respect ternary consequent type
+- Live-Reload plugin uses get_file_mtime when available
+- Code formatting defaults to no-semi, attribute on single line
+
+### Fixed
+
+- Cache fs queries for massive gains
+- Completions for array objects
+- Explicitly-typed completions
+- More completion regressions
+
+## [0.9.16] 2025-04-02
+
+### Added
+
+- Setting for package completion template
+- Definitions for Squirrel methods return objects
+
+### Fixed
+
+- Member Completion regression
+- Removed hard-coded loader matching, now use DocBlock flags
+- DocBlock summary now finds Surface add_artwork labels
+- Returned params use correct tokens
+- Prevent completions appearing for declaration ids, again
+- Output log link parser, again
+
 ## [0.9.15] 2025-03-19
 
 ### Added

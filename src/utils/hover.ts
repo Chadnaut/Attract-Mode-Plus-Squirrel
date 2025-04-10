@@ -33,6 +33,7 @@ export const getHoverInfo = (branch: AST.Node[]): Hover | undefined => {
 
     const contents = new MarkdownString();
     contents.supportHtml = true;
+    contents.isTrusted = true;
     contents.appendCodeblock(signature, constants.LANGUAGE_ID);
 
     const nodeDoc = getNodeDoc(nodeDef);

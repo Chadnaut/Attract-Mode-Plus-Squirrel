@@ -7,26 +7,44 @@ import { addBranchId } from "./identifier";
 import { getNodeDisplayType } from "./signature";
 
 /**
- * Returns true when branch is id of declarator
- * - Used by member provider when branch may be invalid
+ * Returns target branch for member completions
+ * - Returns undefined when branch invalid for completions
+ * - Handles weird AST's that result from "in-progress/invalid" code
  */
-export const getNodeIsDecId = (branch: AST.Node[]): boolean => {
-    switch (branch.at(-1)?.type) {
+export const getMemberCompletionBranch = (
+    branch: AST.Node[],
+): AST.Node[] | undefined => {
+    const node = branch.at(-1);
+    if (!node) return;
+
+    if (node.type === "MemberExpression") {
+        const m = <AST.MemberExpression>node;
+        return m.computed ? branch : [...branch, m.property];
+    }
+
+    if (node.type !== "Identifier") return;
+
+    const parent = <AST.MemberExpression>branch.at(-2);
+    if (parent?.type !== "MemberExpression") return;
+    if (parent.object === node) return branch;
+    if (parent.property !== node) return;
+
+    const b = branch.slice(0, -2);
+    const id = addBranchId(b).at(-1);
+    if (id === parent) return;
+    if (id === node) return;
+
+    const obj = parent.object;
+    if (!obj) return;
+
+    switch (obj.type) {
         case "VariableDeclaration":
-        case "FunctionDeclaration":
-        case "MethodDefinition":
-            return true;
-        case "Identifier":
-            switch (branch.at(-3)?.type) {
-                case "ClassDeclaration":
-                case "PropertyDefinition":
-                case "Property":
-                    return true;
-                default:
-                    return false;
-            }
+            return;
+        case "MemberExpression":
+            const m = <AST.MemberExpression>obj;
+            return m.computed ? [...b, m] : [...b, m, m.property];
         default:
-            return false;
+            return [...b, obj];
     }
 };
 
@@ -46,7 +64,7 @@ export const nodeHasInit = (node: AST.Node): boolean => {
     }
 };
 
-/** Return branch with added init node */
+/** Return branch with init node removed */
 export const getBranchWithInitKey = (branch: AST.Node[]): AST.Node[] => {
     const node = branch.at(-1);
     switch (node?.type) {
@@ -63,7 +81,7 @@ export const getBranchWithInitKey = (branch: AST.Node[]): AST.Node[] => {
 };
 
 /**
- * Return branch with init value, empty array if none
+ * Return branch with init node added, empty array if none
  * - NOTE: fails if branch already has init value...
  * - VariableDeclarator -> init
  * - PropertyDefinition -> value
@@ -140,12 +158,10 @@ export const getBranchClassDef = (branch: AST.Node[]): AST.Node[] => {
         case "ClassDeclaration":
             return branch;
         default:
-            if (
-                getBranchWithInitValue(branch).at(-1)?.type ===
+            return getBranchWithInitValue(branch).at(-1)?.type ===
                 "ClassExpression"
-            )
-                return branch;
-            return getBranchClassDef(branch.slice(0, -1));
+                ? branch
+                : getBranchClassDef(branch.slice(0, -1));
     }
 };
 
@@ -174,6 +190,12 @@ export const isNodeBlock = (node: AST.Node): boolean => {
         case "ObjectExpression":
         case "LambdaExpression":
         case "FunctionExpression":
+
+        // SPECIAL
+        // - getNodeChildrenVisitorsFlat removes body blocks from these
+        // - class them as "blocks" instead
+        case "FunctionDeclaration":
+        case "MethodDefinition":
             return true;
         default:
             return false;
@@ -181,14 +203,14 @@ export const isNodeBlock = (node: AST.Node): boolean => {
 };
 
 /**
- * Return node branch (including node) where end node is a block element
+ * Return branch where end node is a block-type element (includes current node)
+ * - A block-type element is one that contains child nodes
  * - Pops branch end node until valid block branch found
  */
-
 export const getBranchBlock = (branch: AST.Node[]): AST.Node[] => {
-    let i = branch.length - 1;
-    while (i >= 0 && !isNodeBlock(branch.at(i))) i--;
-    return branch.slice(0, i + 1);
+    const b = [...branch];
+    while (b.length && !isNodeBlock(b.at(-1))) b.pop();
+    return b;
 };
 
 export const getBranchProgram = (branch: AST.Node[]): AST.Program =>
@@ -206,17 +228,29 @@ export const isSameBranch = (a: AST.Node[], b: AST.Node[]): boolean =>
 export const getBranchNodeByType = (
     branch: AST.Node[],
     type: NodeType,
-): AST.Node => getBranchEndingAtType(branch, type).at(-1);
+): AST.Node => getBranchEndingAtType(branch, [type]).at(-1);
 
 /**
  * Returns branch slice ending at given type if it exists in the branch, or an empty branch if it doesn't
  */
 export const getBranchEndingAtType = (
     branch: AST.Node[],
-    type: NodeType,
+    types: NodeType[],
 ): AST.Node[] => {
     let i = branch.length - 1;
-    while (i >= 0 && branch.at(i).type !== type) i--;
+    while (i >= 0 && !types.includes(branch.at(i).type)) i--;
+    return branch.slice(0, i + 1);
+};
+
+/**
+ * Returns branch slice NOT ending at given type
+ */
+export const getBranchNotEndingAtType = (
+    branch: AST.Node[],
+    types: NodeType[],
+): AST.Node[] => {
+    let i = branch.length - 1;
+    while (i >= 0 && types.includes(branch.at(i).type)) i--;
     return branch.slice(0, i + 1);
 };
 

@@ -9,8 +9,18 @@ import {
     getSnippetCompletions,
 } from "../../src/doc/snippets";
 import { DocBlock } from "../../src/doc/kind";
+import { refreshArtworkLabels } from "../../src/utils/media";
 
 jest.replaceProperty(constants, "FE_MODULES_PATH", "mock");
+jest.mock('../../src/utils/config.ts', () => ({
+    ...jest.requireActual('../../src/utils/config.ts'),
+    getConfigValue: (name) => {
+        switch (name) {
+            case constants.ATTRACT_MODE_ARTWORK:
+                return "snap";
+        }
+    }
+}));
 
 describe("Doc Snippet", () => {
     it("getSnippetCompletions, invalid", () => {
@@ -30,7 +40,8 @@ describe("Doc Snippet", () => {
     });
 
     it("getProgramSnippets, inject", () => {
-        const program = parse(`/** @keyword requires */ fe.add_artwork("snap");`);
+        refreshArtworkLabels();
+        const program = parse(`/** @keyword requires */\n/** @param {string($artwork)} a */\nfunction add(a) {};\nadd("snap");`);
         const s = getProgramSnippets(program);
         expect(s.length).toBeGreaterThan(0);
         const r = s.find((snippet) => (<CompletionItemLabel>snippet.label).label === "requires");

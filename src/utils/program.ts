@@ -7,21 +7,35 @@ import {
     DiagnosticSeverity,
 } from "vscode";
 import { SquirrelParser } from "../squirrel/parser";
-import { createNodeMaps } from "./map";
+import { createNodeMaps, getProgramCalls } from "./map";
 import { readFile, pathNormalize } from "./file";
 import { getSemanticTokens } from "./token";
 import { getOpenTabPaths } from "./document";
 import { AST } from "../ast";
 import { addProgramErrors } from "./diagnostics";
 import { getBranchProgram } from "./find";
-import { filterBranchCallMethods, getCallExpressionName } from "./call";
-import { getConfigValue } from "./config";
 import { getNodeImportFilename, isProgramGlobal } from "./import";
 import { DocAttr, getKindOrder } from "../doc/kind";
 import { uniqueFilter } from "./array";
 import { getProgramArtworks } from "./media";
 import { trimModuleName, getModuleInfo } from "./module";
 import constants from "../constants";
+import { getNodeArgExpectedLabels, getProgramArgErrors } from "./params";
+
+// -----------------------------------------------------------------------------
+
+let importsAllowed = true;
+
+// Flag if import checking is allowed (yet)
+// - Used prior to imports being added
+export const setImportsAllowed = (allowed: boolean) => {
+    importsAllowed = allowed;
+};
+
+// Sanity check
+export const assertImportsAllowed = (name: string) => {
+    if (!importsAllowed) throw `No Imports Allowed: ${name}`;
+}
 
 // -----------------------------------------------------------------------------
 
@@ -38,6 +52,7 @@ export const addProgramImportName = (program: AST.Program, name: string) => {
 
 /** Return array of unique import values (`fe.do_nut`, `fe.load_module`) */
 export const getProgramImportNames = (program: AST.Program): string[] => {
+    assertImportsAllowed("getProgramImportNames");
     return programImportNameMap.has(program)
         ? programImportNameMap.get(program)
         : [];
@@ -58,6 +73,7 @@ export const addProgramModuleName = (program: AST.Program, name: string) => {
 
 /** Return array of unique module names */
 export const getProgramModuleNames = (program: AST.Program): string[] => {
+    assertImportsAllowed("getProgramModuleNames");
     return programModuleNameMap.has(program)
         ? programModuleNameMap.get(program)
         : [];
@@ -65,10 +81,11 @@ export const getProgramModuleNames = (program: AST.Program): string[] => {
 
 // -----------------------------------------------------------------------------
 
-/** Return attributes describing imported items
- * - Modules, Artwork resources
+/** Return array of layout requirement attributes
+ * - Describes module imports
+ * - Artwork resource labels
  */
-export const getImportAttrs = (program: AST.Program): DocAttr[] => {
+export const getRequiredAttrs = (program: AST.Program): DocAttr[] => {
     const attrs: DocAttr[] = [];
 
     const programs = [program, ...getProgramImports(program)].filter(
@@ -111,33 +128,24 @@ export const getImportAttrs = (program: AST.Program): DocAttr[] => {
 
 // -----------------------------------------------------------------------------
 
-export const addImportCalls = (branches: AST.Node[][]) => {
-    const showMissing =
-        !!getConfigValue(constants.ATTRACT_MODE_PATH) &&
-        getConfigValue(constants.SHOW_MISSING_ENABLED, true);
+/** Link imported file to the current program */
+export const addImportPrograms = (program: AST.Program) => {
+    getProgramCalls(program).forEach((branch) => {
+        const call = <AST.CallExpression>branch.at(-1);
+        call.arguments.forEach((arg, index) => {
+            const argBranch = [...branch, arg];
+            const labels = getNodeArgExpectedLabels(argBranch);
+            const isModule = labels.includes(constants.EXP_MODULE);
+            const isNut = labels.includes(constants.EXP_NUT);
 
-    filterBranchCallMethods(branches, [
-        constants.FE_LOAD_MODULE,
-        constants.FE_DO_NUT,
-        constants.SQ_DOFILE,
-    ]).forEach((branch) => {
-        const filename = getNodeImportFilename(branch);
-        const isModule =
-            getCallExpressionName(branch) === constants.FE_LOAD_MODULE;
-        if (showMissing && filename === "") {
-            const args = (<AST.CallExpression>branch.at(-1)).arguments;
-            const message = isModule
-                ? constants.MODULE_MISSING_MESSAGE
-                : constants.FILE_MISSING_MESSAGE;
-            addProgramErrors(
-                getBranchProgram(branch),
-                [{ message, loc: args[0].loc }],
-                DiagnosticSeverity.Warning,
-            );
-        }
-
-        if (isModule) addProgramModuleName(getBranchProgram(branch), filename);
-        addProgramImportName(getBranchProgram(branch), filename);
+            if (isModule || isNut) {
+                const filename = getNodeImportFilename(argBranch);
+                if (!filename) return;
+                if (isModule)
+                    addProgramModuleName(getBranchProgram(branch), filename);
+                addProgramImportName(getBranchProgram(branch), filename);
+            }
+        });
     });
 };
 
@@ -242,10 +250,14 @@ export const addProgramText = (name: string, text: string) => {
 
     try {
         const program = parser.parse(text); // parse text to AST
+        const errors = parser
+            .errors()
+            .map((err) => ({ ...err, severity: DiagnosticSeverity.Error }));
         addProgram(name, program); // store for traversal
-        addProgramErrors(program, parser.errors()); // store for diagnostics
+        addProgramErrors(program, errors); // store for diagnostics
         createNodeMaps(program); // map id and definitions
         getSemanticTokens(program); // add token and deprecations
+        addProgramErrors(program, getProgramArgErrors(program));
     } catch (error) {
         console.error("Parser Error", error);
         addProgram(name, undefined);
@@ -271,6 +283,8 @@ export const prunePrograms = () => {
  */
 export const getProgramImports = (program: AST.Program): AST.Program[] => {
     if (!program) return [];
+
+    assertImportsAllowed("getProgramImports");
     const { sourceName } = program;
     const sourceKey = getProgramKey(sourceName);
     const imports = getProgramImportsRecursive(sourceName);

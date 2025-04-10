@@ -99,7 +99,7 @@
             ]
         },
         "qstring-local": {
-			"name": "string.quoted.double.nut",
+			"name": "string.quoted.double.local.nut",
 			"begin": "(?<=\\[[^]]+\\] )\"",
 			"beginCaptures": {
 				"0": {
@@ -210,8 +210,12 @@
                     "name": "entity.name.type.class.log"
                 },
                 {
-                    "match": "(?<=^ \\W |^)([^ \\[][\\- _'*a-zA-Z\\/\\(\\)]+(?=(:| -)[ \r\n]))",
-                    "name": "storage.type.log"
+                    "match": "(?<=^ \\W |^)([^ \\[][\\- _'*a-zA-Z\\/\\(\\)]+(?=(:| -)[ \\r\\n]))",
+                    "name": "storage.type.label.log"
+                },
+                {
+                    "match": "(?<=^ - Loaded layout:.*? \\()[^)]+(?=\\)[\\r\\n])",
+                    "name": "constant.language.layout.log"
                 }
             ]
         },

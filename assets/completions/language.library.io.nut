@@ -9,7 +9,7 @@
 
 /**
  * Executes a script and return its response.
- * @param {string} filename The Squirrel script to execute, also accepts serialized closures.
+ * @param {string($file)} filename The Squirrel script to execute, also accepts serialized closure files.
  * @param {boolean} err Invokes the compiler error handler on syntax errors. Defaults to `false`.
  * @returns {*}
  */
@@ -17,7 +17,7 @@ function dofile(filename, err = false) {}
 
 /**
  * Compiles a script and returns it as a function.
- * @param {string} filename The Squirrel script to execute, also accepts serialized closures.
+ * @param {string($file)} filename The Squirrel script to load, also accepts serialized closure files.
  * @param {boolean} err Invokes the compiler error handler on syntax errors. Defaults to `false`.
  * @returns {function}
  */
