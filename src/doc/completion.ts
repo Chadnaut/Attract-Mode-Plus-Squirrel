@@ -28,7 +28,7 @@ export const getDocCompletionsAtPos = (
 ): CompletionItem[] => {
     const completions = getDocCompletions(getNodeAfterPos(program, pos));
     if (pos.index === 3) completions.push(...getDocProgramCompletions(program));
-    if (completions.length) completions.at(-1).preselect = true;
+    completions.at(-1).preselect = true;
     return completions;
 };
 

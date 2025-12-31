@@ -110,6 +110,25 @@ describe("Symbol", () => {
         expect(symbols[0].children[2].kind).toBe(SymbolKind.Variable);
     });
 
+    it("getNodeSymbols, for", () => {
+        const node = parse(`for (local i=0; i<1; i++) {}`);
+
+        const symbols = getNodeSymbols([node]);
+        expect(symbols.length).toEqual(1);
+        expect(symbols[0].kind).toEqual(SymbolKind.Variable);
+        expect(symbols[0].name).toEqual("i");
+    });
+
+    it("getNodeSymbols, foreach", () => {
+        const node = parse(`foreach (k,v in {}) {}`);
+        const symbols = getNodeSymbols([node]);
+        expect(symbols.length).toEqual(2);
+        expect(symbols[0].kind).toEqual(SymbolKind.Variable);
+        expect(symbols[0].name).toEqual("k");
+        expect(symbols[1].kind).toEqual(SymbolKind.Variable);
+        expect(symbols[1].name).toEqual("v");
+    });
+
     it("getNodeSymbols, class", () => {
         const node = parse(
             `class myClass { h = 1; constructor() {}; function i() {} }`,

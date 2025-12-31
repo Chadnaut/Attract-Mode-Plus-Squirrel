@@ -6,8 +6,7 @@ module.exports = {
     testEnvironment: 'node',
     transform: {
         "^.+\\.ts$": [
-            "ts-jest",
-            { isolatedModules: true }
+            "ts-jest"
         ],
         "^.+\\.js$": [
             "esbuild-jest"

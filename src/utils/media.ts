@@ -95,6 +95,22 @@ export const formatBytes = (bytes: number): string => {
     return value + byteExt[ext];
 };
 
+export const getImageSize = (w: number, h:number, size:number): [number, number] => {
+    let mw = w;
+    let mh = h;
+    if (mw > size || mh > size) {
+        // fit height
+        mw = Math.round((size / h) * w);
+        mh = Math.round(size);
+        if (mw > size) {
+            // fit width
+            mw = Math.round(size);
+            mh = Math.round((size / w) * h);
+        }
+    }
+    return [mw, mh];
+}
+
 /**
  * Return markdown string if image is valid
  * - VSCode accepts a subset of html tags - not all are documented however (VIDEO)
@@ -127,17 +143,7 @@ export const getImageMarkdownString = (
     // Markdown only accepts relative images
     const basePath = path.dirname(sourceName) + "/";
     const relFilename = path.relative(basePath, filename);
-
-    let mw = w;
-    let mh = h;
-    if (mw > size || mh > size) {
-        mw = Math.round((size / h) * w);
-        mh = Math.round(size);
-        if (mw > size) {
-            mw = Math.round(size);
-            mh = Math.round((size / w) * h);
-        }
-    }
+    const [mw, mh] = getImageSize(w, h, size);
 
     const media = isImage
         ? `<img width="${mw}" height="${mh}" src="${relFilename}"/>`

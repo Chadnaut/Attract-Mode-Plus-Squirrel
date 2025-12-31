@@ -7,11 +7,11 @@ import { META_KINDS } from "../utils/meta";
 const expectedRegex = RegExp(/^([^\(]*)\((.*?)\)$/);
 
 const docBlockRegex = RegExp(
-    /(?:[\t ]*\*)? ?(?:@(?<kind>[^\s]+))? *(?:{(?<type>[^}]*)})? *(?<doc>(?<rest>\.{3})?(?<name>\$?[._\-A-Za-z0-9!]*)? *(?:<(?<link>[^>]*)>)?[ \t\-]*(?<dh>\* ?)?(?<desc>[\w\W]*?(?=\r?\n[\t ]*\*?[\t ]*@|$)\r?\n?))/g,
+    /(?:[\t ]*\*)? ?(?:@(?<kind>[^\s]+))? *(?:{(?<type>[^}]*)})? *(?<doc>(?<rest>\.{3})?(?<name>\$?[._\+\-A-Za-z0-9!]*)? *(?:<(?<link>[^>]*)>)?[ \t\-]*(?<dh>\* ?)?(?<desc>[\w\W]*?(?=\r?\n[\t ]*\*?[\t ]*@|$)\r?\n?))/g,
 );
 
 const attrNameRegex = RegExp(
-    /^(alias|artwork|augments|author|borrows|callback|constant|constructs|default|event|exports|external|fires|function|getter|interface|keyword|kind|lends|license|listens|magic|member|memberof|memberof\!|mixes|mixin|module|name|namespace|package|param|property|requires|see|setter|this|tutorial|typedef|url|var|variation|version)$/,
+    /^(alias|artwork|augments|author|borrows|callback|constant|constructs|default|event|exports|external|fires|function|getter|interface|keyword|kind|lends|license|listens|magic|member|memberof|memberof\!|mixes|mixin|module|name|namespace|package|param|property|requires|see|setter|since|this|tutorial|typedef|url|var|variation|version)$/,
 );
 
 /** Create completions from "expected" attribute */

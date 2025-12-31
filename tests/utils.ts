@@ -129,6 +129,7 @@ export class MockTextDocument implements TextDocument {
     fileName: string;
     isUntitled: boolean;
     languageId: string;
+    encoding: string;
     version: number;
     isDirty: boolean;
     isClosed: boolean;
@@ -170,8 +171,8 @@ export class MockTextDocument implements TextDocument {
         let start = pos.character;
         let end = pos.character;
         let n = this.value.length;
-        while ((start >= 0) && iswalnum(this.value[start])) { start--; };
-        while ((end < n) && iswalnum(this.value[end])) { end++; };
+        while ((start >= 0) && iswalnum(this.value.charCodeAt(start))) { start--; };
+        while ((end < n) && iswalnum(this.value.charCodeAt(end))) { end++; };
         return new Range(0, start+1, 0, end);
     }
 }

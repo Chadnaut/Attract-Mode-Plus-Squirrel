@@ -2,6 +2,8 @@
 
 ## Quickstart
 
+- Install node [24.12.0](https://nodejs.org/en/download)
+  - Allow `npm.ps1` to run `Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned`
 - `npm i` install project packages
 - `F5` to launch extension `Run and Debug`
   - Starts the `dev` script, which builds the extension `dist` on-save
@@ -11,6 +13,11 @@
 - `npm install -g @vscode/vsce` install globally
   - `npm run package` to build `vsix` for deployment
 
+### Updates
+
+- `"to-fast-properties": "=3.0.1"` must remain at this version for prettier
+- `"@types/vscode": "=1.70.0"` must remain at this version for older vscode support
+
 ## Scripts
 
 - `npm run clean` - Delete the dist path
@@ -18,7 +25,7 @@
 - `npm run dev` - Build dist on-save
 - `npm run build` - Build dist
 - `npm run build:prod` - Build dist for production (minify)
-- `npm run build:meta` - Build dist with meta-data for analysis
+- `npm run build:meta` - Build dist with meta-data for [analysis](https://esbuild.github.io/analyze/)
 - `npm run test` - Run tests
 - `npm run test:watch` - Run tests on-save
 - `npm run coverage` - Run coverage

@@ -3,7 +3,7 @@
 <a href="https://code.visualstudio.com/download"><img alt="VSCode" src="https://img.shields.io/badge/VSCode-^1.70.0-blue"></a>
 <a href="http://www.squirrel-lang.org/doc/squirrel3.html"><img alt="Squirrel" src="https://img.shields.io/badge/Squirrel-3.0.7-blue"></a>
 <a href="https://github.com/mickelson/attract"><img alt="AM" src="https://img.shields.io/badge/Attract--Mode-2.7.0-blue"></a>
-<a href="https://github.com/oomek/attractplus"><img alt="AM+" src="https://img.shields.io/badge/Attract--Mode_Plus-3.1.0-blue"></a>
+<a href="https://github.com/oomek/attractplus"><img alt="AM+" src="https://img.shields.io/badge/Attract--Mode_Plus-3.2.0-blue"></a>
 
 A suite of support tools to enhance your AM+ development experience, built upon a custom Typescript conversion of the original Squirrel Lexer.
 
@@ -32,6 +32,7 @@ All standard language features are implemented to make coding in Squirrel simple
 - Linting - Inline error highlighting and Problems panel listings.
 - Code formatting - Prettier based formatting with bracket and spacing options.
 - DocBlocks - Integrated documentation displayed in IntelliSense popups.
+- Workspace - Load settings from a `.attractrc.json` file in your workspace path.
 
 ## Completions
 

@@ -4,9 +4,10 @@ import * as path from "path";
 import { SquirrelOutputChannel } from "../../src/utils/output";
 import { MockTextDocument } from "../utils";
 import { parseExtra as parse, dump, pos } from "../utils";
-import { formatUserConfig, getFormatInfo, setFormatTarget } from "../../src/utils/format";
+import { formatUserConfig, getAttrOrderNodeVals, getFormatInfo, setFormatTarget } from "../../src/utils/format";
 import { getBranchAtPos } from "../../src/utils/find";
 import { Hover, TextDocument, window } from "vscode";
+import { AST } from "../../src/ast";
 
 const visibleTextEditors = [];
 jest.replaceProperty(window, "visibleTextEditors", visibleTextEditors);
@@ -92,6 +93,31 @@ describe("Format", () => {
         setFormatTarget(t, branch);
         formatUserConfig();
         expect(replaceVal).toBe("0");
+    });
+
+    it("getAttrOrderNodeVals", () => {
+        const text = "class UserConfig { </ order=123 /> prop = 1 }";
+        const program = parse(text);
+        const branch = getBranchAtPos(program, pos(10)).slice(0, -1);
+        const n = getAttrOrderNodeVals(branch);
+        expect(n).toHaveLength(1);
+        expect((<AST.IntegerLiteral>n[0]).value).toBe(123);
+    });
+
+    it("getAttrOrderNodeVals, no order", () => {
+        const text = "class UserConfig { </ misc=123 /> prop = 1 }";
+        const program = parse(text);
+        const branch = getBranchAtPos(program, pos(10)).slice(0, -1);
+        const n = getAttrOrderNodeVals(branch);
+        expect(n).toHaveLength(0);
+    });
+
+    it("getAttrOrderNodeVals, no attr", () => {
+        const text = "class UserConfig { prop = 1 }";
+        const program = parse(text);
+        const branch = getBranchAtPos(program, pos(10)).slice(0, -1);
+        const n = getAttrOrderNodeVals(branch);
+        expect(n).toHaveLength(0);
     });
 
 });

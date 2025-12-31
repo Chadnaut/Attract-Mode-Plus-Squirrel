@@ -1,6 +1,6 @@
 import { describe, expect, it } from "@jest/globals";
 import { parseExtra as parse, dump, pos } from "../utils";
-import { getNodeCallIfCallee, getNodeDef, getNodeDefMap, getNodeMemberExpressionIfTail, getNodeVal, getNodeValMap, resolveNodeChild } from "../../src/utils/definition";
+import { getNodeCallIfCallee, getNodeDef, getNodeDefMap, getNodeMemberExpressionIfTail, getNodeVal, getNodeValMap, resolveNodeChild, setNodeDefMap } from "../../src/utils/definition";
 import { SQTree as qt } from "../../src/ast";
 import { getNodeAtPos, getBranchAtPos } from "../../src/utils/find";
 import { addBranchId } from "../../src/utils/identifier";
@@ -490,6 +490,12 @@ describe("Definition", () => {
         expect(def?.type).toBe("ReturnStatement");
     });
 
+    it("setNodeDefMap null", () => {
+        const n = qt.Identifier("");
+        setNodeDefMap(null, [n]);
+        expect(getNodeDefMap(null)).toBeUndefined();
+    });
+
     it("getNodeMemberExpressionIfTail", () => {
         expect(getNodeMemberExpressionIfTail([])).toHaveLength(0);
     });
@@ -556,6 +562,19 @@ describe("Definition", () => {
         const def = getNodeDef(n).at(-1);
         expect(def?.type).toBe("Identifier");
         expect(def?.range).toEqual([14, 16]);
+    });
+
+    it("Param return unknown", () => {
+        const program = parse("function bar(y) { function foo(x) { return y }; foo(1); }");
+        const n = getBranchAtPos(program, pos(54));
+        expect(getNodeDef(n).length).toBe(0);
+    });
+
+    it("Param return without param", () => {
+        const program = parse("function foo(x) { return x }; foo()");
+        const n = getBranchAtPos(program, pos(35));
+        const def = getNodeDef(n).at(-1);
+        expect(def.type).toBe("Identifier");
     });
 
     it("Param, methodDef if then return", () => {

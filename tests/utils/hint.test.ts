@@ -119,10 +119,30 @@ describe("Hint", () => {
         expect(hints[3].position.character).toBe(indent + 4);
     });
 
+    it("getInlayHints, no args", () => {
+        const program = parse('function foo() {}; foo()');
+        const hints = getInlayHints([program], lineLoc(0, 100));
+        expect(hints).toHaveLength(0);
+    });
+
+    it("getInlayHints, no callee", () => {
+        const program = parse('this.foo("1")');
+        const hints = getInlayHints([program], lineLoc(0, 100));
+        expect(hints).toHaveLength(0);
+    });
+
     it("getInlayHints, no params", () => {
         const program = parse('function foo() {}; foo("1")');
         const hints = getInlayHints([program], lineLoc(0, 100));
         expect(hints).toHaveLength(0);
+    });
+
+    it("getInlayHints, repeat", () => {
+        const program = parse('local foo = function(a) {}; foo(1)');
+        const hints = getInlayHints([program], lineLoc(0, 100));
+        expect(hints).toHaveLength(1);
+        const hints2 = getInlayHints([program], lineLoc(0, 100));
+        expect(hints2).toHaveLength(1);
     });
 
     it("getInlayHints, rest", () => {

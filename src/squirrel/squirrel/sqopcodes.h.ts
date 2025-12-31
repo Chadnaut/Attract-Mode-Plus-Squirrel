@@ -5,7 +5,7 @@ import { AST } from '../../ast';
 export const MAX_FUNC_STACKSIZE = 0xFF;
 export const MAX_LITERALS = 0x7FFFFFFF;
 
-export enum BW { // BitWiseOP
+export const enum BW { // BitWiseOP
 	AND = 0,
 	OR = 2,
 	XOR = 3,
@@ -14,7 +14,7 @@ export enum BW { // BitWiseOP
 	USHIFTR = 6,
 };
 
-export enum CMP { // CmpOP
+export const enum CMP { // CmpOP
 	G = 0,
 	GE = 2,
 	L = 3,
@@ -22,13 +22,13 @@ export enum CMP { // CmpOP
 	THREEW = 5
 };
 
-export enum NOT { // NewObjectType
+export const enum NOT { // NewObjectType
 	TABLE = 0,
 	ARRAY = 1,
 	CLASS = 2
 };
 
-export enum AAT { // AppendArrayType
+export const enum AAT { // AppendArrayType
 	STACK = 0,
 	LITERAL = 1,
 	INT = 2,
@@ -36,7 +36,7 @@ export enum AAT { // AppendArrayType
 	BOOL = 4
 };
 
-export enum _OP // SQOpcode #L39
+export const enum _OP // SQOpcode #L39
 {
     LINE=				0x00,
 	LOAD=				0x01,
@@ -101,60 +101,60 @@ export enum _OP // SQOpcode #L39
 	GETBASE=			0x3B,
 	CLOSE=				0x3C,
 
-    _RETURN = "_RETURN",
-    _YIELD = "_YIELD",
-    _BREAK_STATEMENT = "_BREAK_STATEMENT",
-    _CONTINUE_STATEMENT = "_CONTINUE_STATEMENT",
-    _WHILE_STATEMENT = "_WHILE_STATEMENT",
-    _DO_WHILE_STATEMENT = "_DO_WHILE_STATEMENT",
-    _THROW = "_THROW",
-    _ASSIGNMENT_EXPRESSION = "_ASSIGNMENT_EXPRESSION",
-    _CONDITIONAL_EXPRESSION = "_CONDITIONAL_EXPRESSION",
-    _LOGICAL_EXPRESSION = "_LOGICAL_EXPRESSION",
-    _CALL_EXPRESSION = "_CALL_EXPRESSION",
-    _ROOT = "_ROOT",
-    _DELETE = "_DELETE",
-    _UPDATE_EXPRESSION_PREFIX = "_UPDATE_EXPRESSION_PREFIX",
-    _UPDATE_EXPRESSION_SUFFIX = "_UPDATE_EXPRESSION_SUFFIX",
-    _BLOCK_STATEMENT = "_BLOCK_STATEMENT",
-    _THIS_EXPRESSION = "_THIS_EXPRESSION",
-    _BASE = "_BASE",
-    _MEMBER_EXPRESSION = "_MEMBER_EXPRESSION",
-    _ARRAY_EXPRESSION = "_ARRAY_EXPRESSION",
-    _ARRAY_ELEMENT = "_ARRAY_ELEMENT",
-    _OBJECT_EXPRESSION = "_OBJECT_EXPRESSION",
-    _PROPERTY = "_PROPERTY",
-    _CLASS_EXPRESSION = "_CLASS_EXPRESSION",
-    _CLASS_EXPRESSION_BODY = "_CLASS_EXPRESSION_BODY",
-    _METHOD_PROPERTY_DEFINITION = "_METHOD_PROPERTY_DEFINITION",
-    _DEFINITION_BODY = "_DEFINITION_BODY",
-    _FUNCTION_DECLARATION = "_FUNCTION_DECLARATION",
-    _FUNCTION_EXPRESSION = "_FUNCTION_EXPRESSION",
-    _LAMBDA_EXPRESSION = "_LAMBDA_EXPRESSION",
-    _MEMBER_PROPERTY = "_MEMBER_PROPERTY",
-    _IDENTIFIER = "_IDENTIFIER",
-    _INTEGER_LITERAL = "_INTEGER_LITERAL",
-    _FLOAT_LITERAL = "_FLOAT_LITERAL",
-    _STRING_LITERAL = "_STRING_LITERAL",
-    _NULL_LITERAL = "_NULL_LITERAL",
-    _BOOLEAN_LITERAL = "_BOOLEAN_LITERAL",
-    _SCALAR_LITERAL = "_SCALAR_LITERAL",
-    _UNDEFINED = "_UNDEFINED",
-    _EMPTY_STATEMENT = "_EMPTY_STATEMENT",
-    _PARENTHESIZED = "PARENTHESIZED",
-    _VARIABLE_DECLARATION = "_VARIABLE_DECLARATION",
-    _VARIABLE_DECLARATOR = "_VARIABLE_DECLARATOR",
-    _VARIABLE_DECLARATOR_NULL = "_VARIABLE_DECLARATOR_NULL",
-    _IF_STATEMENT = "_IF_STATEMENT",
-    _FOR_STATEMENT = "_FOR_STATEMENT",
-    _FOR_IN_STATEMENT = "_FOR_IN_STATEMENT",
-    _SWITCH_STATEMENT = "_SWITCH_STATEMENT",
-    _SWITCH_CASE = "_SWITCH_CASE",
-    _CLASS_DECLARATION = "_CLASS_DECLARATION",
-    _ENUM_DECLARATION = "_ENUM_DECLARATION",
-    _ENUM_MEMBER = "_ENUM_MEMBER",
-    _TRY_STATEMENT = "_TRY_STATEMENT",
-    _SEQUENCE_EXPRESSION = "_SEQUENCE_EXPRESSION",
+    _RETURN =                       0x64,
+    _YIELD =                        0x65,
+    _BREAK_STATEMENT =              0x66,
+    _CONTINUE_STATEMENT =           0x67,
+    _WHILE_STATEMENT =              0x68,
+    _DO_WHILE_STATEMENT =           0x69,
+    _THROW =                        0x6A,
+    _ASSIGNMENT_EXPRESSION =        0x6B,
+    _CONDITIONAL_EXPRESSION =       0x6C,
+    _LOGICAL_EXPRESSION =           0x6D,
+    _CALL_EXPRESSION =              0x6E,
+    _ROOT =                         0x6F,
+    _DELETE =                       0x70,
+    _UPDATE_EXPRESSION_PREFIX =     0x71,
+    _UPDATE_EXPRESSION_SUFFIX =     0x72,
+    _BLOCK_STATEMENT =              0x73,
+    _THIS_EXPRESSION =              0x74,
+    _BASE =                         0x75,
+    _MEMBER_EXPRESSION =            0x76,
+    _ARRAY_EXPRESSION =             0x77,
+    _ARRAY_ELEMENT =                0x78,
+    _OBJECT_EXPRESSION =            0x79,
+    _PROPERTY =                     0x7A,
+    _CLASS_EXPRESSION =             0x7B,
+    _CLASS_EXPRESSION_BODY =        0x7C,
+    _METHOD_PROPERTY_DEFINITION =   0x7D,
+    _DEFINITION_BODY =              0x7E,
+    _FUNCTION_DECLARATION =         0x7F,
+    _FUNCTION_EXPRESSION =          0x80,
+    _LAMBDA_EXPRESSION =            0x81,
+    _MEMBER_PROPERTY =              0x82,
+    _IDENTIFIER =                   0x83,
+    _INTEGER_LITERAL =              0x84,
+    _FLOAT_LITERAL =                0x85,
+    _STRING_LITERAL =               0x86,
+    _NULL_LITERAL =                 0x87,
+    _BOOLEAN_LITERAL =              0x88,
+    _SCALAR_LITERAL =               0x89,
+    _UNDEFINED =                    0x8A,
+    _EMPTY_STATEMENT =              0x8B,
+    _PARENTHESIZED =                0x8C,
+    _VARIABLE_DECLARATION =         0x8D,
+    _VARIABLE_DECLARATOR =          0x8E,
+    _VARIABLE_DECLARATOR_NULL =     0x8F,
+    _IF_STATEMENT =                 0x90,
+    _FOR_STATEMENT =                0x91,
+    _FOR_IN_STATEMENT =             0x92,
+    _SWITCH_STATEMENT =             0x93,
+    _SWITCH_CASE =                  0x94,
+    _CLASS_DECLARATION =            0x95,
+    _ENUM_DECLARATION =             0x96,
+    _ENUM_MEMBER =                  0x97,
+    _TRY_STATEMENT =                0x98,
+    _SEQUENCE_EXPRESSION =          0x99,
 }
 
 export type SQOpcode = _OP;

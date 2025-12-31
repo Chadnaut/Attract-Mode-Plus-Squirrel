@@ -645,6 +645,17 @@ describe("Signature", () => {
         expect(help.signatures[1].documentation['value']).toContain('version');
     });
 
+    it("getSignatureHelp, object overloads since", () => {
+        const text = "local foo = { bar = function(a){}, /** @since x */ bar = function(x, y) {} }; foo.bar(10);";
+        const program = parse(text);
+        const help = getSignatureHelp(text, program, pos(87));
+        expect(help.activeSignature).toBe(0);
+        expect(help.signatures).toHaveLength(2);
+        expect(help.signatures[0].parameters).toHaveLength(1);
+        expect(help.signatures[1].parameters).toHaveLength(2);
+        expect(help.signatures[1].documentation['value']).toContain('since');
+    });
+
     it("getSignatureHelp, object overloads version special", () => {
         const text = "local foo = { bar = function(a){}, /** @version 🔶x */ bar = function(x, y) {} }; foo.bar(10);";
         const program = parse(text);

@@ -94,7 +94,7 @@ export const attachMeta = (branch: AST.Node[], metaAttributes: DocAttr[][]) => {
 
     const nodeDef = getNodeDef(branch);
 
-    metaAttributes.forEach((attributes, index) => {
+    metaAttributes?.forEach((attributes, index) => {
         const propAttribute = attributes[0];
         const { name } = propAttribute;
         const type = getMetaType(attributes, nodeDef);
@@ -102,9 +102,10 @@ export const attachMeta = (branch: AST.Node[], metaAttributes: DocAttr[][]) => {
 
         // If meta exists it likely means both a setter and getter have been separately documented
         // - In this case, change the metaNode type to a `property`, which does both
+        // - Note that meta documentation does not get overwritten by new doc
         const metaProp = getMetaNode(classNode, name);
         if (metaProp) {
-            if (getNodeMeta(metaProp.at(-1)) !== type) {
+            if (getNodeMeta(getBranchId(metaProp)) !== type) {
                 setNodeMeta(getBranchId(metaProp), SquirrelType.PROPERTY);
                 updateNodeSignature(metaProp); // rebuild signature for property
             }

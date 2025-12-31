@@ -71,7 +71,12 @@ export const activate = (context: ExtensionContext) => {
 
     // AM+ completions
     const frontendNuts = [
+        path.join(constants.COMPLETIONS_PATH, "fe.const.nut"),
         path.join(constants.COMPLETIONS_PATH, "fe.extensions.nut"),
+        path.join(constants.COMPLETIONS_PATH, "fe.regexp2.nut"),
+        path.join(constants.COMPLETIONS_PATH, "fe.math.nut"),
+        path.join(constants.COMPLETIONS_PATH, "fe.ease.nut"),
+        path.join(constants.COMPLETIONS_PATH, "fe.vector.nut"),
         path.join(constants.COMPLETIONS_PATH, "fe.magictoken.nut"),
         path.join(constants.COMPLETIONS_PATH, "fe.input.keyboard.nut"),
         path.join(constants.COMPLETIONS_PATH, "fe.input.joystick.nut"),
@@ -79,7 +84,6 @@ export const activate = (context: ExtensionContext) => {
         path.join(constants.COMPLETIONS_PATH, "fe.input.touch.nut"),
         path.join(constants.COMPLETIONS_PATH, "fe.input.signal.nut"),
         path.join(constants.COMPLETIONS_PATH, "fe.class.Shader.nut"),
-        path.join(constants.COMPLETIONS_PATH, "fe.const.nut"),
         path.join(constants.COMPLETIONS_PATH, "fe.helpers.nut"),
         path.join(constants.COMPLETIONS_PATH, "fe.class.CurrentList.nut"),
         path.join(constants.COMPLETIONS_PATH, "fe.class.Display.nut"),
@@ -96,6 +100,7 @@ export const activate = (context: ExtensionContext) => {
         path.join(constants.COMPLETIONS_PATH, "fe.class.Surface.nut"),
         path.join(constants.COMPLETIONS_PATH, "fe.class.Text.nut"),
         path.join(constants.COMPLETIONS_PATH, "fe.snippet.nut"),
+        path.join(constants.COMPLETIONS_PATH, "fe.fs.nut"),
         path.join(constants.COMPLETIONS_PATH, "fe.nut"),
     ];
 

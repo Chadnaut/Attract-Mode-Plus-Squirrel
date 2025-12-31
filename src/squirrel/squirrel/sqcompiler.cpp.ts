@@ -3,13 +3,13 @@
 */
 import { _OP, AAT, BW, CMP, NEW_SLOT_ATTRIBUTES_FLAG, NEW_SLOT_COMPUTED_FLAG, NEW_SLOT_JSON_FLAG, NEW_SLOT_METHOD_FLAG, NEW_SLOT_STATIC_FLAG, NOT, SQOpcode } from './sqopcodes.h';
 import { OT, SQLEXREADFUNC, SQObject, SQUIRREL_EOB, TokenType } from '../include/squirrel.h';
-import { CompilerError, CompilerErrorFunc, SQCompilerStruct, TK, TK_VALUES } from './sqcompiler.h';
+import { CompilerError, CompilerErrorFunc, SQCompilerStruct, TK } from './sqcompiler.h';
 import { SQFuncState } from './sqfuncstate.cpp';
 import { SQLexer } from './sqlexer.cpp';
 import { SQVM, _ss } from './sqvm.cpp';
 import { _table } from './sqobject.h';
 import { AST } from '../../ast';
-
+import { _SC } from '../include/squirrel.h' with { type: 'macro' };
 
 
 
@@ -33,7 +33,7 @@ export type SQScope = {
     stacksize: number; nodestacksize: number;
 };
 class SQCompilerDefine extends SQCompilerStruct {
-    BEGIN_SCOPE = () => { this.__oldscope__ = Object.assign({}, this._scope); this._scopeNodeSize.push(this._fs._nodestack.length);
+    BEGIN_SCOPE = () => { this.__oldscope__ = {...this._scope}; this._scopeNodeSize.push(this._fs._nodestack.length);
                         this._scope.outers = this._fs._outers;
                         this._scope.stacksize = this._fs.GetStackSize(); }
 
@@ -104,7 +104,7 @@ export class SQCompiler extends SQCompilerDefine // #L72
             }
             else {
                 let etypename: string;
-                if (TK_VALUES.includes(<TK>tok)) {
+                if (tok > 255) {
                     switch(tok)
                     {
                     case TK.IDENTIFIER:
@@ -124,7 +124,7 @@ export class SQCompiler extends SQCompilerDefine // #L72
                     }
                     this.Error(`expected '${etypename}'`, this.LastLoc()); unexpected = true;
                 } else
-                this.Error(`expected '${tok}'`, this.LastLoc()); unexpected = true;
+                this.Error(`expected '${String.fromCharCode(tok)}'`, this.LastLoc()); unexpected = true;
             }
         }
         let ret: SQObject = { _type: OT.NULL, _unVal: 0 };
@@ -146,17 +146,17 @@ export class SQCompiler extends SQCompilerDefine // #L72
         /* this.Lex(); */ if (unexpected) { this.LexUnexpected(); } else { this.Lex(); }
         return ret;
     };
-    IsEndOfStatement = (): boolean => { return (this._lex._prevtoken == '\n' || this._token == SQUIRREL_EOB || this._token == '}' || this._token == ';');};
+    IsEndOfStatement = (): boolean => { return (this._lex._prevtoken == _SC('\n') || this._token == SQUIRREL_EOB || this._token == _SC('}') || this._token == _SC(';'));};
     OptionalSemicolon = (): void =>
     {
-        if (this._token == ';') { this.Lex(); return; }
+        if (this._token == _SC(';')) { this.Lex(); return; }
         if (!this.IsEndOfStatement()) {
             this.Error('end of statement expected (; or lf)', this.LastLoc());
         }
     };
     MoveIfCurrentTargetIsLocal = (): void => {
         let trg = this._fs.TopTarget();
-        if (this._fs.IsLocal(trg) || 1) {
+        if (this._fs.IsLocal(trg)) { // AMP previously forced this - why?
             trg = this._fs.PopTarget(); //no pops the target and move it
             this._fs.AddInstruction(_OP.MOVE, this._fs.PushTarget(), trg, 5);
         }
@@ -178,13 +178,13 @@ export class SQCompiler extends SQCompilerDefine // #L72
             this.InitLexLoc(); this.Lex();
             while (this._token != SQUIRREL_EOB) {
                 this.Statement();
-                if (this._lex._prevtoken != '}' && this._lex._prevtoken != ';') this.OptionalSemicolon();
+                if (this._lex._prevtoken != _SC('}') && this._lex._prevtoken != _SC(';')) this.OptionalSemicolon();
             }
             this._fs.SetStackSize(stacksize);
             this._fs.AddLineInfos(this._lex._currentline, this._lineinfo, true);
             this._fs.AddInstruction(_OP.RETURN, 0xFF);
             this._fs.SetStackSize(0);
-            o = Object.assign(o, this._fs.BuildProto());
+            Object.assign(o, this._fs.BuildProto());
 // #ifdef _DEBUG_DUMP
             // this._fs.Dump(_funcproto(o));
 // #endif
@@ -201,16 +201,16 @@ export class SQCompiler extends SQCompilerDefine // #L72
     };
     Statements = (): void =>
     {
-        while(this._token != '}' && this._token != TK.DEFAULT && this._token != TK.CASE) {
+        while(this._token != _SC('}') && this._token != TK.DEFAULT && this._token != TK.CASE) {
             this.Statement();
-            if(this._lex._prevtoken != '}' && this._lex._prevtoken != ';') this.OptionalSemicolon(); if (this._token == SQUIRREL_EOB) break;
+            if(this._lex._prevtoken != _SC('}') && this._lex._prevtoken != _SC(';')) this.OptionalSemicolon(); if (this._token == SQUIRREL_EOB) break;
         }
     }
     Statement = (closeframe: boolean = true): void =>
     {
         this._fs.AddLineInfos(this._lex._currentline, this._lineinfo); const i = this.LexIndex();
         switch (this._token) {
-            case ';':           this.Lex(); this._fs.AddInstruction(_OP._EMPTY_STATEMENT, this.LastLoc()); break;
+            case _SC(';'):           this.Lex(); this._fs.AddInstruction(_OP._EMPTY_STATEMENT, this.LastLoc()); break;
             case TK.IF:		    this.IfStatement();			break;
             case TK.WHILE:		this.WhileStatement();		break;
             case TK.DO:		    this.DoWhileStatement();	break;
@@ -273,11 +273,11 @@ export class SQCompiler extends SQCompilerDefine // #L72
             case TK.ENUM:
                 this.EnumStatement();
                 break;
-            case '{': {
+            case _SC('{'): {
                     this.BEGIN_SCOPE(); const s = this.CurLoc().start;
                     this.Lex();
                     this.Statements(); const e = this.CurLoc().end;
-                    this.Expect('}');
+                    this.Expect(_SC('}'));
                     if (closeframe) {
                         this.END_SCOPE();
                     }
@@ -298,7 +298,7 @@ export class SQCompiler extends SQCompilerDefine // #L72
                 {
                     const s = this.CurLoc().start; this.Lex(); let loc = this.CurLoc();
                     const id = this.Expect(TK.IDENTIFIER); this._fs.AddInstruction(_OP._IDENTIFIER, 0, id, loc);
-                    this.Expect('='); loc = this.CurLoc(); const e = this.CurLoc().end;
+                    this.Expect(_SC('=')); loc = this.CurLoc(); const e = this.CurLoc().end;
                     const val = this.ExpectScalar(); this._fs.AddInstruction(_OP._SCALAR_LITERAL, 0, val, loc); this._fs.AddInstruction(_OP._VARIABLE_DECLARATOR); this._fs.AddInstruction(_OP._VARIABLE_DECLARATION, 1, 1, this.Loc(s, e));
                     this.OptionalSemicolon();
                     const enums = _ss(this._vm)._consts;
@@ -364,17 +364,17 @@ export class SQCompiler extends SQCompilerDefine // #L72
     }
     CommaExpr = () =>
     {
-        for (this.Expression(false); this._token == ','; this._fs.PopTarget(), this.Lex(), this.CommaExpr(), this._fs.AddInstruction(_OP._SEQUENCE_EXPRESSION));
+        for (this.Expression(false); this._token == _SC(','); this._fs.PopTarget(), this.Lex(), this.CommaExpr(), this._fs.AddInstruction(_OP._SEQUENCE_EXPRESSION));
     }
     Expression = (required = true) =>
     {
-        const es:SQExpState = Object.assign({}, this._es);
+        const es:SQExpState = {...this._es};
         this._es.etype = EXPR;
         this._es.epos = -1;
         this._es.donot_get = false; const i = this._fs.StackSize();
         this.LogicalOrExp(); if (required && this._fs.StackSize() === i) { this.AddUndefined(); }
         switch(this._token)  {
-            case '=':
+            case _SC('='):
             case TK.NEWSLOT:
             case TK.MINUSEQ:
             case TK.PLUSEQ:
@@ -396,7 +396,7 @@ export class SQCompiler extends SQCompilerDefine // #L72
                     else //if _derefstate != DEREF_NO_DEREF && DEREF_FIELD so is the index of a local
                         this.Error("can't 'create' a local slot", this._fs.NodeAt(-2)?.loc);
                     break;
-                case '=': //ASSIGN
+                case _SC('='): //ASSIGN
                     switch(ds) {
                         case LOCAL:
                             {
@@ -427,7 +427,7 @@ export class SQCompiler extends SQCompilerDefine // #L72
                 }
                 }
                 break;
-            case '?': {
+            case _SC('?'): {
                 this.Lex();
                 this._fs.AddInstruction(_OP.JZ, this._fs.PopTarget());
                 const jzpos = this._fs.GetCurrentPos();
@@ -437,11 +437,11 @@ export class SQCompiler extends SQCompilerDefine // #L72
                 if (trg != first_exp) this._fs.AddInstruction(_OP.MOVE, trg, first_exp);
                 const endfirstexp = this._fs.GetCurrentPos();
                 this._fs.AddInstruction(_OP.JMP, 0, 0);
-                this.Expect(':');
+                this.Expect(_SC(':'));
                 const jmppos = this._fs.GetCurrentPos();
                 this.Expression();
                 const second_exp = this._fs.PopTarget();
-                if (/*trg != second_exp*/ true) this._fs.AddInstruction(_OP._CONDITIONAL_EXPRESSION, trg, second_exp);
+                /*if (trg != second_exp)*/ this._fs.AddInstruction(_OP._CONDITIONAL_EXPRESSION, trg, second_exp);
                 this._fs.SetIntructionParam(jmppos, 1, this._fs.GetCurrentPos() - jmppos);
                 this._fs.SetIntructionParam(jzpos, 1, endfirstexp - jzpos + 1);
                 this._fs.SnoozeOpt();
@@ -452,7 +452,7 @@ export class SQCompiler extends SQCompilerDefine // #L72
     }
 	INVOKE_EXP = (f: () => void): void =>
 	{
-		const es = Object.assign({}, this._es);
+		const es = {...this._es};
 		this._es.etype     = EXPR;
 		this._es.epos      = -1;
 		this._es.donot_get = false;
@@ -510,21 +510,21 @@ export class SQCompiler extends SQCompilerDefine // #L72
     BitwiseOrExp = (): void =>
     {
         this.BitwiseXorExp();
-        for(;;) if(this._token == '|')
+        for(;;) if(this._token == _SC('|'))
         {this.BIN_EXP(_OP.BITW, this.BitwiseXorExp.bind(this), BW.OR);
         }else return;
     }
     BitwiseXorExp = (): void =>
     {
         this.BitwiseAndExp();
-        for(;;) if(this._token == '^')
+        for(;;) if(this._token == _SC('^'))
         {this.BIN_EXP(_OP.BITW, this.BitwiseAndExp.bind(this), BW.XOR);
         }else return;
     }
     BitwiseAndExp = (): void =>
     {
         this.EqExp();
-        for(;;) if(this._token == '&')
+        for(;;) if(this._token == _SC('&'))
         {this.BIN_EXP(_OP.BITW, this.EqExp.bind(this), BW.AND);
         }else return;
     }
@@ -542,8 +542,8 @@ export class SQCompiler extends SQCompilerDefine // #L72
     {
         this.ShiftExp();
         for(;;) switch(this._token) {
-        case '>': this.BIN_EXP(_OP.CMP, this.ShiftExp.bind(this), CMP.G); break;
-        case '<': this.BIN_EXP(_OP.CMP, this.ShiftExp.bind(this), CMP.L); break;
+        case _SC('>'): this.BIN_EXP(_OP.CMP, this.ShiftExp.bind(this), CMP.G); break;
+        case _SC('<'): this.BIN_EXP(_OP.CMP, this.ShiftExp.bind(this), CMP.L); break;
         case TK.GE: this.BIN_EXP(_OP.CMP, this.ShiftExp.bind(this), CMP.GE); break;
         case TK.LE: this.BIN_EXP(_OP.CMP, this.ShiftExp.bind(this), CMP.LE); break;
         case TK.IN: this.BIN_EXP(_OP.EXISTS, this.ShiftExp.bind(this)); break;
@@ -564,11 +564,11 @@ export class SQCompiler extends SQCompilerDefine // #L72
     ChooseArithOpByToken = (tok: TokenType): SQOpcode =>
     {
         switch(tok) {
-            case TK.PLUSEQ: case '+': return _OP.ADD;
-            case TK.MINUSEQ: case '-': return _OP.SUB;
-            case TK.MULEQ: case '*': return _OP.MUL;
-            case TK.DIVEQ: case '/': return _OP.DIV;
-            case TK.MODEQ: case '%': return _OP.MOD;
+            case TK.PLUSEQ: case _SC('+'): return _OP.ADD;
+            case TK.MINUSEQ: case _SC('-'): return _OP.SUB;
+            case TK.MULEQ: case _SC('*'): return _OP.MUL;
+            case TK.DIVEQ: case _SC('/'): return _OP.DIV;
+            case TK.MODEQ: case _SC('%'): return _OP.MOD;
             // default: this.assert(0, 'invalid opcode'); // unreachable
         }
         // return _OP.ADD; // unreachable
@@ -591,7 +591,7 @@ export class SQCompiler extends SQCompilerDefine // #L72
     {
         this.MultExp();
         for(;;) switch(this._token) {
-        case '+': case '-':
+        case _SC('+'): case _SC('-'):
             this.BIN_EXP(this.ChooseArithOpByToken(this._token), this.MultExp.bind(this)); break;
         default: return;
         }
@@ -601,7 +601,7 @@ export class SQCompiler extends SQCompilerDefine // #L72
     {
         this.PrefixedExpr();
         for(;;) switch(this._token) {
-        case '*': case '/': case '%':
+        case _SC('*'): case _SC('/'): case _SC('%'):
             this.BIN_EXP(this.ChooseArithOpByToken(this._token), this.PrefixedExpr.bind(this)); break;
         default: return;
         }
@@ -612,7 +612,7 @@ export class SQCompiler extends SQCompilerDefine // #L72
         let pos = this.Factor();
         for(;;) {
             switch(this._token) {
-            case '.':
+            case _SC('.'):
                 pos = -1;
                 this.Lex();
 
@@ -630,9 +630,9 @@ export class SQCompiler extends SQCompilerDefine // #L72
                     this._es.etype = OBJECT;
                 }
                 break;
-            case '[':
-                if (this._lex._prevtoken == '\n') this.Error("cannot brake deref/or comma needed after [exp]=exp slot declaration", this.LastLoc());
-                const s = this.CurLoc().start; this.Lex(); this.Expression(); const e = this.CurLoc().end; this.Expect(']'); this._fs.AddInstruction(_OP._MEMBER_EXPRESSION, 1, this.Loc(s, e));
+            case _SC('['):
+                if (this._lex._prevtoken == _SC('\n')) this.Error("cannot brake deref/or comma needed after [exp]=exp slot declaration", this.LastLoc());
+                const s = this.CurLoc().start; this.Lex(); this.Expression(); const e = this.CurLoc().end; this.Expect(_SC(']')); this._fs.AddInstruction(_OP._MEMBER_EXPRESSION, 1, this.Loc(s, e));
                 pos = -1;
                 if(this._es.etype==BASE) {
                     this.Emit2ArgsOP(_OP.GET);
@@ -677,7 +677,7 @@ export class SQCompiler extends SQCompilerDefine // #L72
                 }
                 return;
                 // break;
-            case '(':
+            case _SC('('):
                 switch (this._es.etype) {
                     case OBJECT: {
                         const key     = this._fs.PopTarget();  /* location of the key */
@@ -709,7 +709,7 @@ export class SQCompiler extends SQCompilerDefine // #L72
     Factor = (): number => // #L709
     {
         this._es.etype = EXPR;
-        switch(this._token as unknown)
+        switch(this._token)
         {
         case TK.STRING_LITERAL:
 			this._fs.AddInstruction(_OP._STRING_LITERAL, this._fs.PushTarget(), this._fs.GetConstant(this._fs.CreateString(this._lex._svalue, this._lex._longstr)), this.CurLoc());
@@ -761,7 +761,7 @@ export class SQCompiler extends SQCompilerDefine // #L72
                     let constval: SQObject = { _type: OT.NULL, _unVal: 0 };
                     let constid: SQObject;
                     if (constant._type == OT.TABLE) {
-                        this.Expect('.');
+                        this.Expect(_SC('.'));
                         constid = this.Expect(TK.IDENTIFIER); this._fs.AddInstruction(_OP._IDENTIFIER, 0, constid, this.LastLoc()); this._fs.AddInstruction(_OP._MEMBER_EXPRESSION, 0, this.LastLoc());
 						if(!_table(constant).Get(constid, constval)) {
                             constval = { _type: OT.NULL, _unVal: 0 }
@@ -802,7 +802,7 @@ export class SQCompiler extends SQCompilerDefine // #L72
         case TK.DOUBLE_COLON:  // "::"
 			this._fs.AddInstruction(_OP._ROOT, this._fs.PushTarget(), this.CurLoc());
             this._es.etype = OBJECT;
-            this._token = '.'; /* hack: drop into PrefixExpr, case '.'*/
+            this._token = _SC('.'); /* hack: drop into PrefixExpr, case _SC('.')*/
 			this._es.epos = -1;
             return this._es.epos;
             // break;
@@ -810,19 +810,19 @@ export class SQCompiler extends SQCompilerDefine // #L72
             this._fs.AddInstruction(_OP._NULL_LITERAL, this._fs.PushTarget(), 1, this.CurLoc());
             this.Lex();
             break;
-        case TK.INTEGER: this.EmitLoadConstInt(this._lex._nvalue, this._lex._longstr, -1, 1); this.Lex(); break;
-        case TK.FLOAT: this.EmitLoadConstFloat(this._lex._fvalue, this._lex._longstr, -1, 1); this.Lex(); break;
+        case TK.INTEGER: this.EmitLoadConstInt(this._lex._nvalue, this._lex._longstr, -1); this.Lex(); break;
+        case TK.FLOAT: this.EmitLoadConstFloat(this._lex._fvalue, this._lex._longstr, -1); this.Lex(); break;
         case TK.TRUE: case TK.FALSE:
             this._fs.AddInstruction(_OP._BOOLEAN_LITERAL, this._fs.PushTarget(), this._token == TK.TRUE ? 1 : 0, this.CurLoc());
             this.Lex();
             break;
-        case '[': {
+        case _SC('['): {
                 const s = this.CurLoc().start; this._fs.AddInstruction(_OP._ARRAY_EXPRESSION, this._fs.PushTarget(), 0, 0, NOT.ARRAY, this.CurLoc());
                 const apos = this._fs.GetCurrentPos(); let key = 0;
                 this.Lex();
-                while(this._token != ']') { const i = this.LexIndex();
+                while(this._token != _SC(']')) { const i = this.LexIndex();
                     this.Expression();
-                    if(this._token == ',') this.Lex();
+                    if(this._token == _SC(',')) this.Lex();
                     const val = this._fs.PopTarget();
                     const array = this._fs.TopTarget();
                     this._fs.AddInstruction(_OP._ARRAY_ELEMENT, array, val, AAT.STACK);
@@ -832,25 +832,25 @@ export class SQCompiler extends SQCompilerDefine // #L72
                 this.Lex(); this._fs.AddInstruction(_OP._DEFINITION_BODY, this.Loc(s, e));
             }
             break;
-        case '{':
+        case _SC('{'):
 			this._fs.AddInstruction(_OP._OBJECT_EXPRESSION, this._fs.PushTarget(), 0, NOT.TABLE, this.CurLoc());
-            this.Lex(); this.ParseTableOrClass(',', '}');
+            this.Lex(); this.ParseTableOrClass(_SC(','), _SC('}'));
             break;
         case TK.FUNCTION: this.FunctionExp(this._token); break;
-        case '@': this.FunctionExp(this._token, true); break;
+        case _SC('@'): this.FunctionExp(this._token, true); break;
         case TK.CLASS: this.Lex(); this.ClassExp(); break;
-        case '-': { const loc = this.CurLoc();
+        case _SC('-'): { const loc = this.CurLoc();
             this.Lex();
             switch (this._token) {
-            case TK.INTEGER: { this.EmitLoadConstInt(this._lex._nvalue, this._lex._longstr, -1, 1); this.Lex(); this._fs.AddInstruction(_OP.NEG, 0, 0, loc); break; }
-            case TK.FLOAT: { this.EmitLoadConstFloat(this._lex._fvalue, this._lex._longstr, -1, 1); this.Lex(); this._fs.AddInstruction(_OP.NEG, 0, 0, loc); break; }
+            case TK.INTEGER: { this.EmitLoadConstInt(this._lex._nvalue, this._lex._longstr, -1); this.Lex(); this._fs.AddInstruction(_OP.NEG, 0, 0, loc); break; }
+            case TK.FLOAT: { this.EmitLoadConstFloat(this._lex._fvalue, this._lex._longstr, -1); this.Lex(); this._fs.AddInstruction(_OP.NEG, 0, 0, loc); break; }
             default: this.UnaryOP(_OP.NEG);
             }
             break; }
-        case '!': this.Lex(); this.UnaryOP(_OP.NOT); break;
-        case '~': { const loc = this.CurLoc();
+        case _SC('!'): this.Lex(); this.UnaryOP(_OP.NOT); break;
+        case _SC('~'): { const loc = this.CurLoc();
             this.Lex();
-            if (this._token == TK.INTEGER) { this.EmitLoadConstInt(this._lex._nvalue, this._lex._longstr, -1, 1); this.Lex(); this._fs.AddInstruction(_OP.BWNOT, 0, 0, loc); break; }
+            if (this._token == TK.INTEGER) { this.EmitLoadConstInt(this._lex._nvalue, this._lex._longstr, -1); this.Lex(); this._fs.AddInstruction(_OP.BWNOT, 0, 0, loc); break; }
             this.UnaryOP(_OP.BWNOT);
             break; }
         case TK.TYPEOF: this.Lex(); this.UnaryOP(_OP.TYPEOF); break;
@@ -859,32 +859,32 @@ export class SQCompiler extends SQCompilerDefine // #L72
         case TK.MINUSMINUS:
         case TK.PLUSPLUS: this.PrefixIncDec(this._token); break;
         case TK.DELETE: this.DeleteExpr(); break;
-        case '(': { const s = this.CurLoc().start; this.Lex(); this.CommaExpr(); const e = this.CurLoc().end; this.Expect(')'); this._fs.AddInstruction(_OP._PARENTHESIZED, this.Loc(s, e)); }
+        case _SC('('): { const s = this.CurLoc().start; this.Lex(); this.CommaExpr(); const e = this.CurLoc().end; this.Expect(_SC(')')); this._fs.AddInstruction(_OP._PARENTHESIZED, this.Loc(s, e)); }
             break;
         default: this.Error("expression expected");
         }
         return -1;
     }
-    EmitLoadConstInt = (value: number, raw: string, target: number, add?: number): void =>
+    EmitLoadConstInt = (value: number, raw: string, target: number): void =>
     {
         if(target < 0) {
-            target = this._fs.PushTarget(); if (add) this._fs.AddInstruction(_OP._INTEGER_LITERAL, 0, { _type: OT.INTEGER, _unVal: value, _rawVal: raw }, this.CurLoc());
+            target = this._fs.PushTarget(); this._fs.AddInstruction(_OP._INTEGER_LITERAL, 0, { _type: OT.INTEGER, _unVal: value, _rawVal: raw }, this.CurLoc());
         }
-        if (true) { // (value & (~(0xFFFFFFFF))) == 0) { //does it fit in 32 bits?
+        // if ((value & (~(0xFFFFFFFF))) == 0) { //does it fit in 32 bits?
             this._fs.AddInstruction(_OP.LOADINT, target, value);
-        }
+        // }
         // else { // unreachable since we dont check sizes
         //     this._fs.AddInstruction(_OP.LOAD, target, this._fs.GetNumericConstant(value));
         // }
     }
-    EmitLoadConstFloat = (value: number, raw: string, target: number, add?: number): void =>
+    EmitLoadConstFloat = (value: number, raw: string, target: number): void =>
     {
         if(target < 0) {
-            target = this._fs.PushTarget(); if (add) this._fs.AddInstruction(_OP._FLOAT_LITERAL, 0, { _type: OT.FLOAT, _unVal: value, _rawVal: raw }, this.CurLoc());
+            target = this._fs.PushTarget(); this._fs.AddInstruction(_OP._FLOAT_LITERAL, 0, { _type: OT.FLOAT, _unVal: value, _rawVal: raw }, this.CurLoc());
         }
-        if (true) { // sizeof(SQFloat) == sizeof(SQInt32)) {
+        // if (sizeof(SQFloat) == sizeof(SQInt32)) {
             this._fs.AddInstruction(_OP.LOADFLOAT, target, value);
-        }
+        // }
         // else { // unreachable since we dont check sizes
         //     this._fs.AddInstruction(_OP.LOAD, target, this._fs.GetNumericConstantF(value));
         // }
@@ -898,22 +898,22 @@ export class SQCompiler extends SQCompilerDefine // #L72
     NeedGet = (): boolean =>
     {
         switch(this._token) {
-        case '=': case '(': case TK.NEWSLOT: case TK.MODEQ: case TK.MULEQ:
+        case _SC('='): case _SC('('): case TK.NEWSLOT: case TK.MODEQ: case TK.MULEQ:
         case TK.DIVEQ: case TK.MINUSEQ: case TK.PLUSEQ: case TK.PLUSPLUS: case TK.MINUSMINUS:
             return false;
         }
-        return (!this._es.donot_get || (this._es.donot_get && (this._token == '.' || this._token == '[')));
+        return (!this._es.donot_get || (this._es.donot_get && (this._token == _SC('.') || this._token == _SC('['))));
     }
     FunctionCallArgs = () =>
     {
         let nargs = 1; const s = this.LastLoc().start; //this
-        while (this._token != ')') { const i = this.LexIndex();
+        while (this._token != _SC(')')) { const i = this.LexIndex();
             this.Expression();
             this.MoveIfCurrentTargetIsLocal();
             nargs++;
-            if(this._token == ','){
+            if(this._token == _SC(',')){
                 this.Lex();
-                if ((this._token as unknown) == ')') { this.Error("expression expected, found ')'"); this.AddUndefined(); nargs++; }
+                if (this._token == _SC(')')) { this.Error("expression expected, found ')'"); this.AddUndefined(); nargs++; }
             } if (this.LexOrError(i, "expected ')'")) break;
         } const e = this.CurLoc().end;
         this.Lex();
@@ -922,17 +922,17 @@ export class SQCompiler extends SQCompilerDefine // #L72
         const closure = this._fs.PopTarget();
         this._fs.AddInstruction(_OP._CALL_EXPRESSION, this._fs.PushTarget(), closure, stackbase, nargs, this.Loc(s, e));
     }
-    ParseTableOrClass = (separator: string, terminator: string): void =>
+    ParseTableOrClass = (separator: TokenType, terminator: TokenType): void =>
     {
         const tpos = this._fs.GetCurrentPos(); let nkeys = 0; const s = this.LastLoc().start;
         while(this._token != terminator) { const i = this.LexIndex();
             let hasattrs = false; let computed = false; let loc;
             let isstatic = false; let json = false; let method = false;
             //check if is an attribute
-            if(separator == ';') {
+            if(separator == _SC(';')) {
                 if(this._token == TK.ATTR_OPEN) {
                     this._fs.AddInstruction(_OP._OBJECT_EXPRESSION, this._fs.PushTarget(), 1, NOT.TABLE, this.CurLoc()); this.Lex();
-                    this.ParseTableOrClass(',', TK.ATTR_CLOSE);
+                    this.ParseTableOrClass(_SC(','), TK.ATTR_CLOSE);
                     hasattrs = true;
                 }
                 if(this._token == TK.STATIC) {
@@ -946,25 +946,25 @@ export class SQCompiler extends SQCompilerDefine // #L72
                     let tk = this._token; let floc; method = true; if (tk == TK.CONSTRUCTOR) floc = this.CurLoc();
                     this.Lex(); if (tk == TK.FUNCTION) floc = this.CurLoc();
                     const id: SQObject = (tk == TK.FUNCTION) ? this.Expect(TK.IDENTIFIER) : this._fs.CreateString("constructor"); const nloc = this.CurLoc();
-                    this.Expect('(');
+                    this.Expect(_SC('('));
                     this._fs.AddInstruction(_OP._IDENTIFIER, this._fs.PushTarget(), this._fs.GetConstant(id), floc);
                     this.CreateFunction(id);
                     this._fs.AddInstruction(_OP._FUNCTION_EXPRESSION, this._fs.PushTarget(), this._fs._functions.length - 1, 0, nloc);
                     }
                     break;
-                case '[':
-                    this.Lex(); this.CommaExpr(); this.Expect(']');
-                    this.Expect('='); this.Expression(); computed = true;
+                case _SC('['):
+                    this.Lex(); this.CommaExpr(); this.Expect(_SC(']'));
+                    this.Expect(_SC('=')); this.Expression(); computed = true;
                     break;
                 case TK.STRING_LITERAL: //JSON
-                    if(separator == ',') { //only works for tables
+                    if(separator == _SC(',')) { //only works for tables
                         const sloc = this.CurLoc(); this._fs.AddInstruction(_OP._STRING_LITERAL, this._fs.PushTarget(), this._fs.GetConstant(this.Expect(TK.STRING_LITERAL)), sloc); // Expect() === case STRING_LITERAL
-                        this.Expect(':'); this.Expression(); json = true;
+                        this.Expect(_SC(':')); this.Expression(); json = true;
                         break;
                     }
                 default: const eloc = this.CurLoc();
                     this._fs.AddInstruction(_OP._IDENTIFIER, this._fs.PushTarget(), this._fs.GetConstant(this.Expect(TK.IDENTIFIER)), eloc);
-                    this.Expect('='); this.Expression();
+                    this.Expect(_SC('=')); this.Expression();
             }
             if (this._token == separator) this.Lex();//optional comma/semicolon
             nkeys++;
@@ -974,14 +974,14 @@ export class SQCompiler extends SQCompilerDefine // #L72
             this.assert((hasattrs && (attrs == key-1)) || !hasattrs, 'invalid attribute location');
             const flags = (hasattrs ? NEW_SLOT_ATTRIBUTES_FLAG : 0) | (isstatic ? NEW_SLOT_STATIC_FLAG : 0) | (computed ? NEW_SLOT_COMPUTED_FLAG : 0) | (json ? NEW_SLOT_JSON_FLAG : 0) | (method ? NEW_SLOT_METHOD_FLAG : 0);
             const table = this._fs.TopTarget(); //<<BECAUSE OF THIS NO COMMON EMIT FUNC IS POSSIBLE
-            if(separator == ',') { //hack recognizes a table from the separator
+            if(separator == _SC(',')) { //hack recognizes a table from the separator
                 this._fs.AddInstruction(_OP._PROPERTY, flags /*0xFF*/, table, val, loc);
             }
             else {
                 this._fs.AddInstruction(_OP._METHOD_PROPERTY_DEFINITION, flags, table, key, val, loc); //this for classes only as it invokes _newmember
-            } if (this.LexOrError(i, `expected '${terminator == TK.ATTR_CLOSE ? '/>' : terminator}'`)) break;
+            } if (this.LexOrError(i, `expected '${terminator == TK.ATTR_CLOSE ? '/>' : '}'}'`)) break;
         }
-        if(separator == ',') //hack recognizes a table from the separator
+        if(separator == _SC(',')) //hack recognizes a table from the separator
 			this._fs.SetIntructionParam(tpos, 1, nkeys);
         const e = this.CurLoc().end; this.Lex(); this._fs.AddInstruction(_OP._DEFINITION_BODY, this.Loc(s, e));
     };
@@ -992,7 +992,7 @@ export class SQCompiler extends SQCompilerDefine // #L72
         if (this._token == TK.FUNCTION) {
             this.Lex(); const loc = this.CurLoc();
             varname = this.Expect(TK.IDENTIFIER); this._fs.AddInstruction(_OP._IDENTIFIER, 0, varname, loc);
-            this.Expect('(');
+            this.Expect(_SC('('));
             this.CreateFunction(varname, false);
             this._fs.AddInstruction(_OP._FUNCTION_DECLARATION, this._fs.PushTarget(), this._fs._functions.length - 1, 0, 1, dloc);
             this._fs.PopTarget();
@@ -1002,32 +1002,32 @@ export class SQCompiler extends SQCompilerDefine // #L72
 
         do { const loc = this.CurLoc();
             varname = this.Expect(TK.IDENTIFIER); this._fs.AddInstruction(_OP._IDENTIFIER, 0, varname, loc);
-            if (this._token == '=') {
+            if (this._token == _SC('=')) {
                 this.Lex(); this.Expression();
                 const src = this._fs.PopTarget();
                 const dest = this._fs.PushTarget();
-                if (dest != src || 1) this._fs.AddInstruction(_OP._VARIABLE_DECLARATOR, dest, src);
+                /*if (dest != src)*/ this._fs.AddInstruction(_OP._VARIABLE_DECLARATOR, dest, src);
             } else {
                 this._fs.AddInstruction(_OP._VARIABLE_DECLARATOR_NULL, this._fs.PushTarget(), 1);
             }
             nargs++;
 			this._fs.PopTarget();
             this._fs.PushLocalVariable(varname);
-            if (this._token == ',') this.Lex(); else break;
+            if (this._token == _SC(',')) this.Lex(); else break;
         } while (1); this._fs.AddInstruction(_OP._VARIABLE_DECLARATION, 0, nargs, dloc);
     };
     IfStatement = (): void =>
     {
         let jmppos: number;
         let haselse = false; const loc = this.CurLoc();
-        this.Lex(); this.Expect('('); this.CommaExpr(); this.Expect(')');
+        this.Lex(); this.Expect(_SC('(')); this.CommaExpr(); this.Expect(_SC(')'));
         this._fs.AddInstruction(_OP.JZ, this._fs.PopTarget());
         const jnepos = this._fs.GetCurrentPos();
         this.BEGIN_SCOPE();
 
         this.Statement();
         //
-        if(this._token != '}' && this._token != TK.ELSE) this.OptionalSemicolon();
+        if(this._token != _SC('}') && this._token != TK.ELSE) this.OptionalSemicolon();
 
         this.END_SCOPE();
         const endifblock = this._fs.GetCurrentPos();
@@ -1037,7 +1037,7 @@ export class SQCompiler extends SQCompilerDefine // #L72
             this._fs.AddInstruction(_OP.JMP);
             jmppos = this._fs.GetCurrentPos();
             this.Lex();
-            this.Statement(); if (this._lex._prevtoken != '}') this.OptionalSemicolon();
+            this.Statement(); if (this._lex._prevtoken != _SC('}')) this.OptionalSemicolon();
             this.END_SCOPE();
             this._fs.SetIntructionParam(jmppos, 1, this._fs.GetCurrentPos() - jmppos);
         }
@@ -1047,7 +1047,7 @@ export class SQCompiler extends SQCompilerDefine // #L72
     {
         let jzpos: number, jmppos: number;
         jmppos = this._fs.GetCurrentPos(); const loc = this.CurLoc();
-        this.Lex(); this.Expect('('); this.CommaExpr(); this.Expect(')');
+        this.Lex(); this.Expect(_SC('(')); this.CommaExpr(); this.Expect(_SC(')'));
 
         this.BEGIN_BREAKBLE_BLOCK();
         this._fs.AddInstruction(_OP.JZ, this._fs.PopTarget());
@@ -1072,7 +1072,7 @@ export class SQCompiler extends SQCompilerDefine // #L72
         this.END_SCOPE();
         this.Expect(TK.WHILE);
         const continuetrg = this._fs.GetCurrentPos();
-        this.Expect('('); this.CommaExpr(); const e = this.CurLoc().end; this.Expect(')');
+        this.Expect(_SC('(')); this.CommaExpr(); const e = this.CurLoc().end; this.Expect(_SC(')'));
         this._fs.AddInstruction(_OP.JZ, this._fs.PopTarget(), 1);
         this._fs.AddInstruction(_OP._DO_WHILE_STATEMENT, 0, jmptrg - this._fs.GetCurrentPos() - 1, this.Loc(s, e));
         this.END_BREAKBLE_BLOCK(continuetrg);
@@ -1081,25 +1081,25 @@ export class SQCompiler extends SQCompilerDefine // #L72
     {   const loc = this.CurLoc();
         this.Lex(); let hasinit = false, hastest = false, hasupdate = false;
         this.BEGIN_SCOPE();
-        this.Expect('(');
+        this.Expect(_SC('('));
         if(this._token == TK.LOCAL) { this.LocalDeclStatement(); hasinit = true; }
-        else if(this._token != ';'){
+        else if(this._token != _SC(';')){
             this.CommaExpr(); hasinit = true;
             this._fs.PopTarget();
         }
-        this.Expect(';');
+        this.Expect(_SC(';'));
         this._fs.SnoozeOpt();
         const jmppos = this._fs.GetCurrentPos();
         let jzpos = -1;
-        if(this._token != ';') { this.CommaExpr(); this._fs.AddInstruction(_OP.JZ, this._fs.PopTarget()); jzpos = this._fs.GetCurrentPos(); hastest = true; }
-        this.Expect(';');
+        if(this._token != _SC(';')) { this.CommaExpr(); this._fs.AddInstruction(_OP.JZ, this._fs.PopTarget()); jzpos = this._fs.GetCurrentPos(); hastest = true; }
+        this.Expect(_SC(';'));
         this._fs.SnoozeOpt();
         const expstart = this._fs.GetCurrentPos() + 1;
-        if(this._token != ')') {
+        if(this._token != _SC(')')) {
             this.CommaExpr(); hasupdate = true;
             this._fs.PopTarget();
         }
-        this.Expect(')');
+        this.Expect(_SC(')'));
         this._fs.SnoozeOpt();
         const expend = this._fs.GetCurrentPos();
         const expsize = (expend - expstart) + 1;
@@ -1125,8 +1125,8 @@ export class SQCompiler extends SQCompilerDefine // #L72
     ForEachStatement = (): void =>
     {   const loc = this.CurLoc();
         let idxname: SQObject, valname: SQObject, hasindex = 0;
-        this.Lex(); this.Expect('('); const iloc = this.CurLoc(); valname = this.Expect(TK.IDENTIFIER); this._fs.AddInstruction(_OP._IDENTIFIER, 0, valname, iloc);
-        if (this._token == ',') {
+        this.Lex(); this.Expect(_SC('(')); const iloc = this.CurLoc(); valname = this.Expect(TK.IDENTIFIER); this._fs.AddInstruction(_OP._IDENTIFIER, 0, valname, iloc);
+        if (this._token == _SC(',')) {
             idxname = valname; hasindex = 1;
             this.Lex(); const iloc = this.CurLoc(); valname = this.Expect(TK.IDENTIFIER); this._fs.AddInstruction(_OP._IDENTIFIER, 0, valname, iloc);
         }
@@ -1138,7 +1138,7 @@ export class SQCompiler extends SQCompilerDefine // #L72
         //save the stack size
         this.BEGIN_SCOPE();
         //put the table in the stack(evaluate the table expression)
-        this.Expression(); this.Expect(')');
+        this.Expression(); this.Expect(_SC(')'));
         const container = this._fs.TopTarget();
         //push the index local var
         const indexpos = this._fs.PushLocalVariable(idxname);
@@ -1166,8 +1166,8 @@ export class SQCompiler extends SQCompilerDefine // #L72
     }
     SwitchStatement = (): void =>
     {
-        const s = this.CurLoc().start; this.Lex(); this.Expect('('); this.CommaExpr(); this.Expect(')');
-        this.Expect('{'); this._fs.AddInstruction(_OP._SWITCH_STATEMENT);
+        const s = this.CurLoc().start; this.Lex(); this.Expect(_SC('(')); this.CommaExpr(); this.Expect(_SC(')'));
+        this.Expect(_SC('{')); this._fs.AddInstruction(_OP._SWITCH_STATEMENT);
         const expr = this._fs.TopTarget();
         let bfirst = true;
         let tonextcondjmp = -1;
@@ -1181,7 +1181,7 @@ export class SQCompiler extends SQCompilerDefine // #L72
             	this._fs.SetIntructionParam(tonextcondjmp, 1, this._fs.GetCurrentPos() - tonextcondjmp);
             }
 			//condition
-            const loc = this.CurLoc(); this.Lex(); this.Expression(); this.Expect(':');
+            const loc = this.CurLoc(); this.Lex(); this.Expression(); this.Expect(_SC(':'));
             const trg = this._fs.PopTarget();
             let eqtarget = trg;
             const local = this._fs.IsLocal(trg);
@@ -1207,12 +1207,12 @@ export class SQCompiler extends SQCompilerDefine // #L72
         if (tonextcondjmp != -1)
         	this._fs.SetIntructionParam(tonextcondjmp, 1, this._fs.GetCurrentPos() - tonextcondjmp);
         if(this._token == TK.DEFAULT) {
-            const loc = this.CurLoc(); this.Lex(); this.Expect(':');
+            const loc = this.CurLoc(); this.Lex(); this.Expect(_SC(':'));
             this.BEGIN_SCOPE();
             this.Statements();
             this.END_SCOPE(); this._fs.AddInstruction(_OP._SWITCH_CASE, 0, this._scope.nodestacksize, loc);
         }
-        const e = this.CurLoc().end; this.Expect('}'); this._fs.AddInstruction(_OP._DEFINITION_BODY, this.Loc(s, e));
+        const e = this.CurLoc().end; this.Expect(_SC('}')); this._fs.AddInstruction(_OP._DEFINITION_BODY, this.Loc(s, e));
         this._fs.PopTarget();
         __nbreaks__ = this._fs._unresolvedbreaks.length - __nbreaks__;
         if (__nbreaks__ > 0) this.ResolveBreaks(this._fs, __nbreaks__);
@@ -1232,7 +1232,7 @@ export class SQCompiler extends SQCompilerDefine // #L72
 			this._fs.AddInstruction(_OP.LOAD, this._fs.PushTarget(), this._fs.GetConstant(id));
             if (this._token == TK.DOUBLE_COLON) this.Emit2ArgsOP(_OP.GET);
         }
-        this.Expect('(');
+        this.Expect(_SC('('));
         this.CreateFunction(id);
         this._fs.AddInstruction(_OP._FUNCTION_DECLARATION, this._fs.PushTarget(), this._fs._functions.length - 1, 0, 0, loc);
         this.EmitDerefOp(_OP.NEWSLOT);
@@ -1242,7 +1242,7 @@ export class SQCompiler extends SQCompilerDefine // #L72
     {
         let es: SQExpState; const loc = this.CurLoc();
         this.Lex();
-        es = Object.assign({}, this._es);
+        es = {...this._es};
         this._es.donot_get = true;
         this.PrefixedExpr();
         if(this._es.etype == EXPR) {
@@ -1262,7 +1262,7 @@ export class SQCompiler extends SQCompilerDefine // #L72
     {
         let val: SQObject =
         { _type: OT.NULL, _unVal: 0 }; //shut up GCC 4.x
-        switch (this._token as unknown) {
+        switch (this._token) {
             case TK.INTEGER:
                 val._type = OT.INTEGER;
                 val._unVal = this._lex._nvalue; val._rawVal = this._lex._longstr;
@@ -1279,17 +1279,17 @@ export class SQCompiler extends SQCompilerDefine // #L72
                 val._type = OT.BOOL;
                 val._unVal = this._token == TK.TRUE ? 1 : 0;
                 break;
-            case '-':
+            case _SC('-'):
                 this.Lex();
                 switch (this._token)
                 {
                     case TK.INTEGER:
                         val._type = OT.INTEGER;
-                        val._unVal = -this._lex._nvalue; val._rawVal = '-'+this._lex._longstr;
+                        val._unVal = -this._lex._nvalue; val._rawVal = _SC('-')+this._lex._longstr;
                         break;
                     case TK.FLOAT:
                         val._type = OT.FLOAT;
-                        val._unVal = -this._lex._fvalue; val._rawVal = '-'+this._lex._longstr;
+                        val._unVal = -this._lex._fvalue; val._rawVal = _SC('-')+this._lex._longstr;
                         break;
                     default:
                         this.Error("scalar expected : integer,float", this._fs.NodeAt(-1).loc);
@@ -1305,14 +1305,14 @@ export class SQCompiler extends SQCompilerDefine // #L72
     {
         const s = this.CurLoc().start; this.Lex(); const iloc = this.CurLoc();
         const id = this.Expect(TK.IDENTIFIER); this._fs.AddInstruction(_OP._IDENTIFIER, 0, id, iloc); this._fs.AddInstruction(_OP._ENUM_DECLARATION);
-        this.Expect('{');
+        this.Expect(_SC('{'));
 
         let table = this._fs.CreateTable();
         let nval = 0;
-        while (this._token != '}') { const i = this.LexIndex(); const iloc = this.CurLoc();
+        while (this._token != _SC('}')) { const i = this.LexIndex(); const iloc = this.CurLoc();
             const key = this.Expect(TK.IDENTIFIER); this._fs.AddInstruction(_OP._IDENTIFIER, 0, key, iloc);
             let val: SQObject = { _type: OT.NULL, _unVal: 0 };
-            if (this._token == '=') {
+            if (this._token == _SC('=')) {
                 this.Lex(); const mloc = this.CurLoc();
                 val = this.ExpectScalar(); this._fs.AddInstruction(_OP._SCALAR_LITERAL, 0, val, mloc); this._fs.AddInstruction(_OP._ENUM_MEMBER, 1);
             }
@@ -1321,7 +1321,7 @@ export class SQCompiler extends SQCompilerDefine // #L72
                 val._unVal = nval++; val._rawVal = String(val._unVal); this._fs.AddInstruction(_OP._ENUM_MEMBER, 0);
             }
             _table(table).NewSlot(key, val);
-            if (this._token == ',') this.Lex(); if (this.LexOrError(i, "expected '}'")) break;
+            if (this._token == _SC(',')) this.Lex(); if (this.LexOrError(i, "expected '}'")) break;
         } const e = this.CurLoc().end; this._fs.AddInstruction(_OP._DEFINITION_BODY, this.Loc(s, e));
         const enums = _ss(this._vm)._consts;
         let strongid: SQObject | null = id;
@@ -1350,7 +1350,7 @@ export class SQCompiler extends SQCompilerDefine // #L72
         this._fs.AddInstruction(_OP.JMP, 0, 0);
         const jmppos = this._fs.GetCurrentPos();
         this._fs.SetIntructionParam(trappos, 1, (this._fs.GetCurrentPos() - trappos));
-        const cloc = this.CurLoc(); this.Expect(TK.CATCH); this.Expect('('); let iloc = this.CurLoc(); exid = this.Expect(TK.IDENTIFIER); this._fs.AddInstruction(_OP._IDENTIFIER, 0, exid, iloc); this.Expect(')');
+        const cloc = this.CurLoc(); this.Expect(TK.CATCH); this.Expect(_SC('(')); let iloc = this.CurLoc(); exid = this.Expect(TK.IDENTIFIER); this._fs.AddInstruction(_OP._IDENTIFIER, 0, exid, iloc); this.Expect(_SC(')'));
         {
             this.BEGIN_SCOPE();
             const ex_target = this._fs.PushLocalVariable(exid);
@@ -1362,7 +1362,7 @@ export class SQCompiler extends SQCompilerDefine // #L72
     }
     FunctionExp = (ftype: TokenType, lambda = false): void =>
     {
-        const loc = this.CurLoc(); this.Lex(); this.Expect('(');
+        const loc = this.CurLoc(); this.Lex(); this.Expect(_SC('('));
         const dummy: SQObject = { _type: OT.STRING, _unVal: 'dummy' };
         this.CreateFunction(dummy, lambda);
         this._fs.AddInstruction(lambda ? _OP._LAMBDA_EXPRESSION : _OP._FUNCTION_EXPRESSION, this._fs.PushTarget(), this._fs._functions.length - 1, ftype == TK.FUNCTION ? 0 : 1, loc);
@@ -1378,20 +1378,20 @@ export class SQCompiler extends SQCompilerDefine // #L72
         if(this._token == TK.ATTR_OPEN) {
             const aloc = this.CurLoc(); this.Lex();
             this._fs.AddInstruction(_OP._OBJECT_EXPRESSION, this._fs.PushTarget(), 1, NOT.TABLE, aloc);
-            this.ParseTableOrClass(',', TK.ATTR_CLOSE);
+            this.ParseTableOrClass(_SC(','), TK.ATTR_CLOSE);
             attrs = this._fs.TopTarget();
         }
-        this.Expect('{');
+        this.Expect(_SC('{'));
         if (attrs != -1) this._fs.PopTarget();
         if (base != -1) this._fs.PopTarget();
         this._fs.AddInstruction(_OP._CLASS_EXPRESSION, this._fs.PushTarget(), base, attrs, NOT.CLASS);
-        this.ParseTableOrClass(';', '}'); this._fs.AddInstruction(_OP._CLASS_EXPRESSION_BODY, loc);
+        this.ParseTableOrClass(_SC(';'), _SC('}')); this._fs.AddInstruction(_OP._CLASS_EXPRESSION_BODY, loc);
     }
     DeleteExpr = (): void =>
     {
         const loc = this.CurLoc();
         this.Lex();
-        const es = Object.assign({}, this._es);
+        const es = {...this._es};
         this._es.donot_get = true;
         this.PrefixedExpr();
         if(this._es.etype==EXPR) this.Error("can't delete an expression", this.LastLoc());
@@ -1408,7 +1408,7 @@ export class SQCompiler extends SQCompilerDefine // #L72
         let es: SQExpState;
         const diff = (token == TK.MINUSMINUS) ? -1 : 1; const loc = this.CurLoc();
         this.Lex();
-        es = Object.assign({}, this._es);
+        es = {...this._es};
         this._es.donot_get = true;
         this.PrefixedExpr();
         if(this._es.etype==EXPR) {
@@ -1438,19 +1438,19 @@ export class SQCompiler extends SQCompilerDefine // #L72
         funcstate.AddParameter(this._fs.CreateString("this"));
         funcstate._sourcename = this._sourcename;
         let defparams = 0;
-        while (this._token != ')') { const i = this.LexIndex();
+        while (this._token != _SC(')')) { const i = this.LexIndex();
             if (this._token == TK.VARPARAMS) {
                 if(defparams > 0) this.Error("function with default parameters cannot have variable number of parameters", this.CurLoc());
                 funcstate.AddParameter(this._fs.CreateString('vargv'), 1);
                 funcstate._varparams = true;
                 this.Lex();
-                if((this._token as unknown) != ')') this.Error("expected ')'");
-                /* break; */ if ((this._token as unknown) == ',') this.Lex(); // allow to continue
+                if(this._token != _SC(')')) this.Error("expected ')'");
+                /* break; */ if (this._token == _SC(',')) this.Lex(); // allow to continue
             }
             else {
                 paramname = this.Expect(TK.IDENTIFIER);
                 funcstate.AddParameter(paramname, 2);
-                if (this._token == '=') {
+                if (this._token == _SC('=')) {
                     this.Lex();
                     this.Expression();
                     funcstate.AddDefaultParam(this._fs.TopTarget());
@@ -1459,11 +1459,11 @@ export class SQCompiler extends SQCompilerDefine // #L72
                 else {
                     if (defparams > 0) this.Error("expected '='", this.LastLoc());
                 }
-                if(this._token == ',') this.Lex();
-                else if(this._token != ')') this.Error("expected ')' or ','");
+                if(this._token == _SC(',')) this.Lex();
+                else if(this._token != _SC(')')) this.Error("expected ')' or ','");
             } if (this.LexOrError(i, "expected ')'")) break;
         }
-        this.Expect(')');
+        this.Expect(_SC(')'));
         for (let n = 0; n < defparams; n++) {
             this._fs.PopTarget();
         }
@@ -1476,7 +1476,7 @@ export class SQCompiler extends SQCompilerDefine // #L72
         else {
             this.Statement(false);
         }
-        funcstate.AddLineInfos(this._lex._prevtoken == '\n' ? this._lex._lasttokenline : this._lex._currentline, this._lineinfo, true);
+        funcstate.AddLineInfos(this._lex._prevtoken == _SC('\n') ? this._lex._lasttokenline : this._lex._currentline, this._lineinfo, true);
         funcstate.AddInstruction(_OP.RETURN, -1);
         funcstate.SetStackSize(0);
 
@@ -1509,7 +1509,7 @@ export class SQCompiler extends SQCompilerDefine // #L72
         }
     }
 // private:
-    _token!: TokenType;
+    // _token!: TokenType;
 	// _fs!: SQFuncState;
 	_sourcename!: string;
 	// _lex!: SQLexer;

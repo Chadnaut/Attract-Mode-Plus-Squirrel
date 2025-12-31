@@ -6,58 +6,53 @@ const ctrlChar = String.fromCharCode(127);
 describe("STD", () => {
 
     it("iswdigit", () => {
-        expect(iswdigit(undefined)).toBe(false);
-        expect(iswdigit('_')).toBe(false);
-        expect(iswdigit('A')).toBe(false);
-        expect(iswdigit('a')).toBe(false);
-        expect(iswdigit('Z')).toBe(false);
-        expect(iswdigit('0')).toBe(true);
-        expect(iswdigit('9')).toBe(true);
-        expect(iswdigit(ctrlChar)).toBe(false);
+        expect(iswdigit('_'.charCodeAt(0))).toBe(false);
+        expect(iswdigit('A'.charCodeAt(0))).toBe(false);
+        expect(iswdigit('a'.charCodeAt(0))).toBe(false);
+        expect(iswdigit('Z'.charCodeAt(0))).toBe(false);
+        expect(iswdigit('0'.charCodeAt(0))).toBe(true);
+        expect(iswdigit('9'.charCodeAt(0))).toBe(true);
+        expect(iswdigit(ctrlChar.charCodeAt(0))).toBe(false);
     });
 
     it("iswxdigit", () => {
-        expect(iswxdigit(undefined)).toBe(false);
-        expect(iswxdigit('_')).toBe(false);
-        expect(iswxdigit('A')).toBe(true);
-        expect(iswxdigit('a')).toBe(true);
-        expect(iswxdigit('Z')).toBe(false);
-        expect(iswxdigit('0')).toBe(true);
-        expect(iswxdigit('9')).toBe(true);
-        expect(iswxdigit(ctrlChar)).toBe(false);
+        expect(iswxdigit('_'.charCodeAt(0))).toBe(false);
+        expect(iswxdigit('A'.charCodeAt(0))).toBe(true);
+        expect(iswxdigit('a'.charCodeAt(0))).toBe(true);
+        expect(iswxdigit('Z'.charCodeAt(0))).toBe(false);
+        expect(iswxdigit('0'.charCodeAt(0))).toBe(true);
+        expect(iswxdigit('9'.charCodeAt(0))).toBe(true);
+        expect(iswxdigit(ctrlChar.charCodeAt(0))).toBe(false);
     });
 
     it("iswalpha", () => {
-        expect(iswalpha(undefined)).toBe(false);
-        expect(iswalpha('_')).toBe(false);
-        expect(iswalpha('A')).toBe(true);
-        expect(iswalpha('a')).toBe(true);
-        expect(iswalpha('Z')).toBe(true);
-        expect(iswalpha('0')).toBe(false);
-        expect(iswalpha('9')).toBe(false);
-        expect(iswalpha(ctrlChar)).toBe(false);
+        expect(iswalpha('_'.charCodeAt(0))).toBe(false);
+        expect(iswalpha('A'.charCodeAt(0))).toBe(true);
+        expect(iswalpha('a'.charCodeAt(0))).toBe(true);
+        expect(iswalpha('Z'.charCodeAt(0))).toBe(true);
+        expect(iswalpha('0'.charCodeAt(0))).toBe(false);
+        expect(iswalpha('9'.charCodeAt(0))).toBe(false);
+        expect(iswalpha(ctrlChar.charCodeAt(0))).toBe(false);
     });
 
     it("iswcntrl", () => {
-        expect(iswcntrl(undefined)).toBe(false);
-        expect(iswcntrl('_')).toBe(false);
-        expect(iswcntrl('A')).toBe(false);
-        expect(iswcntrl('a')).toBe(false);
-        expect(iswcntrl('Z')).toBe(false);
-        expect(iswcntrl('0')).toBe(false);
-        expect(iswcntrl('9')).toBe(false);
-        expect(iswcntrl(ctrlChar)).toBe(true);
+        expect(iswcntrl('_'.charCodeAt(0))).toBe(false);
+        expect(iswcntrl('A'.charCodeAt(0))).toBe(false);
+        expect(iswcntrl('a'.charCodeAt(0))).toBe(false);
+        expect(iswcntrl('Z'.charCodeAt(0))).toBe(false);
+        expect(iswcntrl('0'.charCodeAt(0))).toBe(false);
+        expect(iswcntrl('9'.charCodeAt(0))).toBe(false);
+        expect(iswcntrl(ctrlChar.charCodeAt(0))).toBe(true);
     });
 
     it("iswalnum", () => {
-        expect(iswalnum(undefined)).toBe(false);
-        expect(iswalnum('_')).toBe(false);
-        expect(iswalnum('A')).toBe(true);
-        expect(iswalnum('a')).toBe(true);
-        expect(iswalnum('Z')).toBe(true);
-        expect(iswalnum('0')).toBe(true);
-        expect(iswalnum('9')).toBe(true);
-        expect(iswalnum(ctrlChar)).toBe(false);
+        expect(iswalnum('_'.charCodeAt(0))).toBe(false);
+        expect(iswalnum('A'.charCodeAt(0))).toBe(true);
+        expect(iswalnum('a'.charCodeAt(0))).toBe(true);
+        expect(iswalnum('Z'.charCodeAt(0))).toBe(true);
+        expect(iswalnum('0'.charCodeAt(0))).toBe(true);
+        expect(iswalnum('9'.charCodeAt(0))).toBe(true);
+        expect(iswalnum(ctrlChar.charCodeAt(0))).toBe(false);
     });
 
     it("wcstod", () => {

@@ -1,7 +1,7 @@
 /**
  * Squirrel Language
  *
- * @package Squirrel
+ * @package String
  * @global
  * @version 3.0.7
  */
@@ -37,7 +37,7 @@ function rstrip(value) {}
 /**
  * Splits a string into substrings using the given separators, and returns them as an array.
  *
- * Empty substrings are omitted from the result.
+ * Empty substrings are omitted from the result, as such an empty array may be returned.
  * @param {string} value The string to split.
  * @param {string} separators The characters used to split the string.
  * @returns {array(string)}

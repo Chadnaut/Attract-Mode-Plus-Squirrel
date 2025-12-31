@@ -58,7 +58,10 @@ describe("Import", () => {
     });
 
     it("getModuleCompletions", () => {
-        expect(getModuleCompletions().length).toBeGreaterThan(0);
+        const completions = getModuleCompletions();
+        expect(completions.length).toBeGreaterThan(0);
+        expect(completions.find((item) => String(item.label).includes("example"))).toBeTruthy();
+        expect(completions.find((item) => String(item.label).includes("invalid"))).toBeFalsy();
     });
 
     it("getModuleInfo, invalid", () => {

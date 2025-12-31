@@ -8,13 +8,14 @@ import constants from '../../src/constants';
 jest.mock('vscode', () => ({
     window: {
         showErrorMessage: () => {
-            return new Promise((resolve) => { resolve(constants.CHECK_CONFLICTS_DISABLE) });
+            return new Promise((resolve) => { resolve(messageResolve) });
         },
     },
     extensions,
 }));
 
 let hasConfigSet = false;
+let messageResolve = constants.CHECK_CONFLICTS_DISABLE;
 
 jest.mock('../../src/utils/config', () => ({
     setConfigValue: () => { hasConfigSet = true; },
@@ -23,6 +24,7 @@ jest.mock('../../src/utils/config', () => ({
 beforeEach(() => {
     extensions.all = [];
     hasConfigSet = false;
+    messageResolve = constants.CHECK_CONFLICTS_DISABLE;
 });
 
 
@@ -106,6 +108,20 @@ describe("Conflict", () => {
 
         await new Promise((r) => setTimeout(r, 0));
         expect(hasConfigSet).toBe(true);
+    });
+
+    it("Conflict, cancel", async() => {
+        extensions.all = [
+            <Extension<any>>{ id: 'a', packageJSON: { contributes: { languages: [{ extensions: ['nut'] }] } } },
+        ];
+
+        messageResolve = null;
+        const c = new SquirrelConflictCheck();
+        c.id = "squirrel";
+        c.enabled = true;
+
+        await new Promise((r) => setTimeout(r, 0));
+        expect(hasConfigSet).toBe(false);
     });
 
 });

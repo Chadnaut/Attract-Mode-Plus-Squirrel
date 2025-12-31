@@ -2,8 +2,10 @@ import { workspace, Disposable, ConfigurationTarget } from "vscode";
 import constants from "../constants";
 import { Options } from "prettier";
 import * as plugin from "../prettier/plugin";
+import { fileExists, readJson } from "./file";
 
 const plugins = [plugin];
+let workspaceConfig = undefined;
 
 // -----------------------------------------------------------------------------
 
@@ -14,13 +16,55 @@ export const getConfigParts = (configSection: string): string[] => {
     return [parts.join("."), property];
 };
 
+export const resetWorkspaceConfig = () => {
+    workspaceConfig = undefined;
+};
+
+export const getWorkspaceConfig = (
+    configSection: string
+) => {
+    if (workspaceConfig === null)
+        return undefined;
+
+    if (workspaceConfig === undefined) {
+        const folders = workspace.workspaceFolders;
+        if (!folders?.length) return undefined;
+
+        const configFile = folders[0].uri.fsPath + '/' + constants.CONFIG_FILENAME;
+        if (!fileExists(configFile)) {
+            workspaceConfig = null;
+            return undefined;
+        }
+
+        try {
+            const config = readJson(configFile);
+            workspaceConfig = {};
+            Object.entries(config).forEach(([key, value]) => {
+                if (typeof value == "object") {
+                    Object.entries(value).forEach(([k, v]) => workspaceConfig[`${key}.${k}`] = v);
+                } else {
+                    workspaceConfig[key] = value;
+                }
+            });
+            console.info(`Loaded ${constants.CONFIG_FILENAME}`);
+        } catch (err) {
+            workspaceConfig = null;
+            return undefined;
+        }
+    }
+
+    const key = configSection;
+    return (key in workspaceConfig) ? workspaceConfig[key] : undefined;
+}
+
 /** Return a config value */
 export const getConfigValue = <T = any>(
     configSection: string,
     defaultValue: any = undefined,
 ): T => {
     const [config, section] = getConfigParts(configSection);
-    return workspace.getConfiguration(config).get<T>(section, defaultValue);
+    return getWorkspaceConfig(configSection)
+        ?? workspace.getConfiguration(config).get<T>(section, defaultValue);
 };
 
 /** Set a config value */

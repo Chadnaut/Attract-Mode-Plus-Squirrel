@@ -17,8 +17,8 @@ export class SquirrelParser {
     private readIndex: number = 0;
     private _errors: CompilerError[];
 
-    private readf: SQLEXREADFUNC = (text: string): string | undefined =>
-        text[this.readIndex++];
+    private readf: SQLEXREADFUNC = (text: string): number =>
+        text.charCodeAt(this.readIndex++) || 0;
 
     private efunc: CompilerErrorFunc = (
         _target: any,

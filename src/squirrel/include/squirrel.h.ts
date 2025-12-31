@@ -21,7 +21,10 @@ THE SOFTWARE.
 */
 import { iswalnum, iswalpha, iswcntrl, iswdigit, iswxdigit, wcstod } from "./std";
 
-export type TokenType = string | undefined;
+export type TokenType = number; // string | undefined;
+
+export const _SC = (a: string): TokenType => a.charCodeAt(0); // #L124
+export const toupper = (c: TokenType): TokenType => c - 32;
 
 export const scstrtod = wcstod; // #L129
 
@@ -33,11 +36,11 @@ export const scisalnum = iswalnum;
 
 export const MAX_CHAR = 0xFFFF; // #L146
 
-export const SQUIRREL_EOB = undefined; // #L193
+export const SQUIRREL_EOB: TokenType = 0; // #L193
 
-export type SQLEXREADFUNC = (text: string) => TokenType; // #L301
+export type SQLEXREADFUNC = (text: string) => TokenType; // TokenType; // #L301
 
-export enum OT { // #L225
+export const enum OT { // #L225
     NULL,
     INTEGER,
     FLOAT,

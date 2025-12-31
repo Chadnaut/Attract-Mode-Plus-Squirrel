@@ -14,7 +14,7 @@ jest.mock('../../src/squirrel/include/squirrel.h.ts', () => ({
 let errors = [];
 let index = 0;
 let ss = new SQSharedState();
-const readf = (text: string): string | undefined => text[index++];
+const readf = (text: string): number => text.charCodeAt(index++) || 0;
 const efunc: CompilerErrorFunc = (target, err) => { throw err; }
 const enone: CompilerErrorFunc = (target, err) => { errors.push(err); }
 
@@ -60,7 +60,7 @@ describe("SQLexer", () => {
         const s = new SQLexer(ss, readf, '"\\xFFFF"', efunc, this);
         expect(s.Lex()).toEqual(TK.STRING_LITERAL);
         expect(s._svalue).toEqual(String.fromCharCode(65535));
-        expect(s._longstr).toEqual('"\\xFFFF\"');
+        expect(s._longstr).toEqual('"\\xFFFF"');
     });
 
     it("String, verbatim", () => {

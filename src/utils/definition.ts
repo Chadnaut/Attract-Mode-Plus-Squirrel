@@ -359,14 +359,17 @@ const resolveNodeVal = (
             // If returns value is a parameter, return the given argument
             const nodeDef = resolveNodeDef(returnVal, []);
             if (getNodeIsParameter(nodeDef)) {
-                const func = <AST.FunctionDeclaration>nodeDef.at(-2);
-                const index = func.params.indexOf(nodeDef.at(-1));
-                const arg = call.arguments.at(index);
-                if (arg) {
-                    return resolveNodeVal(
-                        [...getBranchBlock(branch), arg],
-                        stack,
-                    );
+                const callFunc = resolveNodeVal(callBranch, []).at(-1);
+                const returnFunc = <AST.FunctionDeclaration>nodeDef.at(-2);
+                if (callFunc == returnFunc) {
+                    const index = returnFunc.params.indexOf(nodeDef.at(-1));
+                    const arg = call.arguments.at(index);
+                    if (arg !== undefined) {
+                        return resolveNodeVal(
+                            [...getBranchBlock(branch), arg],
+                            stack,
+                        );
+                    }
                 }
             }
 
@@ -404,12 +407,11 @@ const resolveNodeDef = (branch: AST.Node[], stack: AST.Node[]): AST.Node[] => {
             const { object, property } = <AST.MemberExpression>node;
             const objBranch = [...branch, object];
             const propBranch = [...branch, property];
-            let objProp = [];
 
-            if (!objProp.length) { // the object value
-                const objVal = resolveNodeVal(objBranch, stack);
-                objProp = resolveNodeChild(objVal, propBranch, stack);
-            }
+            // the object value
+            const objVal = resolveNodeVal(objBranch, stack);
+            let objProp = resolveNodeChild(objVal, propBranch, stack);
+
             if (!objProp.length) { // the @type or @lends nodes
                 const objDef = resolveNodeDef(objBranch, stack);
                 const objType = getNodeTypeDef(objDef);

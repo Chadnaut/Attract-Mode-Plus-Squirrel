@@ -60,12 +60,10 @@ export const getNodeInstanceType = (
 
     if (attr) {
         // create a node, used to find typedef classes
-        const n = attrToNode(attr, true);
-        if (n) {
-            const attrBranch = [program, n];
-            if (isArr) attrBranch.push(n["elements"]?.[0]);
-            return attrBranch;
-        }
+        const n = attrToNode(attr, true); // since attr exists this will always return value
+        const attrBranch = [program, n];
+        if (isArr) attrBranch.push(n["elements"]?.[0]);
+        return attrBranch;
     }
 
     const enumType = getNodeEnumType(branch);

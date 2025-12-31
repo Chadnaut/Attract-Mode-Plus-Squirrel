@@ -7,7 +7,6 @@ import { SQInstruction } from './sqopcodes.h';
 import { GetFullLoc, SQTree as qt } from '../../ast/create';
 import { AST } from '../../ast';
 import { SQSharedState } from './sqstate.cpp';
-import toFastProperties from 'to-fast-properties';
 
 export class SQFuncStateStruct {
     _returnexp!: number;
@@ -95,11 +94,10 @@ export class SQFuncStateStruct {
     Error = (err: string, loc?: AST.SourceLocation): void => {}
 
     assert = (v: any, err: string) => {
-        if (!v) this.Error(err, this._ss._lastloc);
+        if (!v && process.env.NODE_ENV != 'production') this.Error(err, this._ss._lastloc);
     }
 
     protected PushNode = (node: AST.Node) => {
-        toFastProperties(node);
         this._nodestack.push(node);
     };
 

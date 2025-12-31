@@ -22,6 +22,12 @@ describe("Type", () => {
         expect(getNodeInstanceType([])).toEqual([]);
     });
 
+    it("getNodeInstanceType, Invalid", () => {
+        const program = parse('/** @type {invalid} */ local node');
+        const n = getBranchAtPos(program, pos(31));
+        expect(getNodeInstanceType(n).at(-1)["name"]).toEqual("invalid");
+    });
+
     it("getNodeInstanceType, StringLiteral", () => {
         const program = parse('local node = "string"');
         const n = getBranchAtPos(program, pos(8));
@@ -143,6 +149,12 @@ describe("Type", () => {
         const program = parse('function foo() { yield 123; }');
         const n = getBranchAtPos(program, pos(11));
         expect(getNodeInstanceType(n).at(-1)["name"]).toEqual("Generator");
+    });
+
+    it("getNodeInstanceType, Not generator", () => {
+        const program = parse("yield 123");
+        const n = getBranchAtPos(program, pos(1));
+        expect(getNodeInstanceType(n).at(-1)["name"]).not.toEqual("Generator");
     });
 
     it("getNodeInstanceType, Generator instance", () => {

@@ -18,8 +18,8 @@ describe("Doc Markdown", () => {
     it("formatVersion", () => {
         const name = "ver";
         const url = "http://web.site";
-        expect(formatVersion({ name, documentation: url })).toBe(`\n\n<small><a href="${url}">\`${name}\`</a></small>`);
-        expect(formatVersion({ name, documentation: `${url} ${name} ${url}` })).toBe(`\n\n<small><a href="${url}">\`${name}\`</a></small> <small><a href="${url}">\`${name}\`</a></small>`);
+        expect(formatVersion({ name, documentation: url })).toBe(`<a href="${url}">\`${name}\`</a>`);
+        expect(formatVersion({ name, documentation: `${url} ${name} ${url}` })).toBe(`<a href="${url}">\`${name}\`</a> <a href="${url}">\`${name}\`</a>`);
         expect(formatVersion({ })).toBe(``);
     });
 
@@ -49,6 +49,19 @@ describe("Doc Markdown", () => {
         const f1 = getNodeDoc([program, program.body[0]]).attributes[0]?.documentation;
         const f2 = getNodeDoc([program, program.body[1]]).attributes[0]?.documentation;
         expect(f1).toEqual(f2);
+    });
+
+    it("createDocMarkdown, variation has doc", () => {
+        const program = parse(`
+            /** Test */
+            function foo() {}
+            /** Doc
+             * @variation foo */
+            function foo() {}
+        `);
+        const f1 = getNodeDoc([program, program.body[0]]).attributes[0]?.documentation;
+        const f2 = getNodeDoc([program, program.body[1]]).attributes[0]?.documentation;
+        expect(f1).not.toEqual(f2);
     });
 
     it("createDocMarkdown variation, no parent", () => {
@@ -169,6 +182,17 @@ describe("Doc Markdown", () => {
         expect(attr.link).toBe("link");
         expect(attr.documentation).toBe("desc");
         expect(createDocMarkdown(db.attributes).value).toBe("@author [name](link) — desc");
+    });
+
+    it("since", () => {
+        const db = createDoc(qt.CommentBlock("@since name", true));
+        expect(db).toHaveProperty("attributes");
+        const attr = getDocAttr(db, "since");
+        expect(attr.kind).toBe("since");
+        expect(attr.name).toBe("name");
+
+        const md = createDocMarkdown(db.attributes);
+        expect(md.value).not.toContain("href");
     });
 
     it("version", () => {

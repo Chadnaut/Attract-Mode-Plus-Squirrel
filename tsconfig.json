@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
-        "target": "ES2018",
-        "module": "CommonJS",
+        "target": "esnext",
+        "module": "esnext",
         "moduleResolution": "node",
         "baseUrl": "./src",
         "rootDir": "./src",
@@ -10,7 +10,8 @@
         "sourceMap": true,
         "strict": false,
         "esModuleInterop": true,
-        "allowJs": true
+        "allowJs": true,
+        "isolatedModules": true
     },
     "include": [
         "./src/**/*"

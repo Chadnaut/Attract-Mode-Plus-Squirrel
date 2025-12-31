@@ -31,7 +31,6 @@ export const getInlayHints = (
     const node = branch.at(-1);
     if (!node) return [];
     if (!locOverlapsLoc(node.loc, loc)) return [];
-
     const hints: InlayHint[] = [];
 
     // only CallExpressions have parameter hints

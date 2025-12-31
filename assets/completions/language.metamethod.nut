@@ -1,7 +1,7 @@
 /**
  * Squirrel Language
  *
- * @package Snippet
+ * @package MetaMethod
  * @global
  */
 

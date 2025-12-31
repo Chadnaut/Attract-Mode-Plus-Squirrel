@@ -3,14 +3,14 @@ import { SQVM } from "../../src/squirrel/squirrel/sqvm.cpp";
 import { SQTable } from "../../src/squirrel/squirrel/sqtable.cpp";
 import { OT, SQObject } from "../../src/squirrel/include/squirrel.h";
 import { _OP, GetAssignmentOperator, GetBinaryOperator, GetLogicOperator, GetUnaryOperator } from "../../src/squirrel/squirrel/sqopcodes.h";
-import { SQCompilerStruct } from "../../src/squirrel/squirrel/sqcompiler.h";
+import { SQCompilerStruct, TK } from "../../src/squirrel/squirrel/sqcompiler.h";
 import { SQFuncStateStruct } from "../../src/squirrel/squirrel/sqfuncstate.h";
 import { SQLexer } from "../../src/squirrel/squirrel/sqlexer.cpp";
 import { AST, GetFullLoc, SQTree as qt, SetFullLoc } from '../../src/ast';
 import { SQCompiler } from "../../src/squirrel/squirrel/sqcompiler.cpp";
 import { SQFuncState } from "../../src/squirrel/squirrel/sqfuncstate.cpp";
 import { SQSharedState } from "../../src/squirrel/squirrel/sqstate.cpp";
-import { SQOuterVar } from "../../src/squirrel/squirrel/sqfuncproto.h";
+import { SQLocalVarInfo, SQOuterVar } from "../../src/squirrel/squirrel/sqfuncproto.h";
 
 /*
     These tests probe un-reachable code in the compiler
@@ -45,6 +45,14 @@ describe("Misc", () => {
 
         n._outervalues.push(<SQOuterVar>{ _name: { _type: OT.NULL, _unVal: 0 }});
         n.GetOuterVariable(<SQObject>{ _type: OT.NULL, _unVal: 0 });
+
+        n.GetOuterVariable(<SQObject>{ _type: OT.NULL, _unVal: 1 });
+
+        n.AddLineInfos(1,false,true);
+
+        n._vlocals = [];
+        n._vlocals.push(<SQLocalVarInfo>{});
+        n.CountOuters(0);
     });
 
     it("FullLoc", () => {
@@ -80,7 +88,7 @@ describe("Misc", () => {
     });
 
     it("SQCompiler", () => {
-        const s = new SQCompiler(new SQVM(new SQSharedState()), (text:string):string=>"", "", "", true, null, true);
+        const s = new SQCompiler(new SQVM(new SQSharedState()), (text:string)=>0, "", "", true, ()=>{}, true);
         s._fs = new SQFuncState(s._vm._sharedstate, null, () => {}, s);
         expect(() => s.BEGIN_SCOPE()).not.toThrow();
 
@@ -94,10 +102,23 @@ describe("Misc", () => {
 
         expect(() => s.BEGIN_BREAKBLE_BLOCK()).not.toThrow();
         expect(() => s.END_BREAKBLE_BLOCK()).not.toThrow();
+
+        s._fs.SetStackSize(0);
+        s._scope.stacksize = 1;
+        expect(() => s.RESOLVE_OUTERS()).not.toThrow();
+
+        s._es.etype = null; // invalid
+        s.Factor = () => -1; // hack to test PrefixIncDec `else`
+        expect(() => s.PrefixIncDec(TK.PLUSPLUS)).not.toThrow();
     });
 
     it("SQLexer", () => {
-        const n = new SQLexer(new SQSharedState(), ()=>"", undefined, undefined, undefined);
-        expect(n.Tok2Str("err")).toBeNull();
+        const readf = () => 0;
+        const n = new SQLexer(new SQSharedState(), readf, undefined, undefined, undefined);
+        expect(n.Tok2Str(0)).toBeNull();
+
+        expect(n._longstr).toBe("");
+        n.APPEND_CHAR("a".charCodeAt(0));
+        expect(n._longstr).toBe("a");
     });
 });

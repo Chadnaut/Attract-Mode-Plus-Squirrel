@@ -4336,7 +4336,7 @@
 		},
         "string-magic-token": {
 			"name": "constant.character.magic.nut",
-			"match": "\\[[_[:alpha:]][_[:alnum:]]*]*\\]"
+			"match": "\\[\\!?[_[:alpha:]][_[:alnum:]]*\\]"
         },
 		"type-string": {
 			"patterns": [
@@ -4940,7 +4940,7 @@
 				},
 				{
 					"contentName": "variable.other.jsdoc",
-					"begin": "((@)(?:default(?:value)?|license|version))\\s+(([''\"]))",
+					"begin": "((@)(?:default(?:value)?|license|version|since))\\s+(([''\"]))",
 					"beginCaptures": {
 						"1": {
 							"name": "storage.type.class.jsdoc"
@@ -4966,7 +4966,7 @@
 					}
 				},
 				{
-					"match": "((@)(?:default(?:value)?|license|tutorial|variation|version))\\s+([^\\s*]+)",
+					"match": "((@)(?:default(?:value)?|license|tutorial|variation|version|since))\\s+([^\\s*]+)",
 					"captures": {
 						"1": {
 							"name": "storage.type.class.jsdoc"

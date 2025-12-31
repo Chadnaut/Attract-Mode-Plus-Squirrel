@@ -14,11 +14,12 @@ jest.spyOn(workspace, "onDidSaveTextDocument").mockImplementation((cb): any => {
 });
 
 jest.spyOn(window, "showWarningMessage").mockImplementation((...args: any[]): Promise<any> => {
-    return new Promise((resolve) => { resolve(constants.LIVE_RELOAD_DISABLE) })
+    return new Promise((resolve) => { resolve(messageResolve) })
 });
 
 let setConfigName;
 let setConfigValue;
+let messageResolve = constants.LIVE_RELOAD_DISABLE;
 
 jest.replaceProperty(constants, "LANGUAGE_ID", "squirrel");
 jest.replaceProperty(constants, "ASSETS_PATH", "assets");
@@ -71,6 +72,7 @@ beforeEach(() => {
     fileExists = [];
     dirExists = ["am"];
     didSaveCallback = () => {};
+    messageResolve = constants.LIVE_RELOAD_DISABLE;
 })
 
 
@@ -144,6 +146,21 @@ describe("Reload", () => {
         expect(copyCount).toEqual(1);
     });
 
+    it("Install, exists", async () => {
+        jest.spyOn(window, "showInformationMessage").mockImplementation((...args: any[]): Promise<any> => {
+            return new Promise((resolve) => { resolve(constants.YES) })
+        });
+
+        fileExists = [];
+        const s = new SquirrelLiveReload();
+        dirExists.push(s['getDstPath']());
+        s.enabled = true;
+        await new Promise((r) => setTimeout(r, 0)); // wait a tick
+
+        expect(makeCount).toEqual(0);
+        expect(copyCount).toEqual(1);
+    });
+
     it("Install, no", async () => {
         jest.spyOn(window, "showInformationMessage").mockImplementation((...args: any[]): Promise<any> => {
             return new Promise((resolve) => { resolve(constants.LIVE_RELOAD_DISABLE) })
@@ -189,6 +206,24 @@ describe("Reload", () => {
         expect(copyCount).toEqual(0);
         expect(setConfigName).toEqual(constants.LIVE_RELOAD_ENABLED);
         expect(setConfigValue).toEqual(false);
+    });
+
+    it("Install, error", async () => {
+        jest.spyOn(window, "showInformationMessage").mockImplementation((...args: any[]): Promise<any> => {
+            return new Promise((resolve) => { resolve(constants.YES) })
+        });
+
+        messageResolve = null;
+        fileExists = [];
+        copySuccess = false;
+        const s = new SquirrelLiveReload();
+        s.enabled = true;
+        await new Promise((r) => setTimeout(r, 0)); // wait a tick
+
+        expect(makeCount).toEqual(1);
+        expect(copyCount).toEqual(0);
+        expect(setConfigName).toEqual(null);
+        expect(setConfigValue).toEqual(null);
     });
 
     it("Update, package wrong", async () => {

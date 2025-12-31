@@ -77,6 +77,16 @@ describe("Launcher", () => {
         expect(s.button.text).toContain(text);
     });
 
+    it("Label Default", () => {
+        const s = new SquirrelLauncher(output);
+        s.enabled = true;
+        s.path = __dirname;
+        s.filename = path.basename(__filename);
+        const text = "Invalid v1";
+        onStdOut(text);
+        expect(s.button.text).toContain("Attract-Mode");
+    });
+
     it("Launch does not throw", () => {
         const s = new SquirrelLauncher(output);
         expect(() => s.launchAM()).not.toThrow();

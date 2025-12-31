@@ -10,7 +10,7 @@ export class SQLexerStruct
     // private:
 	Next = () => {};
     _curtoken: TokenType;
-    _keywords!: TokenType[];
+    _keywords!: { [key: string]: TokenType };
     _reached_eof!: boolean;
 
     // public:
@@ -86,7 +86,7 @@ export class SQLexerStruct
     };
 
     AppendComment = (c: TokenType) => {
-        if (c != undefined) this._commentstr += c;
+        this._commentstr += String.fromCharCode(c);
     };
 
     TerminateComment = (hash: boolean) => {

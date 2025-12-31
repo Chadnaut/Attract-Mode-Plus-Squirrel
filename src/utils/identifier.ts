@@ -85,7 +85,7 @@ const getBranchWithId = (
 };
 
 /**
- * Return true if give node has an ID
+ * Return true if given node has an ID
  * - Does not resolve expressions (doesn't use extra)
  */
 export const hasNodeId = (

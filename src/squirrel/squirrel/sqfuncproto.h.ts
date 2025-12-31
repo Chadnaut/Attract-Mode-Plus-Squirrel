@@ -4,7 +4,7 @@ import { SQObject } from '../include/squirrel.h';
 //
 //
 
-export enum SQOuterType { // #L7
+export const enum SQOuterType { // #L7
 	otLOCAL = 0,
 	otOUTER = 1
 };

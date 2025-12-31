@@ -28,7 +28,7 @@
         "statements": {
             "patterns": [
                 {
-                    "match": "^(display|sound|input_map|general|saver_config|layout_config|plugin)[\\t ]*([^\\s]*)",
+                    "match": "^(display|sound|input_map|general|saver_config|layout_config|plugin)[\\t ]*([^\\r\\n]*)$",
                     "name": "config-section",
                     "captures": {
                         "1": {
@@ -184,7 +184,7 @@
         "constants": {
             "patterns": [
                 {
-                    "match": "\\b(contains|not_contains|equals|not_equals)\\b",
+                    "match": "\\b(contains|not_contains|equals|not_equals|greater_than|less_than|greater_than_or_equal|less_than_or_equal)\\b",
                     "name": "keyword"
                 },
                 {

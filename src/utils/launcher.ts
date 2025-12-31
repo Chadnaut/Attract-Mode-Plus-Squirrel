@@ -100,8 +100,8 @@ export class SquirrelLauncher extends Disposable {
                 .match("(Attract-Mode (?:Plus )?v[^ ]+)");
             if (match) {
                 this.label = match[1];
-                this.refreshLabel();
             }
+            this.refreshLabel();
         });
     }
 

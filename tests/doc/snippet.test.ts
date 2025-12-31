@@ -36,7 +36,7 @@ describe("Doc Snippet", () => {
         const s = getProgramSnippets(program);
         expect(s.length).toBeGreaterThan(0);
         const r = s.find((snippet) => (<CompletionItemLabel>snippet.label).label === "requires");
-        expect(r.insertText).not.toContain("snap");
+        expect(String(r.insertText)).not.toContain("snap");
     });
 
     it("getProgramSnippets, inject", () => {

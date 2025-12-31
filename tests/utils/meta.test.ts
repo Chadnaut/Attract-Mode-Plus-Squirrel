@@ -1,5 +1,5 @@
 import { describe, expect, it } from "@jest/globals";
-import { parseExtra as parse, parseForceExtra, pos } from "../utils";
+import { dump, parseExtra as parse, parseForceExtra, pos } from "../utils";
 import { getMemberCompletions } from "../../src/utils/completion";
 import { getBranchAtPos } from "../../src/utils/find";
 import { AST, SQTree as qt } from "../../src/ast";
@@ -15,8 +15,11 @@ describe("Meta", () => {
         expect(getMemberCompletions(getBranchAtPos(p2, pos(45))).length).toEqual(0);
     });
 
-    it("attachMeta, undefined", () => {
-        expect(() => attachMeta([], null)).not.toThrow();
+    it("attachMeta", () => {
+        let n = [];
+        expect(() => attachMeta(n, null)).not.toThrow();
+        n.push(qt.ClassDeclaration(qt.Identifier("x"), qt.ClassBody()));
+        expect(() => attachMeta(n, null)).not.toThrow();
     });
 
     it("Package", () => {
@@ -114,6 +117,15 @@ describe("Meta", () => {
         expect(items.length).toEqual(1);
         expect(items[0].detail).toBe("(readonly) foo.bar: integer");
         expect(items[0].insertText).toBe("bar");
+    });
+
+    it("Class Getter Prevent Doc Override", () => {
+        const program = parse("/** @getter {integer} bar here\n@getter {integer} bar here2 */ class foo {}; foo()");
+        const items = getMemberCompletions(getBranchAtPos(program, qt.Position(2, 47, 77)));
+        expect(items.length).toEqual(1);
+        expect(items[0].detail).toBe("(readonly) foo.bar: integer");
+        expect(items[0].insertText).toBe("bar");
+        expect(items[0].documentation["value"]).toContain("here");
     });
 
     it("Ignore", () => {

@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.10.0] 2026-01-01
+
+### Added
+
+- AM+ `3.2.0` completions
+- Link to current documentation in completion popup
+- Syntax highlighting for `*.nv`, `*.tag`, and romlist files
+- Workspace settings `.attractrc.json`, entries are identical to vscode `settings.json`
+
+### Changed
+
+- Default Print Width now `120`
+
+### Fixed
+
+- `fe.do_nut` and `do_file` completions now use forward-slash separators
+- Foreach key, value completions
+- Magic token syntax highlighting for nested brackets and custom functions
+
 ## [0.9.17] 2025-04-10
 
 ### Added
@@ -13,7 +32,7 @@ All notable changes to this project will be documented in this file.
 
 - Completions respect returned function parameter type
 - Declarations respect ternary consequent type
-- Live-Reload plugin uses get_file_mtime when available
+- Live-Reload plugin uses `get_file_mtime` when available
 - Code formatting defaults to no-semi, attribute on single line
 
 ### Fixed
@@ -34,7 +53,7 @@ All notable changes to this project will be documented in this file.
 
 - Member Completion regression
 - Removed hard-coded loader matching, now use DocBlock flags
-- DocBlock summary now finds Surface add_artwork labels
+- DocBlock summary now finds Surface `add_artwork` labels
 - Returned params use correct tokens
 - Prevent completions appearing for declaration ids, again
 - Output log link parser, again
@@ -98,7 +117,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
-- VSCode minimum version bumped to 1.70.0
+- VSCode minimum version bumped to `1.70.0`
 
 ### Fixed
 
@@ -153,7 +172,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
-- Reduce VSCode version requirement from 1.95.0 to 1.69.1
+- Reduce VSCode version requirement from `1.95.0` to `1.69.1`
 - Auto-select completion signature to match the given parameters
 
 ## [0.9.6] - 2025-02-25
@@ -176,7 +195,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 - Settings for default author and url
-- DocBlock package @requires completion rebuilds requirements
+- DocBlock package `@requires` completion rebuilds requirements
 
 ### Changed
 
@@ -195,7 +214,7 @@ All notable changes to this project will be documented in this file.
 
 - Sidebar for module explorer
 - DocBlock package completion, with module and artwork listings
-- Colour picker to *_rgb methods
+- Colour picker to `*_rgb` methods
 - Problem reporting for missing files and modules
 
 ### Fixed
@@ -244,7 +263,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
-- README.md
+- `README.md`
 - DocBlock expects completions
 - DocBlock meta-method getters and setters
 - DocBlock access flags
@@ -290,13 +309,13 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
-- Update Squirrel Lexer to 3.0.7 to match AM
+- Update Squirrel Lexer to `3.0.7` to match AM
 
 ## [0.5.0] - 2024-08-31
 
 ### Changed
 
-- Extend language-js as a base for Squirrel formatting
+- Extend `language-js` as a base for Squirrel formatting
 
 ## [0.4.0] - 2024-08-29
 
@@ -322,5 +341,5 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
-- Start Squirrel 3.0.4 lexer to typescript conversion
+- Start Squirrel `3.0.4` lexer to typescript conversion
 - Lexer tests

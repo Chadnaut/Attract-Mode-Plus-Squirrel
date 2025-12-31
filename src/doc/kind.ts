@@ -26,6 +26,7 @@ const KIND_ORDER = [
     "package",
     "summary",
     "version",
+    "since",
     "author",
     "url",
     "requires",

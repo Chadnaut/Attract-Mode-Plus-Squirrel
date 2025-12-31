@@ -60,6 +60,7 @@ export const getSignatureHelp = (
 
         const documentation = getDocAttr(docBlock, "description");
         const version = getDocAttr(docBlock, "version");
+        const since = getDocAttr(docBlock, "since");
 
         const contents = new MarkdownString();
         contents.supportHtml = true;
@@ -67,7 +68,11 @@ export const getSignatureHelp = (
         if (documentation) contents.appendMarkdown(formatDocumentation(documentation));
         if (documentation && call) contents.appendMarkdown("\n\n");
         if (call) contents.appendMarkdown(formatDocumentation(call));
-        if (version) contents.appendMarkdown(formatVersion(version));
+
+        let footer = "";
+        if (version) footer += formatVersion(version) + " ";
+        if (since) footer += formatVersion(since) + " ";
+        if (footer) contents.appendMarkdown(`\n\n<small>${footer.trim()}</small>`);
 
         const signatureInfo = new SignatureInformation(signature, contents);
         signatureInfo.parameters.push(...parameters);

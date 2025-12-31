@@ -64,6 +64,7 @@ beforeEach(() => {
 
 describe("File", () => {
     it("parseExtensionList", () => {
+        expect(parseExtensionList(",")).toEqual([]);
         expect(parseExtensionList("TXT")).toEqual([".txt"]);
         expect(parseExtensionList(".TXT")).toEqual([".txt"]);
         expect(parseExtensionList(".TXT,JPG")).toEqual([".txt", ".jpg"]);

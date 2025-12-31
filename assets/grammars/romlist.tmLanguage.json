@@ -1,0 +1,98 @@
+{
+    "name": "am-romlist",
+    "scopeName": "source.romlist",
+    "patterns": [
+        {
+            "include": "#comments"
+        },
+        {
+            "include": "#statements"
+        }
+    ],
+    "repository": {
+        "comments": {
+            "patterns": [
+                {
+                    "match": "^\\s*(#.*)",
+                    "captures": {
+                        "1": {
+                            "name": "comment.cfg"
+                        }
+                    }
+                }
+            ]
+        },
+        "statements": {
+            "patterns": [
+                {
+                    "match": "^([^;]*;?)?([^;]*;?)?([^;]*;?)?([^;]*;?)?([^;]*;?)?([^;]*;?)?([^;]*;?)?([^;]*;?)?([^;]*;?)?([^;]*;?)?([^;]*;?)?([^;]*;?)?([^;]*;?)?([^;]*;?)?([^;]*;?)?([^;]*;?)?([^;]*;?)?([^;]*;?)?([^;]*;?)?([^;]*;?)?([^;]*;?)?",
+                    "captures": {
+                        "1": {
+                            "name": "rainbow1"
+                        },
+                        "2": {
+                            "name": "rainbow2 keyword"
+                        },
+                        "3": {
+                            "name": "rainbow3 entity.name.function"
+                        },
+                        "4": {
+                            "name": "rainbow4 comment"
+                        },
+                        "5": {
+                            "name": "rainbow5 string"
+                        },
+                        "6": {
+                            "name": "rainbow6 variable.parameter"
+                        },
+                        "7": {
+                            "name": "rainbow7 constant.numeric"
+                        },
+                        "8": {
+                            "name": "rainbow8 entity.name.type"
+                        },
+                        "9": {
+                            "name": "rainbow9 markup.bold"
+                        },
+                        "10": {
+                            "name": "rainbow10 invalid"
+                        },
+                        "11": {
+                            "name": "rainbow1"
+                        },
+                        "12": {
+                            "name": "rainbow2 keyword"
+                        },
+                        "13": {
+                            "name": "rainbow3 entity.name.function"
+                        },
+                        "14": {
+                            "name": "rainbow4 comment"
+                        },
+                        "15": {
+                            "name": "rainbow5 string"
+                        },
+                        "16": {
+                            "name": "rainbow6 variable.parameter"
+                        },
+                        "17": {
+                            "name": "rainbow7 constant.numeric"
+                        },
+                        "18": {
+                            "name": "rainbow8 entity.name.type"
+                        },
+                        "19": {
+                            "name": "rainbow9 markup.bold"
+                        },
+                        "20": {
+                            "name": "rainbow10 invalid"
+                        },
+                        "21": {
+                            "name": "rainbow1"
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}

@@ -14,10 +14,17 @@ async function main() {
     sourcemap: !production,
     sourcesContent: false,
     platform: 'node',
+    target: ['esnext'],
     outfile: 'dist/extension.js',
-    external: ['vscode', 'prettier'],
+    external: ['commonjs', 'vscode', 'prettier'],
     logLevel: 'warning',
+    define: {
+      'process.env.NODE_ENV': production
+        ? '"production"'
+        : '"development"'
+    },
     plugins: [
+      require('unplugin-macros/esbuild')(),
       /* add to the end of plugins array */
       esbuildProblemMatcherPlugin
     ]

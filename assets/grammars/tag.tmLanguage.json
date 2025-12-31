@@ -1,0 +1,72 @@
+{
+    "name": "am-tag",
+    "scopeName": "source.tag",
+    "patterns": [
+		{
+			"include": "#comments"
+		},
+		{
+			"include": "#statements"
+		}
+	],
+	"repository": {
+        "comments": {
+            "patterns": [
+                {
+                    "match": "^\\s*(#.*)",
+                    "captures": {
+                        "1": {
+                            "name": "comment.cfg"
+                        }
+                    }
+                }
+            ]
+        },
+        "statements": {
+            "patterns": [
+                {
+                    "match": "^([^;]*)(;)([^;]*)$",
+                    "captures": {
+                        "1": {
+                            "patterns": [
+                                {
+                                    "include": "#string"
+                                }
+                            ]
+                        },
+                        "2": {
+                            "name": "keyword.am"
+                        },
+                        "3": {
+                            "name": "value.am"
+                        }
+                    }
+                },
+                {
+                    "match": "^([^;]*)$",
+                    "captures": {
+                        "1": {
+                            "name": "keyword.am"
+                        }
+                    }
+                }
+            ]
+        },
+        "string": {
+            "patterns": [
+                {
+                    "match": "[^,]+",
+                    "name": "string.am"
+                }
+            ]
+        },
+        "literals": {
+            "patterns": [
+                {
+                    "match": "\\b([0-9]+)\\b",
+                    "name": "constant.language.am"
+                }
+            ]
+        }
+    }
+}

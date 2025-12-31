@@ -44,9 +44,20 @@ describe("Doc Find", () => {
         expect(getCommentBlockAtPosition(program, pos(0)).type).toBe("CommentBlock");
         expect(getCommentBlockAtPosition(program, pos(5)).type).toBe("CommentBlock");
         expect(getCommentBlockAtPosition(program, pos(10)).type).toBe("CommentBlock");
+    });
+
+    it("getCommentBlockAtPosition misses", () => {
+        const program = parse("/** Doc */ function foo() {}");
         expect(getCommentBlockAtPosition(program, pos(11))).toBeUndefined();
         expect(getCommentBlockAtPosition(program, pos(22))).toBeUndefined();
         expect(getCommentBlockAtPosition(undefined, undefined)).toBeUndefined();
+    });
+
+    it("getCommentBlockAtPosition ignores", () => {
+        const program = parse("/* Doc2 */ function foo() {}");
+        expect(getCommentBlockAtPosition(program, pos(0))).toBeUndefined();
+        expect(getCommentBlockAtPosition(program, pos(5))).toBeUndefined();
+        expect(getCommentBlockAtPosition(program, pos(10))).toBeUndefined();
     });
 
     // -------------------------------------------------------------------------

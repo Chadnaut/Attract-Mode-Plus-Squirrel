@@ -18,4 +18,9 @@ describe("Array", () => {
         expect(response).toBe('[\n    "11111111111111111111111111",\n    "222222222222222222222222222222",\n    "333333333333333333333333333333"\n];\n');
     });
 
+    it("Func", async () => {
+        const response = await format("i[ 1 ]( )");
+        expect(response).toBe("i[1]();\n");
+    });
+
 });

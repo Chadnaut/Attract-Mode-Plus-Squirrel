@@ -1,7 +1,7 @@
 /**
  * Squirrel Language
  *
- * @package Squirrel
+ * @package System
  * @global
  * @version 3.0.7
  */
@@ -65,6 +65,7 @@ function rename(source, destination) {}
 
 /**
  * Executes the given command using the OS interpreter, and returns its output.
+ * @param {string} command The command to execute.
  * @returns {string}
  */
 function system(command) {}

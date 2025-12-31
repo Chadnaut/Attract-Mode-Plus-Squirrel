@@ -176,4 +176,9 @@ describe("Table", () => {
             lineLoc(0, 29)
         ));
     });
+
+    it("Table allows cased-keywords", () => {
+        expect(() => parse("local x = { default = 123 }")).toThrow();
+        expect(() => parse("local x = { Default = 123 }")).not.toThrow();
+    });
 });

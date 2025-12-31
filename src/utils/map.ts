@@ -258,6 +258,11 @@ export const createNodeMaps = (
                 setNodeDec(id, newBranch);
                 updateNodeSymbol(b, SymbolKind.Field);
             }
+            // SPECIAL: `foreach` index/left identifiers dont require declarators!
+            const p = <AST.ForInStatement>parent;
+            if (p?.type == "ForInStatement") {
+                updateNodeSymbol(b, SymbolKind.Variable);
+            }
             break;
         }
 

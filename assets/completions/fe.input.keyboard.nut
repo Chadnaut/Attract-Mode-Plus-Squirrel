@@ -109,4 +109,9 @@ local keyStrings = [
 	"F14",
 	"F15",
 	"Pause",
+
+	"CapsLock",
+	"Shift",
+	"Control",
+	"Alt"
 ];

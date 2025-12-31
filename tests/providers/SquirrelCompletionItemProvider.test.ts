@@ -48,7 +48,7 @@ describe("SquirrelCompletionItemProvider", () => {
             return s.provideCompletionItems(d, p, t, r);
         }
 
-        expect(await getItems("local x = x")).not.toBeUndefined();
+        expect(await getItems("local  x = x")).not.toBeUndefined();
         expect(await getItems("local x")).toBeUndefined();
         expect(await getItems("function x")).toBeUndefined();
         expect(await getItems("class x")).toBeUndefined();

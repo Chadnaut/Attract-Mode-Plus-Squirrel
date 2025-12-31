@@ -13,20 +13,23 @@
  * @class
  * @type {feCurrentList}
  * @alias fe.CurrentList
- * @version AM_1.1.0 https://github.com/mickelson/attract/blob/v1.1.0/Layouts.md?plain=1#L554
+ * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#fecurrentlist
+ * @since AM_1.1.0 https://github.com/mickelson/attract/blob/v1.1.0/Layouts.md?plain=1#L554
  */
 class feCurrentList {
 
     /**
      * The index of the current Filter.
-     * @version AM_1.5.0 https://github.com/mickelson/attract/blob/v1.5.0/Layouts.md?plain=1#L949
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#fecurrentlist
+     * @since AM_1.5.0 https://github.com/mickelson/attract/blob/v1.5.0/Layouts.md?plain=1#L949
      */
     filter_index = 0;
     // filter https://github.com/mickelson/attract/blob/v1.1.0/Layouts.md?plain=1#L563
 
     /**
      * The index of the current Game.
-     * @version AM_1.5.0 https://github.com/mickelson/attract/blob/v1.5.0/Layouts.md?plain=1#L948
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#fecurrentlist
+     * @since AM_1.5.0 https://github.com/mickelson/attract/blob/v1.5.0/Layouts.md?plain=1#L948
      */
     index = 0;
 
@@ -40,7 +43,8 @@ class feCurrentList {
      * - Property - The romlist property to compare.
      * - Predicate - One of `contains`, `not_contains`, `equals`, `not_equals`.
      * - Expression - A string or regular-expression.
-     * @version AM_1.6.2 https://github.com/mickelson/attract/blob/v1.6.2/Layouts.md?plain=1#L1124
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#fecurrentlist
+     * @since AM_1.6.2 https://github.com/mickelson/attract/blob/v1.6.2/Layouts.md?plain=1#L1124
      * @example
      * ```
      * // Show games containing the string "The" or "the"
@@ -56,21 +60,30 @@ class feCurrentList {
      *
      * @property {string} name
      * The name of the current Display.
-     * @version AM_1.5.0 https://github.com/mickelson/attract/blob/v1.5.0/Layouts.md?plain=1#L948
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#fecurrentlist
+     * @since AM_1.5.0 https://github.com/mickelson/attract/blob/v1.5.0/Layouts.md?plain=1#L948
      *
      * @property {integer} display_index
      * The index of the current Display.
      *
      * Will be `-1` when a custom *Displays Menu* Layout is showing.
-     * @version AM_2.0.0-rc1 https://github.com/mickelson/attract/blob/v2.0.0-rc1/Layouts.md?plain=1#L1173
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#fecurrentlist
+     * @since AM_2.0.0-rc1 https://github.com/mickelson/attract/blob/v2.0.0-rc1/Layouts.md?plain=1#L1173
      *
      * @property {boolean} clones_list
      * Whether the current List contains *Group Clones*.
-     * @version 🔶AM+_3.0.0 https://github.com/oomek/attractplus/blob/3.0.0/Layouts.md?plain=1#L1394
+     * @version 🔶AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#fecurrentlist
+     * @since 🔶AM+_3.0.0 https://github.com/oomek/attractplus/blob/3.0.0/Layouts.md?plain=1#L1394
      *
      * @property {integer} size
      * The length of the current List.
-     * @version AM_1.6.2 https://github.com/mickelson/attract/blob/v1.6.2/Layouts.md?plain=1#L1129
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#fecurrentlist
+     * @since AM_1.6.2 https://github.com/mickelson/attract/blob/v1.6.2/Layouts.md?plain=1#L1129
+     *
+     * @property {array(string)} tags
+     * The tags used by the current List.
+     * @version 🔶AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#fecurrentlist
+     * @since 🔶AM+_3.2.0 https://github.com/oomek/attractplus/blob/3.2.0/Layouts.md?plain=1#L1397
      */
     function _get() {}
 }

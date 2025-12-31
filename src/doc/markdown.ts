@@ -1,6 +1,7 @@
 import { MarkdownString } from "vscode";
 import { DocAttr, DocBlock } from "./kind";
 import { META_KINDS } from "../utils/meta";
+import { ucfirst } from "../utils/string";
 
 // -----------------------------------------------------------------------------
 
@@ -51,7 +52,7 @@ const formatDefault = (attr: DocAttr): string => {
 const verRegex = new RegExp(/([^\r\n\t]*?) (http[^\s\t\r\n]+)[\s\t\r\n]*/g)
 
 export const formatVersion = (attr: DocAttr): string => {
-    let { name, documentation } = attr;
+    let { kind, name, documentation } = attr;
     const text = name ? `${name} ${documentation}` : documentation;
     let output = "";
 
@@ -60,10 +61,11 @@ export const formatVersion = (attr: DocAttr): string => {
     while ((m = verRegex.exec(text))) {
         const label = m[1].replace("_", " ");
         const url = m[2];
-        if (output) output += " ";
-        output += `<small><a href="${url}">\`${label}\`</a></small>`;
+        output += `<a href="${url}">\`${label}\`</a> `;
     }
-    return output ? `\n\n${output}` : formatDefault(attr);
+
+    if (output) output = `${ucfirst(kind)} ${output}`.trim();
+    return output ? output : formatDefault(attr);
 };
 
 // -----------------------------------------------------------------------------
@@ -98,6 +100,7 @@ export const createDocMarkdown = (
             case "external":
             case "constant":
             case "version": // prints last
+            case "since":
             case "global":
             case "method":
             case "ignore":
@@ -120,13 +123,16 @@ export const createDocMarkdown = (
         }
     }
 
+    let footer = "";
     for (const attr of attrs) {
         switch (attr.kind) {
-            case "version": {
-                md.appendMarkdown(formatVersion(attr));
-            }
+            case "version":
+            case "since":
+                footer += formatVersion(attr) + " ";
+                break;
         }
     }
+    if (footer) md.appendMarkdown(`\n\n<small>${footer.trim()}</small>`);
 
     md.value = md.value.trim();
 

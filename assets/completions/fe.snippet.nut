@@ -46,10 +46,11 @@
  * @snippet
  * class UserConfig </ help="Description placeholder" /> {
  *     </ label="String", help="Type any text", order=1 /> text = "string"
- *     </ label="Button", help="Press any key", is_input=true, order=3 /> input = "A"
- *     </ label="Choice", help="Choose option", options="Yes,No", order=2 /> option = "Yes"
- *     </ label="Unique", help="Display owned", per_display=true, order=4 /> unique = "string"
- *     </ label="Method", help="Call function", is_function=true, order=5 /> callback = "funcname"
+ *     </ label="Button", help="Press any key", is_input=true, order=2 /> input = "A"
+ *     </ label="—— Info ——", help="Info section", is_info=true, order=3 /> info = "————"
+ *     </ label="Choice", help="Choose option", options="Yes,No", order=4 /> option = "Yes"
+ *     </ label="Unique", help="Display owned", per_display=true, order=5 /> unique = "string"
+ *     </ label="Method", help="Call function", is_function=true, order=6 /> callback = "funcname"
  * }
  */
 

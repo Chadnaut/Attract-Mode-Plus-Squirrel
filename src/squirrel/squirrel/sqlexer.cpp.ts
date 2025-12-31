@@ -1,11 +1,11 @@
 /*
 	see copyright notice in squirrel.h
 */
-import { TokenType, scstrtod, scisalnum, scisalpha, sciscntrl, scisdigit, scisxdigit, MAX_CHAR, SQLEXREADFUNC, SQUIRREL_EOB } from '../include/squirrel.h';
+import { TokenType, scstrtod, scisalnum, scisalpha, sciscntrl, scisdigit, scisxdigit, MAX_CHAR, SQLEXREADFUNC, SQUIRREL_EOB, toupper } from '../include/squirrel.h';
 import { CompilerErrorFunc, TK } from './sqcompiler.h';
 import { SQSharedState } from './sqstate.cpp';
 import { SQLexerStruct } from './sqlexer.h';
-
+import { _SC } from '../include/squirrel.h' with { type: 'macro' };
 //
 
 class SQLexerDefine extends SQLexerStruct {
@@ -13,10 +13,10 @@ class SQLexerDefine extends SQLexerStruct {
     RETURN_TOKEN = (t: TokenType): TokenType => { this._prevtoken = this._curtoken; this._curtoken = t; return t; };
     IS_EOB = (): boolean => { return this.CUR_CHAR == SQUIRREL_EOB; };
     NEXT = () => { this.Next(); this._currentcolumn++; this._currentindex++; };
-    INIT_TEMP_STRING = () => { this._longstr = ""; this._realstr = this.CUR_CHAR };
-    APPEND_CHAR = (c: TokenType) => { if (c != undefined) this._longstr += c; };
-    TERMINATE_BUFFER = () => { if (this.CUR_CHAR != undefined) { this._realstr = this._realstr.slice(0, -1); }};
-    ADD_KEYWORD = (key: string, _id: string) => { this._keywords.push(key); };
+    INIT_TEMP_STRING = () => { this._longstr = ''; this._realstr = String.fromCharCode(this.CUR_CHAR) };
+    APPEND_CHAR = (c: TokenType) => { this._longstr += String.fromCharCode(c); };
+    TERMINATE_BUFFER = () => { if (this.CUR_CHAR) { this._realstr = this._realstr.slice(0, -1); }};
+    ADD_KEYWORD = (key: string, id: TokenType) => { this._keywords[key] = id; };
 }
 
 //
@@ -29,7 +29,7 @@ export class SQLexer extends SQLexerDefine {
         this._errfunc = efunc;
         this._errtarget = ed;
         this._sharedstate = ss; ss._lex = this;
-        this._keywords = [];
+        this._keywords = {};
         this.ADD_KEYWORD('while', TK.WHILE);
         this.ADD_KEYWORD('do', TK.DO);
         this.ADD_KEYWORD('if', TK.IF);
@@ -70,7 +70,7 @@ export class SQLexer extends SQLexerDefine {
         this._up = up;
         this._lasttokenline = this._currentline = 1;
         this._lasttokencolumn = this._currentcolumn = 0; this._lasttokenindex = this._currentindex = 0;
-        this._prevtoken = undefined;
+        this._prevtoken = -1;
         this._reached_eof = false;
         this.Next();
     }
@@ -82,10 +82,10 @@ export class SQLexer extends SQLexerDefine {
 
     Next = (): void =>
     {
-        const t: TokenType = this._readf(this._up);
-        if ((t?.charCodeAt(0) ?? 0) > MAX_CHAR) this.Error("Invalid character");
-        if (t != undefined) {
-            this.CUR_CHAR = this._currdata = t; this._realstr += t;
+        const t: number = this._readf(this._up);
+        if (t > MAX_CHAR) this.Error("Invalid character");
+        if (t != 0) {
+            this.CUR_CHAR = this._currdata = t; this._realstr += String.fromCharCode(t);
             return;
         }
         this.CUR_CHAR = this._currdata = SQUIRREL_EOB;
@@ -94,172 +94,172 @@ export class SQLexer extends SQLexerDefine {
 
     Tok2Str = (tok: TokenType): string | null =>
     {
+        return Object
+            .keys(this._keywords)
+            .find(key => this._keywords[key] === tok)?.toUpperCase() || null;
         //
         //
-        if (this._keywords.includes(tok)) {
-            //
-            //
-            return tok.toUpperCase();
-        }
-        return null;
+        //
+        //
+        //
     }
 
     LexBlockComment = (): void =>
     {
         let done = false; this.InitBlockComment();
         while (!done) { this.AppendComment(this.CUR_CHAR);
-            switch (this.CUR_CHAR as unknown) {
-                case "*": { this.NEXT(); if (this.CUR_CHAR == "/") { done = true; this.NEXT(); }} continue;
-                case "\n": this._currentline++; this.NEXT(); this._lasttokencolumn = 0; this._currentcolumn = 0; continue;
-                case SQUIRREL_EOB: this.ErrorSpan('missing "*/" in comment'); done = true;
+            switch (this.CUR_CHAR) {
+                case _SC('*'): { this.NEXT(); if (this.CUR_CHAR == _SC('/')) { done = true; this.NEXT(); }} continue;
+                case _SC('\n'): this._currentline++; this.NEXT(); this._lasttokencolumn = 0; this._currentcolumn = 0; continue;
+                case SQUIRREL_EOB: this.ErrorSpan("missing \"*/\" in comment"); done = true;
                 default: this.NEXT();
             }
         } this.TerminateBlockComment();
     };
     LexLineComment = (hash: boolean): void =>
     {
-        this.InitComment(); do { this.AppendComment(this.CUR_CHAR); this.NEXT(); } while (this.CUR_CHAR != "\n" && !this.IS_EOB()); this.TerminateComment(hash);
+        this.InitComment(); do { this.AppendComment(this.CUR_CHAR); this.NEXT(); } while (this.CUR_CHAR != _SC('\n') && !this.IS_EOB()); this.TerminateComment(hash);
     };
 
     Lex = (): TokenType =>
     {
         this.ResetValues();
         while (this.CUR_CHAR != SQUIRREL_EOB) { this._lasttokenline = this._currentline; this._lasttokencolumn = this._currentcolumn; this._lasttokenindex = this._currentindex;
-            switch (this.CUR_CHAR as unknown) {
-                case "\t": case "\r": case " ": this.NEXT(); continue;
-                case "\n":
+            switch (this.CUR_CHAR) {
+                case _SC('\t'): case _SC('\r'): case _SC(' '): this.NEXT(); continue;
+                case _SC('\n'):
                     this._currentline++;
                     this._prevtoken = this._curtoken;
-                    this._curtoken = "\n";
+                    this._curtoken = _SC('\n');
                     this.NEXT();
                     this._currentcolumn = 0;
                     continue;
-                case "#": this.LexLineComment(true); continue;
-                case "/":
+                case _SC('#'): this.LexLineComment(true); continue;
+                case _SC('/'):
                     this.NEXT();
                     switch (this.CUR_CHAR) {
-                        case "*":
+                        case _SC('*'):
                             this.NEXT();
                             this.LexBlockComment();
                             continue;
-                        case "/":
+                        case _SC('/'):
                             this.LexLineComment(false);
                             continue;
-                        case "=":
+                        case _SC('='):
                             this.NEXT();
                             return this.RETURN_TOKEN(TK.DIVEQ);
                             // continue;
-                        case ">":
+                        case _SC('>'):
                             this.NEXT();
                             return this.RETURN_TOKEN(TK.ATTR_CLOSE);
                             // continue;
                         default:
-                            return this.RETURN_TOKEN("/");
+                            return this.RETURN_TOKEN(_SC('/'));
                     }
-                case "=":
+                case _SC('='):
                     this.NEXT();
-                    if (this.CUR_CHAR != "=") { return this.RETURN_TOKEN("="); }
+                    if (this.CUR_CHAR != _SC('=')) { return this.RETURN_TOKEN(_SC('=')); }
                     else { this.NEXT(); return this.RETURN_TOKEN(TK.EQ); }
-                case "<":
+                case _SC('<'):
                     this.NEXT();
-                    switch (this.CUR_CHAR as unknown) {
-                        case "=":
+                    switch (this.CUR_CHAR) {
+                        case _SC('='):
                             this.NEXT();
-                            if (this.CUR_CHAR == ">") {
+                            if (this.CUR_CHAR == _SC('>')) {
                                 this.NEXT();
                                 return this.RETURN_TOKEN(TK.THREEWAYSCMP);
                             }
                             return this.RETURN_TOKEN(TK.LE);
                             // break;
-                        case "-": this.NEXT(); return this.RETURN_TOKEN(TK.NEWSLOT); // break;
-                        case "<": this.NEXT(); return this.RETURN_TOKEN(TK.SHIFTL); // break;
-                        case "/": this.NEXT(); return this.RETURN_TOKEN(TK.ATTR_OPEN); // break;
+                        case _SC('-'): this.NEXT(); return this.RETURN_TOKEN(TK.NEWSLOT); // break;
+                        case _SC('<'): this.NEXT(); return this.RETURN_TOKEN(TK.SHIFTL); // break;
+                        case _SC('/'): this.NEXT(); return this.RETURN_TOKEN(TK.ATTR_OPEN); // break;
                     }
-                    return this.RETURN_TOKEN("<");
-                case ">":
+                    return this.RETURN_TOKEN(_SC('<'));
+                case _SC('>'):
                     this.NEXT();
-                    if (this.CUR_CHAR == "=") { this.NEXT(); return this.RETURN_TOKEN(TK.GE); }
-                    else if (this.CUR_CHAR == ">") {
+                    if (this.CUR_CHAR == _SC('=')) { this.NEXT(); return this.RETURN_TOKEN(TK.GE); }
+                    else if (this.CUR_CHAR == _SC('>')) {
                         this.NEXT();
-                        if (this.CUR_CHAR == ">") {
+                        if (this.CUR_CHAR == _SC('>')) {
                             this.NEXT();
                             return this.RETURN_TOKEN(TK.USHIFTR);
                         }
                         return this.RETURN_TOKEN(TK.SHIFTR);
                     }
-                    else { return this.RETURN_TOKEN(">"); }
-                case "!":
+                    else { return this.RETURN_TOKEN(_SC('>')); }
+                case _SC('!'):
                     this.NEXT();
-                    if (this.CUR_CHAR != "=") { return this.RETURN_TOKEN("!"); }
+                    if (this.CUR_CHAR != _SC('=')) { return this.RETURN_TOKEN(_SC('!')); }
                     else { this.NEXT(); return this.RETURN_TOKEN(TK.NE); }
-                case "@": {
+                case _SC('@'): {
                     let stype: TokenType;
                     this.NEXT();
-                    if (this.CUR_CHAR != '"') {
-                        return this.RETURN_TOKEN("@");
+                    if (this.CUR_CHAR != _SC('"')) {
+                        return this.RETURN_TOKEN(_SC('@'));
                     }
-                    if ((stype = this.ReadString('"', true)) != undefined) {
+                    if ((stype = this.ReadString(_SC('"'), true)) != -1) {
                         return this.RETURN_TOKEN(stype);
                     }
                     this.ErrorSpan("error parsing the string");
                 }
-                case '"':
-                case "'": {
+                case _SC('"'):
+                case _SC('\''): {
                     let stype: TokenType;
-                    if ((stype = this.ReadString(this.CUR_CHAR, false)) != undefined) {
+                    if ((stype = this.ReadString(this.CUR_CHAR, false)) != -1) {
                         return this.RETURN_TOKEN(stype);
                     }
                     this.ErrorSpan("error parsing the string");
                 }
-                case "{": case "}": case "(": case ")": case "[": case "]":
-                case ";": case ",": case "?": case "^": case "~": {
+                case _SC('{'): case _SC('}'): case _SC('('): case _SC(')'): case _SC('['): case _SC(']'):
+                case _SC(';'): case _SC(','): case _SC('?'): case _SC('^'): case _SC('~'): {
                     const ret = this.CUR_CHAR;
                     this.NEXT(); return this.RETURN_TOKEN(ret); }
-                case ".":
+                case _SC('.'):
                     this.NEXT();
-                    if (this.CUR_CHAR != ".") { return this.RETURN_TOKEN("."); }
+                    if (this.CUR_CHAR != _SC('.')) { return this.RETURN_TOKEN(_SC('.')); }
                     this.NEXT();
-                    if (this.CUR_CHAR != ".") { this.ErrorCurrent("invalid token '..'", -2, 0); }
+                    if (this.CUR_CHAR != _SC('.')) { this.ErrorCurrent("invalid token '..'", -2, 0); }
                     this.NEXT();
                     return this.RETURN_TOKEN(TK.VARPARAMS);
-                case "&":
+                case _SC('&'):
                     this.NEXT();
-                    if (this.CUR_CHAR != "&") { return this.RETURN_TOKEN("&"); }
+                    if (this.CUR_CHAR != _SC('&')) { return this.RETURN_TOKEN(_SC('&')); }
                     else { this.NEXT(); return this.RETURN_TOKEN(TK.AND); }
-                case "|":
+                case _SC('|'):
                     this.NEXT();
-                    if (this.CUR_CHAR != "|") { return this.RETURN_TOKEN("|"); }
+                    if (this.CUR_CHAR != _SC('|')) { return this.RETURN_TOKEN(_SC('|')); }
                     else { this.NEXT(); return this.RETURN_TOKEN(TK.OR); }
-                case ":":
+                case _SC(':'):
                     this.NEXT();
-                    if (this.CUR_CHAR != ":") { return this.RETURN_TOKEN(":"); }
+                    if (this.CUR_CHAR != _SC(':')) { return this.RETURN_TOKEN(_SC(':')); }
                     else { this.NEXT(); return this.RETURN_TOKEN(TK.DOUBLE_COLON); }
-                case "*":
+                case _SC('*'):
                     this.NEXT();
-                    if (this.CUR_CHAR == "=") { this.NEXT(); return this.RETURN_TOKEN(TK.MULEQ); }
-                    else return this.RETURN_TOKEN("*");
-                case "%":
+                    if (this.CUR_CHAR == _SC('=')) { this.NEXT(); return this.RETURN_TOKEN(TK.MULEQ); }
+                    else return this.RETURN_TOKEN(_SC('*'));
+                case _SC('%'):
                     this.NEXT();
-                    if (this.CUR_CHAR == "=") { this.NEXT(); return this.RETURN_TOKEN(TK.MODEQ); }
-                    else return this.RETURN_TOKEN("%");
-                case "-":
+                    if (this.CUR_CHAR == _SC('=')) { this.NEXT(); return this.RETURN_TOKEN(TK.MODEQ); }
+                    else return this.RETURN_TOKEN(_SC('%'));
+                case _SC('-'):
                     this.NEXT();
-                    if (this.CUR_CHAR == "=") { this.NEXT(); return this.RETURN_TOKEN(TK.MINUSEQ); }
-                    else if (this.CUR_CHAR == "-") { this.NEXT(); return this.RETURN_TOKEN(TK.MINUSMINUS); }
-                    else return this.RETURN_TOKEN("-");
-                case "+":
+                    if (this.CUR_CHAR == _SC('=')) { this.NEXT(); return this.RETURN_TOKEN(TK.MINUSEQ); }
+                    else if (this.CUR_CHAR == _SC('-')) { this.NEXT(); return this.RETURN_TOKEN(TK.MINUSMINUS); }
+                    else return this.RETURN_TOKEN(_SC('-'));
+                case _SC('+'):
                     this.NEXT();
-                    if (this.CUR_CHAR == "=") { this.NEXT(); return this.RETURN_TOKEN(TK.PLUSEQ); }
-                    else if (this.CUR_CHAR == "+") { this.NEXT(); return this.RETURN_TOKEN(TK.PLUSPLUS); }
-                    else return this.RETURN_TOKEN("+");
+                    if (this.CUR_CHAR == _SC('=')) { this.NEXT(); return this.RETURN_TOKEN(TK.PLUSEQ); }
+                    else if (this.CUR_CHAR == _SC('+')) { this.NEXT(); return this.RETURN_TOKEN(TK.PLUSPLUS); }
+                    else return this.RETURN_TOKEN(_SC('+'));
                 // case SQUIRREL_EOB: this.EndPos(); // Unreachable
-                //     return;
+                //     return 0;
                 default: {
                     if (scisdigit(this.CUR_CHAR)) {
                         const ret = this.ReadNumber();
                         return this.RETURN_TOKEN(ret);
                     }
-                    else if (scisalpha(this.CUR_CHAR) || this.CUR_CHAR == "_") {
+                    else if (scisalpha(this.CUR_CHAR) || this.CUR_CHAR == _SC('_')) {
                         const t = this.ReadID();
                         return this.RETURN_TOKEN(t);
                     }
@@ -269,72 +269,72 @@ export class SQLexer extends SQLexerDefine {
                         this.NEXT();
                         return this.RETURN_TOKEN(c);
                     }
-                    // return this.RETURN_TOKEN(undefined);
+                    // return this.RETURN_TOKEN(0); // unreachable
                 }
             }
         } this.EndPos();
-        return;
+        return 0;
     };
 
     GetIDType = (s: string): TokenType =>
     {
         //
-        if (this._keywords.includes(s)) {
-            return s;
+        if (s in this._keywords) {
+            return this._keywords[s];
         }
         return TK.IDENTIFIER;
     };
 
 
-    ReadString = (ndelim: string, verbatim: boolean): TokenType =>
+    ReadString = (ndelim: TokenType, verbatim: boolean): TokenType =>
     {
         this.INIT_TEMP_STRING(); if (verbatim) this._realstr = '@' + this._realstr;
         this.NEXT();
-        if (this.IS_EOB()) return;
+        if (this.IS_EOB()) return -1;
         for (;;) {
             while (this.CUR_CHAR != ndelim) {
-                switch (this.CUR_CHAR as unknown) {
+                switch (this.CUR_CHAR) {
                 case SQUIRREL_EOB:
                     this.ErrorSpan("unfinished string");
-                    return;
-                case "\n":
+                    return -1;
+                case _SC('\n'):
                     if (!verbatim) this.Error("newline in a constant");
                     this.APPEND_CHAR(this.CUR_CHAR); this.NEXT();
                     this._currentline++; this._currentcolumn = 0;
                     break;
-                case "\\":
+                case _SC('\\'):
                     if (verbatim) {
-                        this.APPEND_CHAR("\\"); this.NEXT();
+                        this.APPEND_CHAR(_SC('\\')); this.NEXT();
                     }
                     else {
                         this.NEXT();
                         switch (this.CUR_CHAR) {
-                            case "x": this.NEXT(); {
+                            case _SC('x'): this.NEXT(); {
                                 if (!scisxdigit(this.CUR_CHAR)) this.ErrorCurrent("hexadecimal number expected", -2, 1);
                                 const maxdigits = 4;
-                                let temp = "";
+                                let temp = "0x";
                                 let n = 0;
                                 while (scisxdigit(this.CUR_CHAR) && n < maxdigits) {
-                                    temp += this.CUR_CHAR;
+                                    temp += String.fromCharCode(this.CUR_CHAR);
                                     n++;
                                     this.NEXT();
                                 }
                                 //
                                 //
-                                this.APPEND_CHAR(String.fromCharCode(Number(`0x${temp}`)));
+                                this.APPEND_CHAR(Number(temp));
                                 }
                                 break;
-                            case 't': this.APPEND_CHAR('\t'); this.NEXT(); break;
-                            case 'a': this.APPEND_CHAR('\a'); this.NEXT(); break;
-                            case 'b': this.APPEND_CHAR('\b'); this.NEXT(); break;
-                            case 'n': this.APPEND_CHAR('\n'); this.NEXT(); break;
-                            case 'r': this.APPEND_CHAR('\r'); this.NEXT(); break;
-                            case 'v': this.APPEND_CHAR('\v'); this.NEXT(); break;
-                            case 'f': this.APPEND_CHAR('\f'); this.NEXT(); break;
-                            case '0': this.APPEND_CHAR('\0'); this.NEXT(); break;
-                            case '\\': this.APPEND_CHAR('\\'); this.NEXT(); break;
-                            case '"': this.APPEND_CHAR('"'); this.NEXT(); break;
-                            case '\'': this.APPEND_CHAR('\''); this.NEXT(); break;
+                            case _SC('t'): this.APPEND_CHAR(_SC('\t')); this.NEXT(); break;
+                            case _SC('a'): this.APPEND_CHAR(_SC('\a')); this.NEXT(); break;
+                            case _SC('b'): this.APPEND_CHAR(_SC('\b')); this.NEXT(); break;
+                            case _SC('n'): this.APPEND_CHAR(_SC('\n')); this.NEXT(); break;
+                            case _SC('r'): this.APPEND_CHAR(_SC('\r')); this.NEXT(); break;
+                            case _SC('v'): this.APPEND_CHAR(_SC('\v')); this.NEXT(); break;
+                            case _SC('f'): this.APPEND_CHAR(_SC('\f')); this.NEXT(); break;
+                            case _SC('0'): this.APPEND_CHAR(_SC('\0')); this.NEXT(); break;
+                            case _SC('\\'): this.APPEND_CHAR(_SC('\\')); this.NEXT(); break;
+                            case _SC('"'): this.APPEND_CHAR(_SC('"')); this.NEXT(); break;
+                            case _SC('\''): this.APPEND_CHAR(_SC('\'')); this.NEXT(); break;
                             default:
                                 this.ErrorCurrent("unrecognised escaper char", -1, 1);
                                 break;
@@ -347,7 +347,7 @@ export class SQLexer extends SQLexerDefine {
                 }
             }
             this.NEXT();
-            if (verbatim && this.CUR_CHAR == '"') { //double quotation
+            if (verbatim && this.CUR_CHAR == _SC('"')) { //double quotation
                 this.APPEND_CHAR(this.CUR_CHAR);
                 this.NEXT();
             }
@@ -357,7 +357,7 @@ export class SQLexer extends SQLexerDefine {
         }
         this.TERMINATE_BUFFER();
         const len = this._longstr.length;
-        if (ndelim == "'") {
+        if (ndelim == _SC('\'')) {
             if (len == 0) this.ErrorSpan("empty constant");
             if (len > 1) this.ErrorSpan("constant too long");
             this._nvalue = this._longstr.charCodeAt(0); this._longstr = this._realstr;
@@ -387,7 +387,7 @@ export class SQLexer extends SQLexerDefine {
         return parseInt(s);
     }
 
-    scisodigit = (c: string | undefined): boolean => { if (c === undefined) return false; const code = c.charCodeAt(0); return code > 47 && code < 56; };
+    scisodigit = (c: TokenType): boolean => { return c >= _SC('0') && c <= _SC('7'); };
 
     LexOctal = (s: string): number =>
     {
@@ -399,7 +399,7 @@ export class SQLexer extends SQLexerDefine {
         return parseInt(s, 8);
     }
 
-    isexponent = (c: string | undefined): boolean => { return c == "e" || c == "E"; };
+    isexponent = (c: TokenType): boolean => { return c == _SC('e') || c == _SC('E'); };
 
 
     MAX_HEX_DIGITS = 8;
@@ -413,8 +413,8 @@ export class SQLexer extends SQLexerDefine {
         let type = TINT; const firstchar = this.CUR_CHAR;
         //
         this.INIT_TEMP_STRING();
-        this.NEXT(); if (firstchar == "0" && this.CUR_CHAR == SQUIRREL_EOB) this.Error("newline expected");
-        if (firstchar == "0" && (this.CUR_CHAR?.toUpperCase() == "X" || this.scisodigit(this.CUR_CHAR))) {
+        this.NEXT(); if (firstchar == _SC('0') && this.CUR_CHAR == SQUIRREL_EOB) this.Error("newline expected");
+        if (firstchar == _SC('0') && (toupper(this.CUR_CHAR) == _SC('X') || this.scisodigit(this.CUR_CHAR))) {
             if (this.scisodigit(this.CUR_CHAR)) {
                 type = TOCTAL;
                 while (this.scisodigit(this.CUR_CHAR)) {
@@ -435,14 +435,14 @@ export class SQLexer extends SQLexerDefine {
         }
         else {
             this.APPEND_CHAR(firstchar);
-            while (this.CUR_CHAR == "." || scisdigit(this.CUR_CHAR) || this.isexponent(this.CUR_CHAR)) {
-                if (this.CUR_CHAR == "." || this.isexponent(this.CUR_CHAR)) type = TFLOAT;
+            while (this.CUR_CHAR == _SC('.') || scisdigit(this.CUR_CHAR) || this.isexponent(this.CUR_CHAR)) {
+                if (this.CUR_CHAR == _SC('.') || this.isexponent(this.CUR_CHAR)) type = TFLOAT;
                 if (this.isexponent(this.CUR_CHAR)) {
                     // if (type != TFLOAT) this.Error("invalid numeric format"); // Unreachable!
                     type = TSCIENTIFIC;
                     this.APPEND_CHAR(this.CUR_CHAR);
                     this.NEXT();
-                    if (this.CUR_CHAR == "+" || this.CUR_CHAR == "-") {
+                    if (this.CUR_CHAR == _SC('+') || this.CUR_CHAR == _SC('-')) {
                         this.APPEND_CHAR(this.CUR_CHAR);
                         this.NEXT();
                     }
@@ -469,7 +469,7 @@ export class SQLexer extends SQLexerDefine {
                 this._nvalue = this.LexOctal(this._longstr);
                 return TK.INTEGER;
         }
-        // return;
+        // return 0; // unreachable
     };
 
     ReadID = (): TokenType =>
@@ -479,7 +479,7 @@ export class SQLexer extends SQLexerDefine {
         do {
             this.APPEND_CHAR(this.CUR_CHAR);
             this.NEXT();
-        } while (scisalnum(this.CUR_CHAR) || this.CUR_CHAR == "_");
+        } while (scisalnum(this.CUR_CHAR) || this.CUR_CHAR == _SC('_'));
         this.TERMINATE_BUFFER();
         res = this.GetIDType(this._longstr);
         if (res == TK.IDENTIFIER || res == TK.CONSTRUCTOR) {

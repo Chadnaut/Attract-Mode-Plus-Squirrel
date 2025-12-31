@@ -73,6 +73,7 @@ describe("Map", () => {
 
     it("createNodeMaps, brute", () => {
         expect(() => createNodeMaps(qt.FunctionDeclaration(null, null, null))).not.toThrow();
+        expect(() => createNodeMaps(qt.Identifier(null, null))).not.toThrow();
     });
 
     it("getNodeChildren, brute", () => {

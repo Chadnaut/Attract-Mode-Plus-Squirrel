@@ -15,7 +15,8 @@
  * @class
  * @type {feListBox}
  * @alias fe.ListBox
- * @version AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L584
+ * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#felistbox
+ * @since AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L584
  */
 class feListBox {
 
@@ -26,7 +27,8 @@ class feListBox {
      * The x position of the element.
      * @relative To the top-left corner of the parent Surface.
      * @default `0`
-     * @version AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L593
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#felistbox
+     * @since AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L593
      */
     x = 0.0;
 
@@ -34,21 +36,24 @@ class feListBox {
      * The y position of the element.
      * @relative To the top-left corner of the parent Surface.
      * @default `0`
-     * @version AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L594
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#felistbox
+     * @since AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L594
      */
     y = 0.0;
 
     /**
      * The width of the element.
      * @default `0`
-     * @version AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L595
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#felistbox
+     * @since AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L595
      */
     width = 0.0;
 
     /**
      * The height of the element.
      * @default `0`
-     * @version AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L596
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#felistbox
+     * @since AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L596
      */
     height = 0.0;
 
@@ -57,7 +62,8 @@ class feListBox {
      *
      * When not visible the element won't be drawn to the parent Surface.
      * @default `true`
-     * @version AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L597
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#felistbox
+     * @since AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L597
      */
     visible = true;
 
@@ -65,35 +71,40 @@ class feListBox {
      * Rotation of the element in clockwise degrees.
      * @relative To the `origin` or `rotation_origin`.
      * @default `0.0`
-     * @version AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L598
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#felistbox
+     * @since AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L598
      */
     rotation = 0.0;
 
     /**
      * The red channel level for the text `0...255`.
      * @default `255`
-     * @version AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L601
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#felistbox
+     * @since AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L601
      */
     red = 0;
 
     /**
      * The green channel level for the text `0...255`.
      * @default `255`
-     * @version AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L603
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#felistbox
+     * @since AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L603
      */
     green = 0;
 
     /**
      * The blue channel level for the text `0...255`.
      * @default `255`
-     * @version AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L605
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#felistbox
+     * @since AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L605
      */
     blue = 0;
 
     /**
      * The alpha channel level for the text `0...255`.
      * @default `255`
-     * @version AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L607
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#felistbox
+     * @since AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L607
      */
     alpha = 0;
 
@@ -102,14 +113,16 @@ class feListBox {
      *
      * Use to select content adjacent to the current selection.
      * @default `0`
-     * @version AM_1.5.0 https://github.com/mickelson/attract/blob/v1.5.0/Layouts.md?plain=1#L1317
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#felistbox
+     * @since AM_1.5.0 https://github.com/mickelson/attract/blob/v1.5.0/Layouts.md?plain=1#L1317
      */
     filter_offset = 0;
 
     /**
      * The shader applied to the *atlas* texture.
      * @note Glyphs are arranged automatically on the atlas, causing unpredictable Shader results.
-     * @version AM_1.2.0 https://github.com/mickelson/attract/blob/v1.2.0/Layouts.md?plain=1#L838
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#felistbox
+     * @since AM_1.2.0 https://github.com/mickelson/attract/blob/v1.2.0/Layouts.md?plain=1#L838
      */
     shader = feShader();
 
@@ -118,7 +131,8 @@ class feListBox {
      * - Higher ordered elements are drawn on top.
      * - Identically ordered elements are drawn in order of creation.
      * @default `0`
-     * @version AM_2.0.0-rc1 https://github.com/mickelson/attract/blob/v2.0.0-rc1/Layouts.md?plain=1#L1658
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#felistbox
+     * @since AM_2.0.0-rc1 https://github.com/mickelson/attract/blob/v2.0.0-rc1/Layouts.md?plain=1#L1658
      */
     zorder = 0;
 
@@ -130,134 +144,210 @@ class feListBox {
     /**
      * The red channel level for the background `0...255`.
      * @default `0`
-     * @version AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L610
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#felistbox
+     * @since AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L610
      */
     bg_red = 0;
 
     /**
      * The green channel level for the background `0...255`.
      * @default `0`
-     * @version AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L612
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#felistbox
+     * @since AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L612
      */
     bg_green = 0;
 
     /**
      * The blue channel level for the background `0...255`.
      * @default `0`
-     * @version AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L614
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#felistbox
+     * @since AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L614
      */
     bg_blue = 0;
 
     /**
      * The alpha channel level for the background `0...255`.
      * @default `0`
-     * @version AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L616
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#felistbox
+     * @since AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L616
      */
     bg_alpha = 0;
 
     /**
      * The red channel level for the selected option text `0...255`.
      * @default `0`
-     * @version AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L618
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#felistbox
+     * @since AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L618
      */
     sel_red = 0;
 
     /**
      * The green channel level for the selected option text `0...255`.
      * @default `0`
-     * @version AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L620
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#felistbox
+     * @since AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L620
      */
     sel_green = 0;
 
     /**
      * The blue channel level for the selected option text `0...255`.
      * @default `0`
-     * @version AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L622
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#felistbox
+     * @since AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L622
      */
     sel_blue = 0;
 
     /**
      * The alpha channel level for the selected option text `0...255`.
      * @default `0`
-     * @version AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L624
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#felistbox
+     * @since AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L624
      */
     sel_alpha = 0;
 
     /**
      * The red channel level for the selected option background `0...255`.
      * @default `0`
-     * @version AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L626
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#felistbox
+     * @since AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L626
      */
     selbg_red = 0;
 
     /**
      * The green channel level for the selected option background `0...255`.
      * @default `0`
-     * @version AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L628
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#felistbox
+     * @since AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L628
      */
     selbg_green = 0;
 
     /**
      * The blue channel level for the selected option background `0...255`.
      * @default `0`
-     * @version AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L630
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#felistbox
+     * @since AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L630
      */
     selbg_blue = 0;
 
     /**
      * The alpha channel level for the selected option background `0...255`.
      * @default `0`
-     * @version AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L632
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#felistbox
+     * @since AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L632
      */
     selbg_alpha = 0;
 
     /**
      * The number of options displayed in the element.
      * @default `11`
-     * @version AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L634
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#felistbox
+     * @since AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L634
      */
     rows = 0;
+
+    /**
+     * The row alignment when `sel_mode` is `Selection.Moving`.
+     * @default `ListAlign.Top`
+     * @version 🔶AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#felistbox
+     * @since 🔶AM+_3.2.0 https://github.com/oomek/attractplus/blob/3.2.0/Layouts.md?plain=1#L1821
+     */
+    list_align = ListAlign;
 
     /**
      * The font size, in points.
      *
      * Use `<= 0` to auto-size to the option elements.
      * @default `-1`
-     * @version AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L635
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#felistbox
+     * @since AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L635
      */
     char_size = 0;
 
     /**
      * The space between characters, as a ratio of the font default.
      * @default `1.0`
-     * @version AM_2.4.0 https://github.com/mickelson/attract/blob/v2.4.0/Layouts.md?plain=1#L1739
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#felistbox
+     * @since AM_2.4.0 https://github.com/mickelson/attract/blob/v2.4.0/Layouts.md?plain=1#L1739
      */
     char_spacing = 0.0;
 
     /**
+     * The thickness of the text outline.
+     * @default `0.0`
+     * @version 🔶AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#felistbox
+     * @since 🔶AM+_3.2.0 https://github.com/oomek/attractplus/blob/3.2.0/Layouts.md?plain=1#L1830
+     */
+    outline = 0.0;
+
+    /**
+     * The thickness of the selected text outline.
+     * @default `0.0`
+     * @version 🔶AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#felistbox
+     * @since 🔶AM+_3.2.0 https://github.com/oomek/attractplus/blob/3.2.0/Layouts.md?plain=1#L1831
+     */
+    sel_outline = 0.0;
+
+    /**
      * The font style for the text, accepts multiple values separated by `|`.
      * @default `Style.Regular`
-     * @version AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L638
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#felistbox
+     * @since AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L638
      */
     style = Style;
 
     /**
      * The font style for the selected option text, accepts multiple values separated by `|`.
      * @default `Style.Regular`
-     * @version AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L649
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#felistbox
+     * @since AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L649
      */
     sel_style = Style;
 
     /**
+     * Space the text to fill the available space.
+     * @default `Justify.None`
+     * @version 🔶AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#felistbox
+     * @since 🔶AM+_3.2.0 https://github.com/oomek/attractplus/blob/3.2.0/Layouts.md?plain=1#L1844
+     */
+    justify = Justify;
+
+    /**
      * The alignment of the text within the option elements.
      * @default `Align.Centre`
-     * @version AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L644
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#felistbox
+     * @since AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L644
      */
     align = Align;
 
     /**
+     * The selection mode controls how the listbox behaves when navigating.
+     * @default `Selection.Static`
+     * @version 🔶AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#felistbox
+     * @since 🔶AM+_3.2.0 https://github.com/oomek/attractplus/blob/3.2.0/Layouts.md?plain=1#L862
+     */
+    sel_mode = Selection;
+
+    /**
+     * The list will scroll when the selection is this many rows from the edge.
+     *
+     * Requires `sel_mode` to be `Selection.Moving` or `Selection.Paged`.
+     * @default `0`
+     * @version 🔶AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#felistbox
+     * @since 🔶AM+_3.2.0 https://github.com/oomek/attractplus/blob/3.2.0/Layouts.md?plain=1#L867
+     */
+    sel_margin = 0;
+
+    /**
+     * The index of the selected row.
+     * @version 🔶AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#felistbox
+     * @since 🔶AM+_3.2.0 https://github.com/oomek/attractplus/blob/3.2.0/Layouts.md?plain=1#L868
+     */
+    sel_row = 0;
+
+    /**
      * The filename of the option font.
-     * @version AM_1.2.0 https://github.com/mickelson/attract/blob/v1.2.0/Layouts.md?plain=1#L836
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#felistbox
+     * @since AM_1.2.0 https://github.com/mickelson/attract/blob/v1.2.0/Layouts.md?plain=1#L836
      */
     font = "";
 
@@ -266,7 +356,8 @@ class feListBox {
      *
      * Use `-1` to auto-size based on `char_size`.
      * @default `-1`
-     * @version AM_2.4.0 https://github.com/mickelson/attract/blob/v2.4.0/Layouts.md?plain=1#L1759
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#felistbox
+     * @since AM_2.4.0 https://github.com/mickelson/attract/blob/v2.4.0/Layouts.md?plain=1#L1759
      */
     margin = 0;
 
@@ -274,7 +365,8 @@ class feListBox {
      * The option text format, accepts *[MagicTokens]*.
      *
      * When empty `"[Title]"` will be used.
-     * @version AM_1.4.1 https://github.com/mickelson/attract/blob/v1.4.1/Layouts.md?plain=1#L1270
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#felistbox
+     * @since AM_1.4.1 https://github.com/mickelson/attract/blob/v1.4.1/Layouts.md?plain=1#L1270
      */
     format_string = "";
 
@@ -283,11 +375,13 @@ class feListBox {
      *
      * @property {integer} glyph_size
      * The height of an uppercase `X`.
-     * @version AM_2.4.0 https://github.com/mickelson/attract/blob/v2.4.0/Layouts.md?plain=1#L1738
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#felistbox
+     * @since AM_2.4.0 https://github.com/mickelson/attract/blob/v2.4.0/Layouts.md?plain=1#L1738
      *
      * @property {integer} list_size
      * The total number of listbox items.
-     * @version AM_2.4.0 https://github.com/mickelson/attract/blob/v2.4.0/Layouts.md?plain=1#L1731
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#felistbox
+     * @since AM_2.4.0 https://github.com/mickelson/attract/blob/v2.4.0/Layouts.md?plain=1#L1731
      */
     function _get() {}
 
@@ -300,7 +394,8 @@ class feListBox {
      * Sets the position of the element.
      * @param {float} x The x position of the element.
      * @param {float} y The y position of the element.
-     * @version AM_1.3.0-beta1 https://github.com/mickelson/attract/blob/v1.3.0-beta1/Layouts.md?plain=1#L1008
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#felistbox
+     * @since AM_1.3.0-beta1 https://github.com/mickelson/attract/blob/v1.3.0-beta1/Layouts.md?plain=1#L1008
      */
     function set_pos(x, y) {}
 
@@ -311,7 +406,8 @@ class feListBox {
      * @param {float} y The y position of the element.
      * @param {float} width The width of the element.
      * @param {float} height The height of the element.
-     * @version AM_1.3.0-beta1 https://github.com/mickelson/attract/blob/v1.3.0-beta1/Layouts.md?plain=1#L1009
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#felistbox
+     * @since AM_1.3.0-beta1 https://github.com/mickelson/attract/blob/v1.3.0-beta1/Layouts.md?plain=1#L1009
      */
     function set_pos(x, y, width, height) {}
 
@@ -320,7 +416,8 @@ class feListBox {
      * @param {integer} r The red channel level `0...255`.
      * @param {integer} g The green channel level `0...255`.
      * @param {integer} b The blue channel level `0...255`.
-     * @version AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L659
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#felistbox
+     * @since AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L659
      */
     function set_rgb(r, g, b) {}
 
@@ -329,7 +426,8 @@ class feListBox {
      * @param {integer} r The red channel level `0...255`.
      * @param {integer} g The green channel level `0...255`.
      * @param {integer} b The blue channel level `0...255`.
-     * @version AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L661
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#felistbox
+     * @since AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L661
      */
     function set_bg_rgb(r, g, b) {}
 
@@ -338,7 +436,8 @@ class feListBox {
      * @param {integer} r The red channel level `0...255`.
      * @param {integer} g The green channel level `0...255`.
      * @param {integer} b The blue channel level `0...255`.
-     * @version AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L663
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#felistbox
+     * @since AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L663
      */
     function set_sel_rgb(r, g, b) {}
 
@@ -347,9 +446,30 @@ class feListBox {
      * @param {integer} r The red channel level `0...255`.
      * @param {integer} g The green channel level `0...255`.
      * @param {integer} b The blue channel level `0...255`.
-     * @version AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L665
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#felistbox
+     * @since AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L665
      */
     function set_selbg_rgb(r, g, b) {}
+
+    /**
+     * Sets the colour channel levels for the text outline.
+     * @param {integer} r The red channel level `0...255`.
+     * @param {integer} g The green channel level `0...255`.
+     * @param {integer} b The blue channel level `0...255`.
+     * @version 🔶AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#felistbox
+     * @since 🔶AM+_3.2.0 https://github.com/oomek/attractplus/blob/3.2.0/Layouts.md?plain=1#L1881
+     */
+    function set_outline_rgb(r, g, b) {}
+
+    /**
+     * Sets the colour channel levels for the selected text outline.
+     * @param {integer} r The red channel level `0...255`.
+     * @param {integer} g The green channel level `0...255`.
+     * @param {integer} b The blue channel level `0...255`.
+     * @version 🔶AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#felistbox
+     * @since 🔶AM+_3.2.0 https://github.com/oomek/attractplus/blob/3.2.0/Layouts.md?plain=1#L1882
+     */
+    function set_sel_outline_rgb(r, g, b) {}
 
     // #endregion
 }

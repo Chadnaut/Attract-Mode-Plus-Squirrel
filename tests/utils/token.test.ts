@@ -84,6 +84,18 @@ describe("Token", () => {
         expect(getNodeSymbol(n).kind).toBe(SymbolKind.Method);
     });
 
+    it("Method, cannot force unknown", () => {
+        const program = parse("/** @method */ abcdef");
+        const n = getBranchAtPos(program, pos(19));
+        expect(getNodeSymbol(n)?.kind).not.toBe(SymbolKind.Method);
+    });
+
+    it("Class, cannot force unknown", () => {
+        const program = parse("/** @class */ abcdefg");
+        const n = getBranchAtPos(program, pos(19));
+        expect(getNodeSymbol(n)?.kind).not.toBe(SymbolKind.Class);
+    });
+
     it("Enum", () => {
         const program = parse("enum myEnum {}");
         const n = getBranchAtPos(program, pos(8));

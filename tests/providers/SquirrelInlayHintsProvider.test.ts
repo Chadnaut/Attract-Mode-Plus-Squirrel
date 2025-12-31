@@ -21,10 +21,17 @@ describe("SquirrelInlayHintsProvider", () => {
         const s = new SquirrelInlayHintsProvider()
         const d = new MockTextDocument("");
         const r = new Range(0, 0, 0, 0);
-        s.enabled = false;
-        s.enabled = true; // toggle to fire emitter
-        s.enabled = false;
 
+        s.enabled = false;
+        expect(s.provideInlayHints(d, r, t)).toBeUndefined();
+
+        s.enabled = true; // toggle to fire emitter
+        expect(s.provideInlayHints(d, r, t)).not.toBeUndefined();
+
+        s.enabled = true; // toggle twice does nothing
+        expect(s.provideInlayHints(d, r, t)).not.toBeUndefined();
+
+        s.enabled = false;
         expect(s.provideInlayHints(d, r, t)).toBeUndefined();
     });
 

@@ -1,10 +1,11 @@
 import { forwardSlash } from './../../src/utils/file';
 import { describe, expect, it } from "@jest/globals";
 import { parseExtra as parse, pos } from '../utils';
-import { formatBytes, getArtworkCallLabel, getArtworkCompletions, getAudioCompletions, getImageCompletions, getImageMarkdownString, getProgramArtworks, getShaderCompletions, getVideoCompletions, isSupportedAudio, isSupportedImage, isSupportedShader, refreshArtworkLabels, scanArtworkLabels } from "../../src/utils/media";
+import { formatBytes, getArtworkCallLabel, getArtworkCompletions, getAudioCompletions, getImageCompletions, getImageMarkdownString, getImageSize, getProgramArtworks, getShaderCompletions, getVideoCompletions, isSupportedAudio, isSupportedImage, isSupportedShader, refreshArtworkLabels, scanArtworkLabels } from "../../src/utils/media";
 import * as path from "path";
 import constants from "../../src/constants";
 import { getProgramErrors } from "../../src/utils/diagnostics";
+import { getBranchAtPos } from '../../src/utils/find';
 
 jest.replaceProperty(constants, "FE_LAYOUTS_PATH", "tests");
 
@@ -84,6 +85,12 @@ describe("Media", () => {
         expect(getProgramArtworks(null)).toEqual([]);
     });
 
+    it("getProgramArtworks, repeated", () => {
+        const program = parse("");
+        expect(getProgramArtworks(program)).toEqual([]);
+        expect(getProgramArtworks(program)).toEqual([]);
+    });
+
     it("getProgramArtworks", () => {
         getConfigValueFunc = (v) => {
             switch (v) {
@@ -102,6 +109,19 @@ describe("Media", () => {
 
     it("getArtworkCallLabel, undefined", () => {
         expect(getArtworkCallLabel([])).toBeUndefined();
+    });
+
+    it("getArtworkCallLabel ignores wrong expected", () => {
+        const program = parse(`/** @param {string($file)} a */ function add(a){}; add("snap")`);
+        const b = getBranchAtPos(program, pos(62));
+        expect(getArtworkCallLabel(b)).toBeUndefined();
+    });
+
+    it("getImageSize", () => {
+        expect(getImageSize(1, 1, 10)).toEqual([1, 1]);
+        expect(getImageSize(10, 10, 10)).toEqual([10, 10]);
+        expect(getImageSize(10, 20, 10)).toEqual([5, 10]);
+        expect(getImageSize(20, 10, 10)).toEqual([10, 5]);
     });
 
     it("isSupportedImage", () => {

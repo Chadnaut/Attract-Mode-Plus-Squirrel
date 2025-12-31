@@ -187,6 +187,38 @@ function add_shader2(type, name) {}
 function add_shader3(type, vert, frag) {}
 
 /**
+ * Creates a new Shader.
+ *
+ * Shader code should target `#version 120` for best cross-platform compatibility.
+ * @ignore
+ * @method
+ * @param {Shader} type The type of shader to create.
+ * @returns {feShader}
+ */
+function compile_shader1(type) {}
+
+/**
+ * @ignore
+ * @method
+ * @variation compile_shader1
+ * @param {Shader} type The type of shader to create.
+ * @param {string} value The vertex or fragment shader code.
+ * @returns {feShader}
+ */
+function compile_shader2(type, value) {}
+
+/**
+ * @ignore
+ * @method
+ * @variation compile_shader1
+ * @param {Shader} type The type of shader to create.
+ * @param {string} vert The vertex shader code.
+ * @param {string} frag The fragment shader code.
+ * @returns {feShader}
+ */
+function compile_shader3(type, vert, frag) {}
+
+/**
  * Creates a new Sound element.
  *
  * Sound audio is stored in RAM.
@@ -218,3 +250,107 @@ function add_sound2(filename, reuse = true) {}
  * @returns {feMusic}
  */
 function add_music1(filename) {}
+
+/**
+ * Returns romlist information for a Game.
+ * @method
+ * @param {Info} info The information attribute to get.
+ * @returns {string}
+ * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feget_game_info
+ * @since AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L297
+ */
+function game_info1(info) {}
+
+/**
+ * @ignore
+ * @variation game_info1
+ * @param {Info} info The information attribute to get.
+ * @param {integer} index_offset The offset relative to the current Game. Defaults to `0`.
+ * @returns {string}
+ * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feget_game_info
+ * @since AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L298
+ */
+function game_info2(info, index_offset = 0) {}
+
+/**
+ * @ignore
+ * @variation game_info1
+ * @param {Info} info The information attribute to get.
+ * @param {integer} index_offset The offset relative to the current Game. Defaults to `0`.
+ * @param {integer} filter_offset The offset relative to the current Filter. Defaults to `0`.
+ * @returns {string}
+ * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feget_game_info
+ * @since AM_1.5.0 https://github.com/mickelson/attract/blob/v1.5.0/Layouts.md?plain=1#L511
+ */
+function game_info3(info, index_offset = 0, filter_offset = 0) {}
+
+/**
+ * Substitutes leading system tokens in the given path.
+ * - `~` or `$HOME` - The User's home directory.
+ * - `%SYSTEMROOT%` - The Windows directory.
+ * - `%PROGRAMFILES%` - The "Program Files" directory.
+ * - `%PROGRAMFILESx86%` - The "Program Files (x86)" directory.
+ * @ignore
+ * @method
+ * @param {string} path The path to expand.
+ * @returns {string}
+ * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#fspath_expand
+ * @since AM_1.1.0 https://github.com/mickelson/attract/blob/v1.1.0/Layouts.md?plain=1#L480
+ */
+function path_expand1(path) {}
+
+/**
+ * Checks the given path has the status indicated by the flag.
+ * @ignore
+ * @method
+ * @param {string} path The path to check. Relative to the application, or absolute.
+ * @param {PathTest} flag The status to check.
+ * @returns {boolean}
+ * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#fspath_test
+ * @since AM_2.4.0 https://github.com/mickelson/attract/blob/v2.4.0/Layouts.md?plain=1#L1038
+ */
+function path_test1(path, flag) {}
+
+/**
+ * Returns the modified time of the given file as a GMT timestamp in seconds.
+ * @ignore
+ * @method
+ * @param {string} filename The filename to check. Relative to the application, or absolute.
+ * @returns {integer}
+ * @version 🔶AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#fsget_file_mtime-
+ * @since 🔶AM+_3.1.0 https://github.com/oomek/attractplus/blob/3.1.0/Layouts.md?plain=1#L1182
+ */
+function get_file_mtime1(filename) {}
+
+/**
+ * Returns the text with *[MagicTokens]* substituted.
+ *
+ * Attempts to translate into the user's configured language prior to substitution.
+ * @ignore
+ * @method
+ * @param {string} value The text to format, accepts *[MagicTokens]*.
+ * @returns {string}
+ */
+function get_text1(value) {}
+
+/**
+ * @ignore
+ * @method
+ * @variation get_text1
+ * @param {string} value The text to format, accepts *[MagicTokens]*.
+ * @param {integer} index_offset The offset relative to the current Game. Defaults to `0`.
+ * @returns {string}
+ */
+function get_text2(value, index_offset) {}
+
+/**
+ * @ignore
+ * @method
+ * @variation get_text1
+ * @param {string} value The text to format, accepts *[MagicTokens]*.
+ * @param {integer} index_offset The offset relative to the current Game. Defaults to `0`.
+ * @param {integer} filter_offset The offset relative to the current Filter. Defaults to `0`.
+ * @returns {string}
+ */
+function get_text3(value, index_offset, filter_offset) {}
+

@@ -1,0 +1,6 @@
+{
+    "config.value": 123,
+    "config": {
+        "sub.value": 456
+    }
+}

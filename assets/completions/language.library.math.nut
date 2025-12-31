@@ -1,7 +1,7 @@
 /**
  * Squirrel Language
  *
- * @package Squirrel
+ * @package Math
  * @global
  * @version 3.0.7
  */

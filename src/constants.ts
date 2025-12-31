@@ -11,6 +11,8 @@ export default {
 
     UPDATE_ORDER: "Update order",
 
+    CONFIG_FILENAME: ".attractrc.json",
+
     // language
     LANGUAGE_ID: "squirrel",
     LANGUAGE_EXTENSION: ".nut",

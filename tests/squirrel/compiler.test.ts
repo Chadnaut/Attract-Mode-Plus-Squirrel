@@ -14,14 +14,14 @@ jest.mock('../../src/squirrel/squirrel/sqopcodes.h.ts', () => ({
 
 describe("SQCompiler", () => {
     it("Creates", () => {
-        const c = new SQCompiler(new SQVM(new SQSharedState()), ()=>"", "", "", true, null, true);
+        const c = new SQCompiler(new SQVM(new SQSharedState()), ()=>0, "", "", true, null, true);
         expect(c).toBeInstanceOf(SQCompiler);
     });
 
     it("Returns false on error", () => {
         let readIndex = 0;
         const text = "base = 1"; // erroneous code
-        const readf = (t) => t[readIndex++];
+        const readf = (t) => t.charCodeAt(readIndex++) || 0;
         const efunc = () => { throw "err"; };
         const raiseerror = false;
         const c = new SQCompiler(new SQVM(new SQSharedState()), readf, text, "src", raiseerror, efunc, true);
@@ -54,5 +54,11 @@ describe("SQCompiler", () => {
         expect(() => {
             parse("delete base");
         }).toThrow("internal compiler assertion: invalid command");
+    });
+
+    it("Throws: expected 'IDENTIFIER'", () => {
+        expect(() => {
+            parse('local foo = class { \"wut\" }');
+        }).toThrow("expected 'IDENTIFIER'");
     });
 });

@@ -810,7 +810,7 @@ export const valueKeys: { [key: string]: string[] } = {
     WhileStatement: ["test", "body"],
     DoWhileStatement: ["body", "test"],
     ForStatement: ["init", "test", "update", "body"],
-    ForInStatement: ["index", "right", "body"],
+    ForInStatement: ["index", "left", "right", "body"],
     Declaration: [],
     FunctionDeclaration: ["params", "body"],
     VariableDeclaration: ["declarations"],

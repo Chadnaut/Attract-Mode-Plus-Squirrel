@@ -42,5 +42,4 @@ describe("Class", () => {
         const response = await format('  class foo { constructor  (x) {} } ');
         expect(response).toBe("class foo {\n    constructor(x) {}\n}\n");
     });
-
 });

@@ -15,14 +15,16 @@
  * @class
  * @type {feShader}
  * @alias fe.Shader
- * @version AM_1.2.0 https://github.com/mickelson/attract/blob/v1.2.0/Layouts.md?plain=1#L872
+ * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feshader
+ * @since AM_1.2.0 https://github.com/mickelson/attract/blob/v1.2.0/Layouts.md?plain=1#L872
  */
 class feShader {
     /**
      * @ignore
      *
      * @property {Shader} type The Shader type
-     * @version AM_1.2.0 https://github.com/mickelson/attract/blob/v1.2.0/Layouts.md?plain=1#L880
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feshader
+     * @since AM_1.2.0 https://github.com/mickelson/attract/blob/v1.2.0/Layouts.md?plain=1#L880
      */
     function _get() {}
 
@@ -30,7 +32,8 @@ class feShader {
      * Sets the Shader's uniform parameter to the given `float`.
      * @param {string} uniform The name of the uniform variable.
      * @param {float} f The value to set.
-     * @version AM_1.2.0 https://github.com/mickelson/attract/blob/v1.2.0/Layouts.md?plain=1#L888
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feshader
+     * @since AM_1.2.0 https://github.com/mickelson/attract/blob/v1.2.0/Layouts.md?plain=1#L888
      */
     function set_param(uniform, f) {}
 
@@ -40,7 +43,8 @@ class feShader {
      * @param {string} uniform The name of the uniform variable.
      * @param {float} x The x component to set.
      * @param {float} y The y component to set.
-     * @version AM_1.2.0 https://github.com/mickelson/attract/blob/v1.2.0/Layouts.md?plain=1#L890
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feshader
+     * @since AM_1.2.0 https://github.com/mickelson/attract/blob/v1.2.0/Layouts.md?plain=1#L890
      */
     function set_param(uniform, x, y) {}
 
@@ -51,7 +55,8 @@ class feShader {
      * @param {float} x The x component to set.
      * @param {float} y The y component to set.
      * @param {float} z The z component to set.
-     * @version AM_1.2.0 https://github.com/mickelson/attract/blob/v1.2.0/Layouts.md?plain=1#L892
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feshader
+     * @since AM_1.2.0 https://github.com/mickelson/attract/blob/v1.2.0/Layouts.md?plain=1#L892
      */
     function set_param(uniform, x, y, z) {}
 
@@ -63,14 +68,16 @@ class feShader {
      * @param {float} y The y component to set.
      * @param {float} z The z component to set.
      * @param {float} w The w component to set.
-     * @version AM_1.2.0 https://github.com/mickelson/attract/blob/v1.2.0/Layouts.md?plain=1#L894
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feshader
+     * @since AM_1.2.0 https://github.com/mickelson/attract/blob/v1.2.0/Layouts.md?plain=1#L894
      */
     function set_param(uniform, x, y, z, w) {}
 
     /**
      * Sets the Shader's uniform parameter to the `sampler2D` texture of the current element.
      * @param {string} uniform The name of the uniform variable.
-     * @version AM_1.2.0 https://github.com/mickelson/attract/blob/v1.2.0/Layouts.md?plain=1#L896
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feshader
+     * @since AM_1.2.0 https://github.com/mickelson/attract/blob/v1.2.0/Layouts.md?plain=1#L896
      */
     function set_texture_param(uniform) {}
 
@@ -79,7 +86,8 @@ class feShader {
      * @ignore
      * @param {string} uniform The name of the uniform variable.
      * @param {fe.Image} element The element containing the texture to set.
-     * @version AM_1.2.0 https://github.com/mickelson/attract/blob/v1.2.0/Layouts.md?plain=1#L890
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feshader
+     * @since AM_1.2.0 https://github.com/mickelson/attract/blob/v1.2.0/Layouts.md?plain=1#L890
      */
     function set_texture_param(uniform, element) {}
 }

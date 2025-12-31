@@ -187,7 +187,7 @@ export const getFileCompletions = (sourceName: string): CompletionItem[] => {
     const self = path.relative(basePath, sourceName);
     return readDir(basePath, true)
         .filter((name) => name !== self)
-        .map((name) => new CompletionItem(name, CompletionItemKind.File));
+        .map((name) => new CompletionItem(forwardSlash(name), CompletionItemKind.File));
 };
 
 /** Return nut files relative to layout path */
@@ -198,5 +198,5 @@ export const getNutCompletions = (sourceName: string): CompletionItem[] => {
     const self = path.relative(basePath, sourceName);
     return readDir(basePath, true)
         .filter((name) => isSupportedNut(name) && name !== self)
-        .map((name) => new CompletionItem(name, CompletionItemKind.File));
+        .map((name) => new CompletionItem(forwardSlash(name), CompletionItemKind.File));
 };

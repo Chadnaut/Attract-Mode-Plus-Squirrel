@@ -1,7 +1,7 @@
 /**
  * Squirrel Language
  *
- * @package Squirrel
+ * @package Blob
  * @global
  * @version 3.0.7
  */

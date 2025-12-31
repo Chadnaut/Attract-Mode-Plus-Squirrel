@@ -1,7 +1,7 @@
 import { describe, expect, it } from "@jest/globals";
 import { dump, MockTextDocument, parseExtra as parse, pos } from "../utils";
 import { getBranchAtPos } from "../../src/utils/find";
-import { colorToRGB, getNodeColorInformation, getProgramColorInformation } from "../../src/utils/color";
+import { colorToRGB, getNodeColorInformation, getProgramColorCalls, getProgramColorInformation } from "../../src/utils/color";
 import { Color } from "vscode";
 
 describe("Color", () => {
@@ -15,6 +15,13 @@ describe("Color", () => {
         const t = new MockTextDocument("");
         const program = parse(t.getText())
         expect(getProgramColorInformation(t, program)).toHaveLength(0);
+    });
+
+    it("getProgramColorCalls", () => {
+        const t = new MockTextDocument("");
+        const program = parse(t.getText())
+        expect(getProgramColorCalls(program)).toHaveLength(0);
+        expect(getProgramColorCalls(program)).toHaveLength(0);
     });
 
     it("addProgramColorCall", () => {
@@ -33,6 +40,13 @@ describe("Color", () => {
 
     it("getNodeColorInformation, none", () => {
         const t = new MockTextDocument("call_rgb();");
+        const program = parse(t.getText());
+        const n = getBranchAtPos(program, pos(2)).slice(0, -1);
+        expect(getNodeColorInformation(t, n).color).toEqual(new Color(0,0,0,1));
+    });
+
+    it("getNodeColorInformation, whitespace", () => {
+        const t = new MockTextDocument("call_rgb( );");
         const program = parse(t.getText());
         const n = getBranchAtPos(program, pos(2)).slice(0, -1);
         expect(getNodeColorInformation(t, n).color).toEqual(new Color(0,0,0,1));

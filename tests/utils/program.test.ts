@@ -1,4 +1,4 @@
-import { addProgram, addProgramDocument, addProgramFile, addProgramImportName, addProgramModuleName, addProgramText, prunePrograms, deletePrograms, getRequiredAttrs, getProgramImports, getProgram, getProgramExists, getProgramKey, getProgramSize, removeProgram, requestProgram, ProgramProvider, assertImportsAllowed, setImportsAllowed } from "../../src/utils/program";
+import { addProgram, addProgramDocument, addProgramFile, addProgramImportName, addProgramModuleName, addProgramText, prunePrograms, deletePrograms, getRequiredAttrs, getProgramImports, getProgram, getProgramExists, getProgramKey, getProgramSize, removeProgram, requestProgram, ProgramProvider, assertImportsAllowed, setImportsAllowed, getProgramImportNames, getProgramModuleNames } from "../../src/utils/program";
 import { describe, expect, it } from "@jest/globals";
 import { AST, SQTree as qt } from "../../src/ast";
 import { CancellationToken, commands, Disposable, TabGroups, TabInputText, TextDocument, Uri, window, workspace } from "vscode";
@@ -95,6 +95,20 @@ describe("Program", () => {
         addProgramModuleName(program, "modules/mockModule");
 
         expect(getRequiredAttrs(program)).toEqual([ { kind: "module", name: "mockModule", documentation: "" }]);
+    });
+
+    it("addProgram works", () => {
+        const program = <AST.Program>{ sourceName: "mockProgram" };
+
+        expect(getProgramImportNames(program).length).toBe(0);
+        addProgramImportName(program, "modules/mockModule");
+        addProgramImportName(program, "modules/mockModule");
+        expect(getProgramImportNames(program).length).toBe(1);
+
+        expect(getProgramModuleNames(program).length).toBe(0);
+        addProgramModuleName(program, "modules/mockModule");
+        addProgramModuleName(program, "modules/mockModule");
+        expect(getProgramModuleNames(program).length).toBe(1);
     });
 
     it("getRequiredAttrs, invalid", () => {
@@ -239,6 +253,19 @@ describe("Program", () => {
         const progA = <AST.Program>{ sourceName: "a" };
         const progB = <AST.Program>{ sourceName: "b" };
         const progC = <AST.Program>{ sourceName: "c" };
+        addProgramImportName(progB, "a");
+        addProgramImportName(progC, "b");
+        addProgram("a", progA);
+        addProgram("b", progB);
+        addProgram("c", progC);
+        expect(getProgramImports(progC)).toEqual([progA, progB]);
+    });
+
+    it("getProgramImports, loop", () => {
+        const progA = <AST.Program>{ sourceName: "a" };
+        const progB = <AST.Program>{ sourceName: "b" };
+        const progC = <AST.Program>{ sourceName: "c" };
+        addProgramImportName(progA, "c");
         addProgramImportName(progB, "a");
         addProgramImportName(progC, "b");
         addProgram("a", progA);

@@ -4,7 +4,7 @@ import * as path from "path";
 import { readFile } from "../../src/utils/file";
 
 export const getFile = (filename: string): string =>
-    readFile(path.join(__dirname, filename));
+    readFile(path.join(__dirname, filename), { encoding: "utf8" });
 
 describe("Sample", () => {
 

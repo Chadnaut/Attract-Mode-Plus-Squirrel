@@ -210,12 +210,16 @@
                     "name": "entity.name.type.class.log"
                 },
                 {
-                    "match": "(?<=^ \\W |^)([^ \\[][\\- _'*a-zA-Z\\/\\(\\)]+(?=(:| -)[ \\r\\n]))",
+                    "match": "(?<=^ - Loaded layout:.*? \\()[^)]+(?=\\)[\\r\\n])",
+                    "name": "constant.language.layout.log"
+                },
+                {
+                    "match": "(?<=^ - )Loaded (?:romlist|filters).*?(?= in)",
                     "name": "storage.type.label.log"
                 },
                 {
-                    "match": "(?<=^ - Loaded layout:.*? \\()[^)]+(?=\\)[\\r\\n])",
-                    "name": "constant.language.layout.log"
+                    "match": "(?<=^ \\W |^)([^ \\[][\\- _'*a-zA-Z\\/\\(\\)]+(?=(:| -)[ \\r\\n]))",
+                    "name": "storage.type.label.log"
                 }
             ]
         },

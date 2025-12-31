@@ -1,6 +1,6 @@
 import { describe, expect, it } from "@jest/globals";
 import { SquirrelCompletionItemSnippetProvider } from "../../src/providers/squirrelCompletionItemSnippetProvider";
-import { MockTextDocument, parseForceExtra as parse } from "../utils";
+import { MockTextDocument, parseForceExtra as parse, dump } from "../utils";
 import { CompletionTriggerKind, Position, Event, commands, CompletionItemKind, CompletionItem } from "vscode";
 import { addProgram } from "../../src/utils/program";
 import { addSnippetCompletion } from "../../src/doc/snippets";

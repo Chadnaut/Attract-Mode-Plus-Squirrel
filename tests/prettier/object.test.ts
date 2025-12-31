@@ -27,6 +27,16 @@ describe("Table", () => {
         expect(response).toBe('local x = { "y": 1 };\n');
     });
 
+    it("json missing comma", async () => {
+        const response = await format('  local  x  = {   "y": 1 "z": 2 } ');
+        expect(response).toBe('local x = { "y": 1, "z": 2 };\n');
+    });
+
+    it("json mixed", async () => {
+        const response = await format('  local  x  = {   y=1 "z":2 } ');
+        expect(response).toBe('local x = { y = 1, "z": 2 };\n');
+    });
+
     it("computed", async () => {
         const response = await format('  local  x  = {   ["x"+"y"] =  1 } ');
         expect(response).toBe('local x = { ["x" + "y"] = 1 };\n');

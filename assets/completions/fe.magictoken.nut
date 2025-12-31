@@ -83,7 +83,13 @@
  * @keyword SystemN The last system name for the game's emulator.
  * @kind magic
  *
- * @keyword Title The full name.
+ * @keyword Title The formatted game name.
+ * @kind magic
+ *
+ * @keyword TitleLetter 🔶 The capitalised first letter of the formatted game name.
+ * @kind magic
+ *
+ * @keyword TitleFull 🔶 The pre-formatted game name.
  * @kind magic
  *
  * @keyword Year The year.
@@ -98,13 +104,25 @@
  * @keyword Favourite The favourite status.
  * @kind magic
  *
+ * @keyword FavouriteStar 🔶 The favourite status as a filled star icon.
+ * @kind magic
+ *
+ * @keyword FavouriteStarAlt 🔶 The favourite status as an outlined star icon.
+ * @kind magic
+ *
+ * @keyword FavouriteHeart 🔶 The favourite status as a filled heart icon.
+ * @kind magic
+ *
+ * @keyword FavouriteHeartAlt 🔶 The favourite status as an outlined heart icon.
+ * @kind magic
+ *
  * @keyword FileIsAvailable The file availability.
  * @kind magic
  *
  * @keyword Language The language.
  * @kind magic
  *
- * @keyword Rating The rating.
+ * @keyword Rating The age rating.
  * @kind magic
  *
  * @keyword Region The region.
@@ -115,4 +133,32 @@
  *
  * @keyword Tags The tags, separated by `;`.
  * @kind magic
+ *
+ * @keyword TagsList 🔶 The tags formatted with tag icons.
+ * @kind magic
+ *
+ * @keyword PlayedCount The number of times the game has been played.
+ * @kind magic
+ *
+ * @keyword PlayedTime The number of seconds the game has been played.
+ * @kind magic
+ *
+ * @keyword PlayedLast 🔶 The timestamp the game was last played.
+ * @kind magic
+ *
+ * @keyword PlayedAgo 🔶 The last played date formatted relative to now.
+ * @kind magic
+ *
+ * @keyword Score 🔶 The user score for the game.
+ * @kind magic
+ *
+ * @keyword ScoreStar 🔶 The score displayed as star icons.
+ * @kind magic
+ *
+ * @keyword ScoreStarAlt 🔶 The score displayed as outlined and filled star icons.
+ * @kind magic
+ *
+ * @keyword Votes 🔶 The total number of user votes for the game.
+ * @kind magic
+ *
  */

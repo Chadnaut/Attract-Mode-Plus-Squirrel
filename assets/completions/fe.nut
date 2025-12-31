@@ -9,7 +9,8 @@
  * All the functions, objects and classes that Attract-Mode exposes to Squirrel.
  * @class
  * @type {fe}
- * @version AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L46
+ * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#functions
+ * @since AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L46
  */
 fe <- {
     // ---------------------------------------------------------------------------------
@@ -17,94 +18,130 @@ fe <- {
 
     /**
      * @inheritdoc
-     * @version AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L65
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feadd_image
+     * @since AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L65
      */
     add_image = add_image1,
     /**
      * @inheritdoc
-     * @version AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L66
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feadd_image
+     * @since AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L66
      */
     add_image = add_image2,
     /**
      * @inheritdoc
-     * @version AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L67
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feadd_image
+     * @since AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L67
      */
     add_image = add_image3,
     /**
      * @inheritdoc
-     * @version AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L94
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feadd_artwork
+     * @since AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L94
      */
     add_artwork = add_artwork1,
     /**
      * @inheritdoc
-     * @version AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L95
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feadd_artwork
+     * @since AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L95
      */
     add_artwork = add_artwork2,
     /**
      * @inheritdoc
-     * @version AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L96
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feadd_artwork
+     * @since AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L96
      */
     add_artwork = add_artwork3,
     /**
      * @inheritdoc
-     * @version AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L126
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feadd_clone
+     * @since AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L126
      */
     add_clone = add_clone1,
     /**
      * @inheritdoc
-     * @version AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L145
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feadd_image
+     * @since AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L145
      */
     add_text = add_text1,
     /**
      * @inheritdoc
-     * @version AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L181
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feadd_text
+     * @since AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L181
      */
     add_listbox = add_listbox1,
     /**
      * @inheritdoc
-     * @version 🔶AM+_3.1.0 https://github.com/oomek/attractplus/blob/3.1.0/Layouts.md?plain=1#L577
+     * @version 🔶AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feadd_listbox
+     * @since 🔶AM+_3.1.0 https://github.com/oomek/attractplus/blob/3.1.0/Layouts.md?plain=1#L577
      */
     add_music = add_music1,
     /**
      * @inheritdoc
-     * @version AM_1.3.0-beta1 https://github.com/mickelson/attract/blob/v1.3.0-beta1/Layouts.md?plain=1#L173
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feadd_music-
+     * @since AM_1.3.0-beta1 https://github.com/mickelson/attract/blob/v1.3.0-beta1/Layouts.md?plain=1#L173
      */
     add_surface = add_surface1,
     /**
      * @inheritdoc
-     * @version 🔶AM+_3.1.0 https://github.com/oomek/attractplus/blob/3.1.0/Layouts.md?plain=1#L364
+     * @version 🔶AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feadd_surface
+     * @since 🔶AM+_3.1.0 https://github.com/oomek/attractplus/blob/3.1.0/Layouts.md?plain=1#L364
      */
     add_surface = add_surface2,
     /**
      * @inheritdoc
-     * @version 🔶AM+_3.0.0 https://github.com/oomek/attractplus/blob/3.0.0/Layouts.md?plain=1#L451
+     * @version 🔶AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feadd_surface
+     * @since 🔶AM+_3.0.0 https://github.com/oomek/attractplus/blob/3.0.0/Layouts.md?plain=1#L451
      */
     add_rectangle = add_rectangle1,
     /**
      * @inheritdoc
-     * @version AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L202
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feadd_rectangle-
+     * @since AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L202
      */
     add_sound = add_sound1,
     /**
      * @inheritdoc
-     * @version AM_1.6.0 https://github.com/mickelson/attract/blob/v1.6.0/Layouts.md?plain=1#L472
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feadd_sound
+     * @since AM_1.6.0 https://github.com/mickelson/attract/blob/v1.6.0/Layouts.md?plain=1#L472
      */
     add_sound = add_sound2,
     /**
      * @inheritdoc
-     * @version AM_1.2.0 https://github.com/mickelson/attract/blob/v1.2.0/Layouts.md?plain=1#L209
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feadd_sound
+     * @since AM_1.2.0 https://github.com/mickelson/attract/blob/v1.2.0/Layouts.md?plain=1#L209
      */
     add_shader = add_shader1,
     /**
      * @inheritdoc
-     * @version AM_1.2.0 https://github.com/mickelson/attract/blob/v1.2.0/Layouts.md?plain=1#L208
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feadd_shader
+     * @since AM_1.2.0 https://github.com/mickelson/attract/blob/v1.2.0/Layouts.md?plain=1#L208
      */
     add_shader = add_shader2,
     /**
      * @inheritdoc
-     * @version AM_1.2.0 https://github.com/mickelson/attract/blob/v1.2.0/Layouts.md?plain=1#L207
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feadd_shader
+     * @since AM_1.2.0 https://github.com/mickelson/attract/blob/v1.2.0/Layouts.md?plain=1#L207
      */
     add_shader = add_shader3,
+    /**
+     * @inheritdoc
+     * @version 🔶AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#fecompile_shader-
+     * @since 🔶AM+_3.2.0 https://github.com/oomek/attractplus/blob/3.2.0/Layouts.md?plain=1#L702
+     */
+    compile_shader = compile_shader1,
+    /**
+     * @inheritdoc
+     * @version 🔶AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#fecompile_shader-
+     * @since 🔶AM+_3.2.0 https://github.com/oomek/attractplus/blob/3.2.0/Layouts.md?plain=1#L702
+     */
+    compile_shader = compile_shader2,
+    /**
+     * @inheritdoc
+     * @version 🔶AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#fecompile_shader-
+     * @since 🔶AM+_3.2.0 https://github.com/oomek/attractplus/blob/3.2.0/Layouts.md?plain=1#L702
+     */
+    compile_shader = compile_shader3,
 
     // #endregion
 
@@ -117,7 +154,8 @@ fe <- {
      * Ticks are emitted prior to drawing each Layout frame.
      * @method
      * @param {string} name The name of the callback function.
-     * @version AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L219
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feadd_ticks_callback
+     * @since AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L219
      * @example
      * ```
      * add_ticks_callback("on_tick");
@@ -126,14 +164,15 @@ fe <- {
      * }
      * ```
      */
-    function add_ticks_callback(name) {}
+    add_ticks_callback = function (name) {},
 
     /**
      * @ignore
      * @variation add_ticks_callback
      * @param {*} env The object to use as the current environment.
      * @param {string} name The name of the callback function.
-     * @version AM_1.4.1 https://github.com/mickelson/attract/blob/v1.4.1/Layouts.md?plain=1#L387
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feadd_ticks_callback
+     * @since AM_1.4.1 https://github.com/mickelson/attract/blob/v1.4.1/Layouts.md?plain=1#L387
      * @example
      * ```
      * add_ticks_callback(this, "on_tick");
@@ -142,7 +181,7 @@ fe <- {
      * }
      * ```
      */
-    function add_ticks_callback(env, name) {}
+    add_ticks_callback = function (env, name) {},
 
     /**
      * Registers a function to be called when the application emits a Transition.
@@ -153,7 +192,8 @@ fe <- {
      *
      * @method
      * @param {string} name The name of the callback function.
-     * @version AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L244
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feadd_transition_callback
+     * @since AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L244
      * @example
      * ```
      * fe.add_transition_callback("on_transition");
@@ -172,7 +212,8 @@ fe <- {
      * @variation add_transition_callback
      * @param {*} env The object to use as the current environment.
      * @param {string} name The name of the callback function.
-     * @version AM_1.4.1 https://github.com/mickelson/attract/blob/v1.4.1/Layouts.md?plain=1#L416
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feadd_transition_callback
+     * @since AM_1.4.1 https://github.com/mickelson/attract/blob/v1.4.1/Layouts.md?plain=1#L416
      * @example
      * ```
      * fe.add_transition_callback(this, "on_transition");
@@ -187,34 +228,73 @@ fe <- {
     add_transition_callback = function (env, name) {},
 
     /**
-     * Returns romlist information for a Game.
+     * @inheritdoc
+     * @deprecated
+     */
+    game_info = game_info1,
+
+    /**
+     * @inheritdoc
+     * @deprecated
+     */
+    game_info = game_info2,
+
+    /**
+     * @inheritdoc
+     * @deprecated
+     */
+    game_info = game_info3,
+
+    /**
+     * @inheritdoc
+     */
+    get_game_info = game_info1,
+
+    /**
+     * @inheritdoc
+     */
+    get_game_info = game_info2,
+
+    /**
+     * @inheritdoc
+     */
+    get_game_info = game_info3,
+
+    /**
+     * Update romlist information for a Game.
      * @method
-     * @param {Info} info The information attribute to get.
-     * @returns {string}
-     * @version AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L297
+     * @param {Info} info The information attribute to set.
+     * @param {string} value The value to set.
+     * @returns {boolean}
+     * @version 🔶AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feset_game_info-
+     * @since 🔶AM+_3.2.0 https://github.com/oomek/attractplus/blob/3.2.0/Layouts.md?plain=1#L791
      */
-    game_info = function(info) {},
+    set_game_info = function (info, value) {},
 
     /**
      * @ignore
-     * @variation game_info
-     * @param {Info} info The information attribute to get.
+     * @variation set_game_info
+     * @param {Info} info The information attribute to set.
+     * @param {string} value The value to set.
      * @param {integer} index_offset The offset relative to the current Game. Defaults to `0`.
-     * @returns {string}
-     * @version AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L298
+     * @returns {boolean}
+     * @version 🔶AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feset_game_info-
+     * @since 🔶AM+_3.2.0 https://github.com/oomek/attractplus/blob/3.2.0/Layouts.md?plain=1#L791
      */
-    game_info = function(info, index_offset = 0) {},
+    set_game_info = function (info, value, index_offset = 0) {},
 
     /**
      * @ignore
-     * @variation game_info
-     * @param {Info} info The information attribute to get.
+     * @variation set_game_info
+     * @param {Info} info The information attribute to set.
+     * @param {string} value The value to set.
      * @param {integer} index_offset The offset relative to the current Game. Defaults to `0`.
      * @param {integer} filter_offset The offset relative to the current Filter. Defaults to `0`.
-     * @returns {string}
-     * @version AM_1.5.0 https://github.com/mickelson/attract/blob/v1.5.0/Layouts.md?plain=1#L511
+     * @returns {boolean}
+     * @version 🔶AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feset_game_info-
+     * @since 🔶AM+_3.2.0 https://github.com/oomek/attractplus/blob/3.2.0/Layouts.md?plain=1#L791
      */
-    game_info = function(info, index_offset = 0, filter_offset = 0) {},
+    set_game_info = function (info, value, index_offset = 0, filter_offset = 0) {},
 
     /**
      * Returns the artwork filename for a Game.
@@ -224,9 +304,10 @@ fe <- {
      * @param {integer} filter_offset The offset relative to the current Filter. Defaults to `0`.
      * @param {Art} flags The type of artwork to return, accepts multiple values separated by `|`. Defaults to `Art.Default`.
      * @returns {string}
-     * @version AM_1.5.2 https://github.com/mickelson/attract/blob/v1.5.2/Layouts.md?plain=1#L558
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feget_art
+     * @since AM_1.5.2 https://github.com/mickelson/attract/blob/v1.5.2/Layouts.md?plain=1#L558
      */
-    get_art = function(label, index_offset = 0, filter_offset = 0, flags = Art.Default) {}
+    get_art = function (label, index_offset = 0, filter_offset = 0, flags = Art.Default) {},
 
     /**
      * Returns the pressed state of an input:
@@ -237,9 +318,10 @@ fe <- {
      * @method
      * @param {string(=keyStrings|=joyStrings|=mouseStrings|=signalActions)} input The input to sample.
      * @returns {boolean}
-     * @version AM_1.2.0 https://github.com/mickelson/attract/blob/v1.2.0/Layouts.md?plain=1#L425
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feget_input_state
+     * @since AM_1.2.0 https://github.com/mickelson/attract/blob/v1.2.0/Layouts.md?plain=1#L425
      */
-    get_input_state = function(input) {},
+    get_input_state = function (input) {},
 
     /**
      * Returns the position of an analog input.
@@ -249,7 +331,8 @@ fe <- {
      * @method
      * @param {string(=joyStrings|=mouseStrings)} input The input to sample.
      * @returns {integer}
-     * @version AM_1.2.0 https://github.com/mickelson/attract/blob/v1.2.0/Layouts.md?plain=1#L447
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feget_input_pos
+     * @since AM_1.2.0 https://github.com/mickelson/attract/blob/v1.2.0/Layouts.md?plain=1#L447
      */
     get_input_pos = function (input) {},
 
@@ -259,7 +342,8 @@ fe <- {
      * The action is processed normally, passing through `fe.add_signal_handler()` before being executed.
      * @method
      * @param {string(=signalActions)} action The signal action to trigger.
-     * @version AM_1.4.1 https://github.com/mickelson/attract/blob/v1.4.1/Layouts.md?plain=1#L582
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#fesignal
+     * @since AM_1.4.1 https://github.com/mickelson/attract/blob/v1.4.1/Layouts.md?plain=1#L582
      */
     signal = function (action) {},
 
@@ -267,7 +351,8 @@ fe <- {
      * Sets the current Display by index, updating `fe.list`. Clamps to the available range.
      * @method
      * @param {integer} index The index to set.
-     * @version AM_2.0.0-rc1 https://github.com/mickelson/attract/blob/v2.0.0-rc1/Layouts.md?plain=1#L824
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feadd_image
+     * @since AM_2.0.0-rc1 https://github.com/mickelson/attract/blob/v2.0.0-rc1/Layouts.md?plain=1#L824
      */
     set_display = function (index) {},
 
@@ -277,7 +362,8 @@ fe <- {
      * @variation set_display
      * @param {integer} index The index to set.
      * @param {boolean} stack Add the current Display to the history stack. Defaults to `false`.
-     * @version AM_2.3.0 https://github.com/mickelson/attract/blob/v2.3.0/Layouts.md?plain=1#L838
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feset_display
+     * @since AM_2.3.0 https://github.com/mickelson/attract/blob/v2.3.0/Layouts.md?plain=1#L838
      */
     set_display = function (index, stack = false) {},
 
@@ -288,7 +374,8 @@ fe <- {
      * @param {integer} index The index to set.
      * @param {boolean} stack Add the current Display to the history stack. Defaults to `false`.
      * @param {boolean} reload Force the Layout to reload. Defaults to `true`.
-     * @version 🔶AM+_3.0.0 https://github.com/oomek/attractplus/blob/3.0.0/Layouts.md?plain=1#L912
+     * @version 🔶AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feset_display
+     * @since 🔶AM+_3.0.0 https://github.com/oomek/attractplus/blob/3.0.0/Layouts.md?plain=1#L912
      */
     set_display = function (index, stack = false, reload = true) {},
 
@@ -300,7 +387,8 @@ fe <- {
      * The callback may return `true` to cancel the action.
      * @method
      * @param {string} name The name of the callback function.
-     * @version AM_1.4.1 https://github.com/mickelson/attract/blob/v1.4.1/Layouts.md?plain=1#L633
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feadd_signal_handler
+     * @since AM_1.4.1 https://github.com/mickelson/attract/blob/v1.4.1/Layouts.md?plain=1#L633
      * @example
      * ```
      * add_signal_handler("on_signal");
@@ -317,7 +405,8 @@ fe <- {
      * @variation add_signal_handler
      * @param {*} env The object to use as the current environment.
      * @param {string} name The name of the callback function.
-     * @version AM_1.4.1 https://github.com/mickelson/attract/blob/v1.4.1/Layouts.md?plain=1#L632
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feadd_signal_handler
+     * @since AM_1.4.1 https://github.com/mickelson/attract/blob/v1.4.1/Layouts.md?plain=1#L632
      * @example
      * ```
      * add_signal_handler(this, "on_signal");
@@ -333,7 +422,8 @@ fe <- {
      * Removes a previously registered signal handler.
      * @method
      * @param {string} name The name of the callback function to deregister.
-     * @version AM_1.4.1 https://github.com/mickelson/attract/blob/v1.4.1/Layouts.md?plain=1#L678
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feremove_signal_handler
+     * @since AM_1.4.1 https://github.com/mickelson/attract/blob/v1.4.1/Layouts.md?plain=1#L678
      */
     remove_signal_handler = function (name) {},
 
@@ -342,12 +432,13 @@ fe <- {
      * @variation remove_signal_handler
      * @param {*} env The object to use as the current environment.
      * @param {string} name The name of the callback function to deregister.
-     * @version AM_1.4.1 https://github.com/mickelson/attract/blob/v1.4.1/Layouts.md?plain=1#L677
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feremove_signal_handler
+     * @since AM_1.4.1 https://github.com/mickelson/attract/blob/v1.4.1/Layouts.md?plain=1#L677
      */
     remove_signal_handler = function (env, name) {},
 
     /**
-     * Imports a Squirrel file to the current environment.
+     * Imports a Squirrel file to the current environment, returning `true` on success.
      *
      * All root objects become globally available:
      * - `class foo {}` - Class declarations.
@@ -355,7 +446,9 @@ fe <- {
      * - `slot <- "value"` - Root members.
      * @method
      * @param {string($nut)} filename The filename of the script to import. Relative to Layout/Plugin, or absolute.
-     * @version AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L402
+     * @returns {boolen}
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#fedo_nut
+     * @since AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L402
      */
     do_nut = function (filename) {},
 
@@ -371,7 +464,8 @@ fe <- {
      * @method
      * @param {string($module)} name The name of the Module to import.
      * @returns {boolean}
-     * @version AM_1.3.1 https://github.com/mickelson/attract/blob/v1.3.1/Layouts.md?plain=1#L573
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feload_module
+     * @since AM_1.3.1 https://github.com/mickelson/attract/blob/v1.3.1/Layouts.md?plain=1#L573
      */
     load_module = function (name) {},
 
@@ -380,7 +474,8 @@ fe <- {
      * @method
      * @param {string} command The command to run.
      * @param {string} args The arguments for the command.
-     * @version AM_1.1.0 https://github.com/mickelson/attract/blob/v1.1.0/Layouts.md?plain=1#L441
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feplugin_command
+     * @since AM_1.1.0 https://github.com/mickelson/attract/blob/v1.1.0/Layouts.md?plain=1#L441
      */
     plugin_command = function (command, args) {},
 
@@ -390,10 +485,11 @@ fe <- {
      * @param {string} command The command to run.
      * @param {string} args The arguments for to the command.
      * @param {string} callback The name of the callback function.
-     * @version AM_1.1.0 https://github.com/mickelson/attract/blob/v1.1.0/Layouts.md?plain=1#L442
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feplugin_command
+     * @since AM_1.1.0 https://github.com/mickelson/attract/blob/v1.1.0/Layouts.md?plain=1#L442
      * @example
      * ```
-     * plugin_command("command.bat", "-arg", "on_command");
+     * fe.plugin_command("command.bat", "-arg", "on_command");
      * function on_command(stdout) {
      *     fe.log(stdout); // stdout may arrive in multiple parts
      * }
@@ -408,10 +504,11 @@ fe <- {
      * @param {string} args The arguments to append to the command.
      * @param {*} env The object to use as the current environment.
      * @param {string} callback The name of the callback function.
-     * @version AM_1.4.1 https://github.com/mickelson/attract/blob/v1.4.1/Layouts.md?plain=1#L733
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feplugin_command
+     * @since AM_1.4.1 https://github.com/mickelson/attract/blob/v1.4.1/Layouts.md?plain=1#L733
      * @example
      * ```
-     * plugin_command("command.bat", "-arg", this, "on_command");
+     * fe.plugin_command("command.bat", "-arg", this, "on_command");
      * function on_command(stdout) {
      *     fe.log(stdout); // stdout may arrive in multiple parts
      * }
@@ -424,41 +521,46 @@ fe <- {
      * @method
      * @param {string} command The command to run.
      * @param {string} args The arguments for the command.
-     * @version AM_1.1.0 https://github.com/mickelson/attract/blob/v1.1.0/Layouts.md?plain=1#L467
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feplugin_command_bg
+     * @since AM_1.1.0 https://github.com/mickelson/attract/blob/v1.1.0/Layouts.md?plain=1#L467
      */
     plugin_command_bg = function (command, args) {},
 
     /**
-     * Substitutes leading system tokens in the given path.
-     * - `~` or `$HOME` - The User's home directory.
-     * - `%SYSTEMROOT%` - The Windows directory.
-     * - `%PROGRAMFILES%` - The "Program Files" directory.
-     * - `%PROGRAMFILESx86%` - The "Program Files (x86)" directory.
+     * Returns a table containing control input mappings.
      * @method
-     * @param {string} path The path to expand.
-     * @returns {string}
-     * @version AM_1.1.0 https://github.com/mickelson/attract/blob/v1.1.0/Layouts.md?plain=1#L480
+     * @returns {table}
+     * @version 🔶AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feget_input_mappings-
+     * @since 🔶AM+_3.2.0 https://github.com/oomek/attractplus/blob/3.2.0/Layouts.md?plain=1#L1158
      */
-    path_expand = function (path) {},
+    get_input_mappings = function () {},
 
     /**
-     * Checks the given path has the status indicated by the flag.
+     * Returns a table containing general configuration settings.
      * @method
-     * @param {string} path The path to check. Relative to the application, or absolute.
-     * @param {PathTest} flag The status to check.
-     * @returns {boolean}
-     * @version AM_2.4.0 https://github.com/mickelson/attract/blob/v2.4.0/Layouts.md?plain=1#L1038
+     * @returns {table}
+     * @version 🔶AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feget_general_config-
+     * @since 🔶AM+_3.2.0 https://github.com/oomek/attractplus/blob/3.2.0/Layouts.md?plain=1#L1182
      */
-    path_test = function (path, flag) {},
+    get_general_config = function () {},
 
     /**
-     * Returns the modified time of the given file as a GTM timestamp.
-     * @method
-     * @param {string} filename The filename to check. Relative to the application, or absolute.
-     * @returns {integer}
-     * @version 🔶AM+_3.1.0 https://github.com/oomek/attractplus/blob/3.1.0/Layouts.md?plain=1#L1182
+     * @inheritdoc
+     * @deprecated
      */
-    get_file_mtime = function (filename) {},
+    path_expand = path_expand1,
+
+    /**
+     * @inheritdoc
+     * @deprecated
+     */
+    path_test = path_test1,
+
+    /**
+     * @inheritdoc
+     * @deprecated
+     */
+    get_file_mtime = get_file_mtime1,
 
     /**
      * Returns user configurable values defined by the `UserConfig` class.
@@ -466,18 +568,42 @@ fe <- {
      * Layouts, Plugins, Screensavers and Intros may contain this class.
      * @method
      * @returns {table}
-     * @version AM_1.2.0 https://github.com/mickelson/attract/blob/v1.2.0/Layouts.md?plain=1#L533
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feget_config
+     * @since AM_1.2.0 https://github.com/mickelson/attract/blob/v1.2.0/Layouts.md?plain=1#L533
      */
     get_config = function () {},
 
     /**
-     * Returns the text translated into the user's configured language, or the given text if none available.
+     * Sets user configurable values defined by the `UserConfig` class.
+     *
+     * Layouts, Plugins, Screensavers and Intros may contain this class.
      * @method
-     * @param {string} value The text to translate.
-     * @returns {string}
-     * @version AM_2.5.0 https://github.com/mickelson/attract/blob/v2.5.0/Layouts.md?plain=1#L1099
+     * @param {table} config The config to set.
+     * @version 🔶AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feset_config-
+     * @since 🔶AM_3.2.0 https://github.com/oomek/attractplus/blob/3.2.0/Layouts.md?plain=1#L1222
      */
-    get_text = function (value) {},
+    set_config = function (config) {},
+
+    /**
+     * @inheritdoc
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feget_text
+     * @since AM_2.5.0 https://github.com/mickelson/attract/blob/v2.5.0/Layouts.md?plain=1#L1099
+     */
+    get_text = get_text1,
+
+    /**
+     * @inheritdoc
+     * @version 🔶AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feget_text
+     * @since 🔶AM+_3.2.0 https://github.com/oomek/attractplus/blob/3.2.0/Layouts.md?plain=1#L1244
+     */
+    get_text = get_text2,
+
+    /**
+     * @inheritdoc
+     * @version 🔶AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feget_text
+     * @since 🔶AM+_3.2.0 https://github.com/oomek/attractplus/blob/3.2.0/Layouts.md?plain=1#L1245
+     */
+    get_text = get_text3,
 
     /**
      * Saves the response from the given url to a file, returning `true` on success.
@@ -487,7 +613,8 @@ fe <- {
      * @param {string} url The url to download.
      * @param {string} filename The filename to save to. Relative to Layout/Plugin, or absolute.
      * @returns {boolean}
-     * @version 🔶AM+_3.0.0 https://github.com/oomek/attractplus/blob/3.0.0/Layouts.md?plain=1#L1189
+     * @version 🔶AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feget_url-
+     * @since 🔶AM+_3.0.0 https://github.com/oomek/attractplus/blob/3.0.0/Layouts.md?plain=1#L1189
      */
     get_url = function (url, filename) {},
 
@@ -497,10 +624,17 @@ fe <- {
      * Adds a newline and flushes the buffer for immediate display.
      * @method
      * @param {*} value The value to print.
-     * @version 🔶AM+_3.0.9 https://github.com/oomek/attractplus/blob/3.0.9/Layouts.md?plain=1#L1211
+     * @version 🔶AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#felog-
+     * @since 🔶AM+_3.0.9 https://github.com/oomek/attractplus/blob/3.0.9/Layouts.md?plain=1#L1211
      */
     log = function (value) {},
 
+    /**
+     * A table to store Plugin instances.
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md
+     * @since AM+_2.6.1 https://github.com/mickelson/attract/blob/v2.6.1/Layouts.md?plain=1
+     */
+    plugin = {},
 
     // fe.is_keypressed( keycode ) // AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L328
     // fe.is_joybuttonpressed( joy_id, button_num ) // AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L363
@@ -513,50 +647,58 @@ fe <- {
 
     /**
      * The *Ambient Soundtrack* Sound instance.
-     * @version AM_1.4.1 https://github.com/mickelson/attract/blob/v1.4.1/Layouts.md?plain=1#L825
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feambient_sound
+     * @since AM_1.4.1 https://github.com/mickelson/attract/blob/v1.4.1/Layouts.md?plain=1#L825
      */
     ambient_sound = fe.Music,
 
     /**
      * The Global Layout settings.
-     * @version AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L418
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#felayout
+     * @since AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L418
      */
     layout = fe.LayoutGlobals,
 
     /**
      * The current Display settings.
-     * @version AM_1.1.0 https://github.com/mickelson/attract/blob/v1.1.0/Layouts.md?plain=1#L505
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#felist
+     * @since AM_1.1.0 https://github.com/mickelson/attract/blob/v1.1.0/Layouts.md?plain=1#L505
      */
     list = fe.CurrentList,
 
     /**
      * The Image cache settings
-     * @version AM_2.6.2 https://github.com/mickelson/attract/blob/v2.6.2/Layouts.md?plain=1#L1187
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feimage_cache
+     * @since AM_2.6.2 https://github.com/mickelson/attract/blob/v2.6.2/Layouts.md?plain=1#L1187
      */
     image_cache = fe.ImageCache,
 
     /**
      * The Overlay controller
-     * @version AM_1.4.1 https://github.com/mickelson/attract/blob/v1.4.1/Layouts.md?plain=1#L846
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feoverlay
+     * @since AM_1.4.1 https://github.com/mickelson/attract/blob/v1.4.1/Layouts.md?plain=1#L846
      */
     overlay = fe.Overlay,
 
     /**
      * The draw list, containing all added Layout elements.
-     * @version AM_1.3.2 https://github.com/mickelson/attract/blob/v1.3.2/Layouts.md?plain=1#L699
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#feobj
+     * @since AM_1.3.2 https://github.com/mickelson/attract/blob/v1.3.2/Layouts.md?plain=1#L699
      */
     obj = [],
     // objs // AM_1.0.2 https://github.com/mickelson/attract/blob/v1.0.2/Layouts.md?plain=1#L426
 
     /**
      * The available Displays.
-     * @version AM_2.0.0-rc1 https://github.com/mickelson/attract/blob/v2.0.0-rc1/Layouts.md?plain=1#L1076
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#fedisplays
+     * @since AM_2.0.0-rc1 https://github.com/mickelson/attract/blob/v2.0.0-rc1/Layouts.md?plain=1#L1076
      */
     displays = [fe.Display],
 
     /**
      * The Filters for the current Display.
-     * @version AM_1.5.0 https://github.com/mickelson/attract/blob/v1.5.0/Layouts.md?plain=1#L878
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#fefilters
+     * @since AM_1.5.0 https://github.com/mickelson/attract/blob/v1.5.0/Layouts.md?plain=1#L878
      */
     filters = [fe.Filter],
 
@@ -565,21 +707,24 @@ fe <- {
      *
      * The first entry is the system's primary monitor.
      * @note OSX does not support multiple monitors.
-     * @version AM_1.5.2 https://github.com/mickelson/attract/blob/v1.5.2/Layouts.md?plain=1#L932
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#femonitors
+     * @since AM_1.5.2 https://github.com/mickelson/attract/blob/v1.5.2/Layouts.md?plain=1#L932
      */
     monitors = [fe.Monitor],
 
     /**
      * The current Layout or Plugin directory.
      * @external $script_dir
-     * @version AM_1.3.1 https://github.com/mickelson/attract/blob/v1.3.1/Layouts.md?plain=1#L705
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#fescript_dir
+     * @since AM_1.3.1 https://github.com/mickelson/attract/blob/v1.3.1/Layouts.md?plain=1#L705
      */
     script_dir = "",
 
     /**
      * The current Layout or Plugin filename.
      * @external $script_file
-     * @version AM_1.3.1 https://github.com/mickelson/attract/blob/v1.3.1/Layouts.md?plain=1#L712
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#fescript_file
+     * @since AM_1.3.1 https://github.com/mickelson/attract/blob/v1.3.1/Layouts.md?plain=1#L712
      */
     script_file = "",
     // init_name https://github.com/mickelson/attract/blob/v1.1.0/Layouts.md?plain=1#L517
@@ -588,7 +733,8 @@ fe <- {
     /**
      * The current Module directory.
      * @external $module_dir
-     * @version AM_2.6.2 https://github.com/mickelson/attract/blob/v2.6.2/Layouts.md?plain=1#L1255
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#femodule_dir
+     * @since AM_2.6.2 https://github.com/mickelson/attract/blob/v2.6.2/Layouts.md?plain=1#L1255
      */
     module_dir = "",
 
@@ -597,7 +743,8 @@ fe <- {
      *
      * The table is written to `script.nv`, which is loaded on startup and saved on shutdown.
      * @note Only primitive data types can be stored.
-     * @version AM_1.6.0 https://github.com/mickelson/attract/blob/v1.6.0/Layouts.md?plain=1#L1054
+     * @version AM+_3.2.0 https://github.com/oomek/attractplus/blob/master/Layouts.md#fenv
+     * @since AM_1.6.0 https://github.com/mickelson/attract/blob/v1.6.0/Layouts.md?plain=1#L1054
      */
     nv = {},
 
@@ -665,7 +812,7 @@ fe <- {
     /**
      * @inheritdoc
      */
-    Shader = class extends feShader {},
+    Shader = class extends feShader {}
 
     // #endregion
 }
